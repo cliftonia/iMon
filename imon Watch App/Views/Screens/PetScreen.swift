@@ -157,7 +157,7 @@ struct PetScreen: View {
     // MARK: - Effect Display
 
     private var effectRightSprite: SpriteFrame? {
-        if presenter.viewModel.isBusy {
+        if presenter.feedingAnimator.isPlaying {
             return presenter.feedingAnimator.currentFrame
         }
         if presenter.viewModel.status?.isInjured == true {
@@ -240,7 +240,8 @@ struct PetScreen: View {
         case .heal:
             presenter.healAction()
         case .call:
-            break
+            presenter.debugEvolve()
+            appPresenter.checkDeath()
         }
     }
 }

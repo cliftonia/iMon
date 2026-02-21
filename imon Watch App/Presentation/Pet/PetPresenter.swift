@@ -84,6 +84,55 @@ final class PetPresenter {
         updateAnimation()
     }
 
+    // MARK: - Debug Evolution
+
+    /// Debug: walk through each evolution journey, resetting
+    /// to egg between them. Loops back to journey 1 at the end.
+    private static let debugJourneys: [[virtual petSpecies]] = [
+        [.dotkin, .hopkin, .emberkin, .rexkin, .steelkin],
+        [.dotkin, .hopkin, .marshkin, .blazekin, .orbkin],
+        [.dotkin, .hopkin, .emberkin, .dreadkin, .steelkin],
+        [.dotkin, .hopkin, .emberkin, .pyrekin, .orbkin],
+        [.dotkin, .hopkin, .marshkin, .galekin, .steelkin],
+        [.dotkin, .hopkin, .marshkin, .tidekin, .orbkin],
+        [.dotkin, .hopkin, .emberkin, .sludgekin, .plushkin]
+    ]
+
+    private static let debugJourneyKey = "debugJourneyIndex"
+
+    private var debugJourneyIndex: Int {
+        get { UserDefaults.standard.integer(forKey: Self.debugJourneyKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.debugJourneyKey) }
+    }
+
+    private var debugStepIndex = 0
+
+    func debugEvolve() {
+        guard !viewModel.isBusy else { return }
+
+        let journeys = Self.debugJourneys
+        let journey = journeys[debugJourneyIndex]
+
+        let nextStep = debugStepIndex + 1
+        if nextStep >= journey.count {
+            state.isDead = true
+            let next = debugJourneyIndex + 1
+            debugJourneyIndex = next >= journeys.count
+                ? 0 : next
+            debugStepIndex = 0
+        } else {
+            state = EvolutionEngine.evolve(
+                state, to: journey[nextStep], at: .now
+            )
+            debugStepIndex = nextStep
+            WKInterfaceDevice.evolveHaptic()
+        }
+
+        updateViewModel()
+        updateAnimation()
+        save()
+    }
+
     // MARK: - Lights
 
     func lightsAction() {

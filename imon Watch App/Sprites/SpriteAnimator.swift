@@ -37,6 +37,8 @@ final class SpriteAnimator {
         currentFrameIndex = 0
     }
 
+    var isPlaying: Bool { animation != nil }
+
     private func advanceFrame() {
         guard let animation else { return }
         let nextIndex = currentFrameIndex + 1
