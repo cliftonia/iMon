@@ -18,6 +18,7 @@ final class PetViewModel {
 
     var status: PetStatus?
     var currentAnimation: SpriteCatalog.AnimationKind = .idle
+    var petOffsetX: Int = 8
 
     // MARK: - Menu
 

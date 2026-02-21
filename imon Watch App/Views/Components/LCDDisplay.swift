@@ -7,19 +7,28 @@ struct LCDDisplay: View {
     let poopCount: Int
     let stinkPhase: Int
     let lightsOn: Bool
+    let leftSpriteOffsetX: Int
+    let leftSpriteOffsetY: Int
+    let rightSpriteOffsetY: Int
 
     init(
         leftSprite: SpriteFrame,
         rightSprite: SpriteFrame? = nil,
         poopCount: Int = 0,
         stinkPhase: Int = 0,
-        lightsOn: Bool = true
+        lightsOn: Bool = true,
+        leftSpriteOffsetX: Int = 8,
+        leftSpriteOffsetY: Int = 4,
+        rightSpriteOffsetY: Int = 4
     ) {
         self.leftSprite = leftSprite
         self.rightSprite = rightSprite
         self.poopCount = poopCount
         self.stinkPhase = stinkPhase
         self.lightsOn = lightsOn
+        self.leftSpriteOffsetX = leftSpriteOffsetX
+        self.leftSpriteOffsetY = leftSpriteOffsetY
+        self.rightSpriteOffsetY = rightSpriteOffsetY
     }
 
     // MARK: - Inverted Colors
@@ -35,7 +44,7 @@ struct LCDDisplay: View {
     var body: some View {
         Canvas { context, size in
             let pixelWidth = size.width / 32
-            let pixelHeight = size.height / 16
+            let pixelHeight = size.height / 20
 
             drawGrid(
                 in: context,
@@ -54,7 +63,8 @@ struct LCDDisplay: View {
             drawSprite(
                 leftSprite,
                 in: context,
-                offsetX: 8,
+                offsetX: leftSpriteOffsetX,
+                offsetY: leftSpriteOffsetY,
                 pixelWidth: pixelWidth,
                 pixelHeight: pixelHeight
             )
@@ -64,6 +74,7 @@ struct LCDDisplay: View {
                     rightSprite,
                     in: context,
                     offsetX: 20,
+                    offsetY: rightSpriteOffsetY,
                     pixelWidth: pixelWidth,
                     pixelHeight: pixelHeight
                 )
@@ -76,7 +87,7 @@ struct LCDDisplay: View {
             )
         }
         .background(backgroundColor)
-        .aspectRatio(2, contentMode: .fit)
+        .aspectRatio(32.0 / 20.0, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .accessibilityHidden(true)
     }
@@ -101,7 +112,7 @@ struct LCDDisplay: View {
             )
             context.fill(line, with: .color(gridColor))
         }
-        for row in stride(from: 0, through: 16, by: 4) {
+        for row in stride(from: 0, through: 20, by: 4) {
             let y = Double(row) * pixelHeight
             let line = Path(
                 CGRect(
@@ -121,7 +132,7 @@ struct LCDDisplay: View {
     ) {
         let groundColor = basePixelColor.opacity(0.12)
 
-        let groundY = 15.0 * pixelHeight
+        let groundY = 19.0 * pixelHeight
         let groundLine = Path(
             CGRect(
                 x: 0, y: groundY,
@@ -135,7 +146,7 @@ struct LCDDisplay: View {
         for col in tufts {
             let rect = CGRect(
                 x: Double(col) * pixelWidth,
-                y: 14.0 * pixelHeight,
+                y: 18.0 * pixelHeight,
                 width: pixelWidth,
                 height: pixelHeight
             )
@@ -149,6 +160,7 @@ struct LCDDisplay: View {
         _ sprite: SpriteFrame,
         in context: GraphicsContext,
         offsetX: Int,
+        offsetY: Int = 0,
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
@@ -159,7 +171,7 @@ struct LCDDisplay: View {
                 guard sprite.pixel(x: x, y: y) else { continue }
                 let rect = CGRect(
                     x: Double(x + offsetX) * pixelWidth,
-                    y: Double(y) * pixelHeight,
+                    y: Double(y + offsetY) * pixelHeight,
                     width: pixelWidth + 0.5,
                     height: pixelHeight + 0.5
                 )
@@ -181,10 +193,10 @@ struct LCDDisplay: View {
         guard poopCount > 0 else { return }
         let color = basePixelColor
 
-        // Poop pile positions on the 32x16 LCD
+        // Poop pile positions on the 32x20 LCD
         let bases: [(x: Int, y: Int)] = [
-            (25, 10), (29, 10),
-            (25, 13), (29, 13)
+            (25, 14), (29, 14),
+            (25, 17), (29, 17)
         ]
 
         // Classic poop pile: tip + body + base
@@ -219,9 +231,9 @@ struct LCDDisplay: View {
         let stinkColor = basePixelColor.opacity(0.7)
         let stinkPixels: [(x: Int, y: Int)]
         if stinkPhase % 2 == 0 {
-            stinkPixels = [(26, 8), (28, 7), (30, 8)]
+            stinkPixels = [(26, 12), (28, 11), (30, 12)]
         } else {
-            stinkPixels = [(25, 7), (27, 8), (31, 7)]
+            stinkPixels = [(25, 11), (27, 12), (31, 11)]
         }
         for p in stinkPixels {
             fillPixel(x: p.x, y: p.y, stinkColor)

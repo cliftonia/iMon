@@ -36,7 +36,7 @@ extension PetScreen {
                 }
                 .padding(8)
                 .background(Color("LCDBackground"))
-                .aspectRatio(2, contentMode: .fit)
+                .aspectRatio(32.0 / 20.0, contentMode: .fit)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
                     "\(battle.viewModel.petSpecies.displayName)"

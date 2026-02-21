@@ -81,9 +81,50 @@ extension SpriteCatalog {
             0x0038  //  ..........###...
         ])
 
+        // Side-walk: serpentine dragon side, wings, long body
+        let sideWalk1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0F00, //  ....####........  head
+            0x1F80, //  ...######.......
+            0x1D80, //  ...###.##.......  eye
+            0x0F00, //  ....####........
+            0x0780, //  .....####.......  neck
+            0x0FC0, //  ....######......
+            0x1FC0, //  ...#######......  wing
+            0x3FE0, //  ..#########.....  wing spread
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x007C, //  .........#####..
+            0x0018  //  ...........##...  tail tip
+        ])
+
+        let sideWalk2 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0F00, //  ....####........  head
+            0x1F80, //  ...######.......
+            0x1D80, //  ...###.##.......  eye
+            0x0F00, //  ....####........
+            0x0780, //  .....####.......  neck
+            0x0FC0, //  ....######......
+            0x3FE0, //  ..#########.....  wing up
+            0x1FC0, //  ...#######......
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x007C, //  .........#####..
+            0x0018  //  ...........##...  tail tip
+        ])
+
         switch kind {
         case .idle, .walk:
             return [idle1, idle2]
+        case .sideWalk:
+            return [sideWalk1, sideWalk2]
         case .happy, .eat, .sleep:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         case .attack:

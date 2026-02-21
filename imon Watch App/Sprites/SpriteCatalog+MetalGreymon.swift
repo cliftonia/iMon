@@ -78,9 +78,50 @@ extension SpriteCatalog {
             0x1DB8  //  ...###.##.###...
         ])
 
+        // Side-walk: cyborg dinosaur side, metal arm, wings, massive
+        let sideWalk1 = SpriteFrame(rows: [
+            0x0300, //  ......##........  horn
+            0x0700, //  .....###........  helmet
+            0x0F80, //  ....#####.......  head
+            0x1FC0, //  ...#######......
+            0x1BC0, //  ...##.####......  visor eye
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......  neck
+            0x1FC0, //  ...#######......  body + metal
+            0x3FE0, //  ..#########.....
+            0x7FE0, //  .##########.....  wing
+            0x3FE0, //  ..#########.....
+            0x1FC0, //  ...#######......
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......  legs
+            0x0D80, //  ....##.##.......  stride
+            0x1180  //  ...#...##.......  feet apart
+        ])
+
+        let sideWalk2 = SpriteFrame(rows: [
+            0x0300, //  ......##........  horn
+            0x0700, //  .....###........  helmet
+            0x0F80, //  ....#####.......  head
+            0x1FC0, //  ...#######......
+            0x1BC0, //  ...##.####......  visor eye
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......  neck
+            0x1FC0, //  ...#######......  body + metal
+            0x3FE0, //  ..#########.....
+            0x7FE0, //  .##########.....  wing
+            0x3FE0, //  ..#########.....
+            0x1FC0, //  ...#######......
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......  legs
+            0x1280, //  ...#..#.#.......  together
+            0x1280  //  ...#..#.#.......  feet
+        ])
+
         switch kind {
         case .idle, .walk:
             return [idle1, idle2]
+        case .sideWalk:
+            return [sideWalk1, sideWalk2]
         case .happy, .eat, .sleep:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         case .attack:
