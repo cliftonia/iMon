@@ -55,9 +55,14 @@ final class PetViewModel {
 
     var isCleaningAnimation: Bool = false
 
+    // MARK: - Healing
+
+    var isHealingAnimation: Bool = false
+
     /// True when any LCD ceremony or inline mode is active.
     var isBusy: Bool {
         isInFeedingMode || isCleaningAnimation
+            || isHealingAnimation
             || screenMode == .training || screenMode == .battle
     }
 

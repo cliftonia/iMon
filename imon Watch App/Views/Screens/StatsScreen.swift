@@ -43,7 +43,7 @@ struct StatsScreen: View {
                 value: "\(presenter.viewModel.ageDays)d"
             )
             statRow(
-                label: "WT",
+                label: "WEIGHT",
                 value: "\(presenter.viewModel.weightGrams)G"
             )
         }
@@ -52,7 +52,7 @@ struct StatsScreen: View {
     private var heartMeters: some View {
         VStack(alignment: .leading, spacing: 4) {
             HeartMeter(
-                label: "HUNG",
+                label: "HUNGER",
                 filledCount: presenter.viewModel.hungerHearts
             )
             HeartMeter(
