@@ -23,6 +23,7 @@ struct PetScreen: View {
         }
         .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 12)
+        .padding(.top, 12)
         .task {
             presenter.startGameLoop()
         }
@@ -56,7 +57,9 @@ struct PetScreen: View {
                 stinkPhase: presenter
                     .spriteAnimator.currentFrameIndex,
                 lightsOn: presenter.viewModel.status?
-                    .lightsOn ?? true
+                    .lightsOn ?? true,
+                leftSpriteOffsetX: presenter.viewModel
+                    .petOffsetX
             )
         case .training:
             trainingLCD

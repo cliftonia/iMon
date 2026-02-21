@@ -237,6 +237,45 @@ extension SpriteCatalog {
             0x0000
         ])
 
+        // Side-walk: upright dinosaur side view, tail behind, two legs
+        let sideWalk1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0F00, //  ....####........  head round
+            0x1F80, //  ...######.......
+            0x1B80, //  ...##.###.......  eye
+            0x1F80, //  ...######.......
+            0x0F00, //  ....####........  jaw
+            0x0F00, //  ....####........  neck
+            0x1F80, //  ...######.......  body
+            0x1F80, //  ...######.......
+            0x0FC0, //  ....######......  tail side
+            0x0F00, //  ....####........
+            0x0F00, //  ....####........  legs
+            0x0900, //  ....#..#........  leg stride
+            0x1100, //  ...#...#........  feet apart
+            0x0000  //  ................
+        ])
+
+        let sideWalk2 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0F00, //  ....####........  head round
+            0x1F80, //  ...######.......
+            0x1B80, //  ...##.###.......  eye
+            0x1F80, //  ...######.......
+            0x0F00, //  ....####........  jaw
+            0x0F00, //  ....####........  neck
+            0x1F80, //  ...######.......  body
+            0x1F80, //  ...######.......
+            0x0FC0, //  ....######......  tail side
+            0x0F00, //  ....####........
+            0x0F00, //  ....####........  legs
+            0x1200, //  ...#..#.........  legs together
+            0x1200, //  ...#..#.........  feet
+            0x0000  //  ................
+        ])
+
         switch kind {
         case .idle:
             return [idle1, idle2]
@@ -247,6 +286,8 @@ extension SpriteCatalog {
                 walk2,
                 walk2.shiftedDown(1)
             ]
+        case .sideWalk:
+            return [sideWalk1, sideWalk2]
         case .happy:
             return [
                 idle1.shiftedDown(1),

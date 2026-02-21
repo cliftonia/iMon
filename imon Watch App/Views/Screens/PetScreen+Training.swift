@@ -15,7 +15,8 @@ extension PetScreen {
                 leftSprite: resultOnly
                     ? .empty : training.petFrame,
                 rightSprite: showTarget
-                    ? training.targetFrame : nil
+                    ? training.targetFrame : nil,
+                rightSpriteOffsetY: 0
             )
         }
     }

@@ -169,9 +169,50 @@ extension SpriteCatalog {
             0x0920
         ])
 
+        // Side-walk: large T-rex side, horn, helmet, thick body, tail
+        let sideWalk1 = SpriteFrame(rows: [
+            0x0600, //  .....##.........  horn
+            0x0F00, //  ....####........  helmet
+            0x1F80, //  ...######.......  head
+            0x1B80, //  ...##.###.......  eye
+            0x1F80, //  ...######.......
+            0x1F00, //  ...#####........  jaw
+            0x0F00, //  ....####........  neck
+            0x1F80, //  ...######.......  body
+            0x3FC0, //  ..########......
+            0x3FC0, //  ..########......
+            0x1FE0, //  ...########.....  tail
+            0x0FF0, //  ....########....
+            0x0FE0, //  ....#######.....
+            0x0F00, //  ....####........  legs
+            0x0900, //  ....#..#........  stride
+            0x1100  //  ...#...#........  feet apart
+        ])
+
+        let sideWalk2 = SpriteFrame(rows: [
+            0x0600, //  .....##.........  horn
+            0x0F00, //  ....####........  helmet
+            0x1F80, //  ...######.......  head
+            0x1B80, //  ...##.###.......  eye
+            0x1F80, //  ...######.......
+            0x1F00, //  ...#####........  jaw
+            0x0F00, //  ....####........  neck
+            0x1F80, //  ...######.......  body
+            0x3FC0, //  ..########......
+            0x3FC0, //  ..########......
+            0x1FE0, //  ...########.....  tail
+            0x0FF0, //  ....########....
+            0x0FE0, //  ....#######.....
+            0x0F00, //  ....####........  legs
+            0x1200, //  ...#..#.........  together
+            0x1200  //  ...#..#.........  feet
+        ])
+
         switch kind {
         case .idle, .walk:
             return [idle1, idle2]
+        case .sideWalk:
+            return [sideWalk1, sideWalk2]
         case .happy:
             return [
                 idle1.shiftedDown(1),

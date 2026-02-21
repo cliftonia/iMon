@@ -7,6 +7,7 @@ nonisolated enum SpriteCatalog {
     nonisolated enum AnimationKind: CaseIterable, Sendable {
         case idle
         case walk
+        case sideWalk
         case happy
         case eat
         case sleep
@@ -27,6 +28,9 @@ nonisolated enum SpriteCatalog {
             duration = 0.5
             loops = true
         case .walk:
+            duration = 0.35
+            loops = true
+        case .sideWalk:
             duration = 0.35
             loops = true
         case .happy:
@@ -183,6 +187,9 @@ extension SpriteCatalog {
         case .idle, .walk:
             return [idle1, idle2]
 
+        case .sideWalk:
+            return defaultSideWalkFromIdle(idle1, idle2)
+
         case .happy:
             // Bounce: crouch → jump → peak → land with dust
             return [
@@ -220,5 +227,14 @@ extension SpriteCatalog {
                 idle1
             ]
         }
+    }
+
+    /// Generates a simple 2-frame side-walk from idle frames
+    /// using horizontal shift as a placeholder side profile.
+    static func defaultSideWalkFromIdle(
+        _ idle1: SpriteFrame,
+        _ idle2: SpriteFrame
+    ) -> [SpriteFrame] {
+        [idle1.shiftedLeft(1), idle2.shiftedLeft(1)]
     }
 }

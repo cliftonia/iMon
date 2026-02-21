@@ -78,9 +78,50 @@ extension SpriteCatalog {
             0x0660  //  .....##..##.....
         ])
 
+        // Side-walk: tall demon side, one wing visible, long limbs
+        let sideWalk1 = SpriteFrame(rows: [
+            0x0700, //  .....###........  horns
+            0x0F80, //  ....#####.......
+            0x1F80, //  ...######.......  head
+            0x1B80, //  ...##.###.......  eye
+            0x0F80, //  ....#####.......
+            0x0700, //  .....###........  neck
+            0x0F80, //  ....#####.......  body
+            0x1FC0, //  ...#######......
+            0x3FC0, //  ..########......  wing
+            0x7F80, //  .########.......  wing spread
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......
+            0x0700, //  .....###........  waist
+            0x0700, //  .....###........
+            0x0500, //  .....#.#........  legs stride
+            0x0900  //  ....#..#........  feet apart
+        ])
+
+        let sideWalk2 = SpriteFrame(rows: [
+            0x0700, //  .....###........  horns
+            0x0F80, //  ....#####.......
+            0x1F80, //  ...######.......  head
+            0x1B80, //  ...##.###.......  eye
+            0x0F80, //  ....#####.......
+            0x0700, //  .....###........  neck
+            0x0F80, //  ....#####.......  body
+            0x1FC0, //  ...#######......
+            0x7F80, //  .########.......  wing up
+            0x3FC0, //  ..########......
+            0x1FC0, //  ...#######......
+            0x0F80, //  ....#####.......
+            0x0700, //  .....###........  waist
+            0x0700, //  .....###........
+            0x0A00, //  ....#.#.........  legs together
+            0x0A00  //  ....#.#.........  feet
+        ])
+
         switch kind {
         case .idle, .walk:
             return [idle1, idle2]
+        case .sideWalk:
+            return [sideWalk1, sideWalk2]
         case .happy, .eat, .sleep:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         case .attack:
