@@ -135,8 +135,13 @@ struct PetScreen: View {
     // MARK: - Effect Display
 
     private var effectRightSprite: SpriteFrame? {
-        guard presenter.viewModel.isBusy else { return nil }
-        return presenter.feedingAnimator.currentFrame
+        if presenter.viewModel.isBusy {
+            return presenter.feedingAnimator.currentFrame
+        }
+        if presenter.viewModel.status?.isInjured == true {
+            return SharedSprites.skull
+        }
+        return nil
     }
 
     // MARK: - Button Handlers

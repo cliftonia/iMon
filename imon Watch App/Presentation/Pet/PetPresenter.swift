@@ -16,6 +16,7 @@ final class PetPresenter {
     private var gameTimer: Timer?
     var feedingTask: Task<Void, Never>?
     var cleaningTask: Task<Void, Never>?
+    var healingTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -44,6 +45,7 @@ final class PetPresenter {
         gameTimer = nil
         cancelFeeding()
         cancelCleaning()
+        cancelHealing()
         dismissTraining()
         dismissBattle()
     }
@@ -65,18 +67,6 @@ final class PetPresenter {
 
         updateViewModel()
         updateAnimation()
-    }
-
-    // MARK: - Heal
-
-    func healAction() {
-        guard HealAction.canHeal(state) else {
-            WKInterfaceDevice.rejectHaptic()
-            return
-        }
-        state = HealAction.apply(to: state, at: .now)
-        updateViewModel()
-        save()
     }
 
     // MARK: - Lights
@@ -172,6 +162,7 @@ final class PetPresenter {
     func updateAnimation() {
         guard viewModel.screenMode == .normal else { return }
         guard !viewModel.isCleaningAnimation else { return }
+        guard !viewModel.isHealingAnimation else { return }
         switch viewModel.feedingPhase {
         case .inactive, .selecting:
             let kind: SpriteCatalog.AnimationKind =

@@ -18,6 +18,10 @@ extension WKInterfaceDevice {
         WKInterfaceDevice.current().play(.success)
     }
 
+    static func healHaptic() {
+        WKInterfaceDevice.current().play(.success)
+    }
+
     static func evolveHaptic() {
         WKInterfaceDevice.current().play(.notification)
     }
