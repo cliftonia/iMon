@@ -6,17 +6,30 @@ struct LCDDisplay: View {
     let rightSprite: SpriteFrame?
     let poopCount: Int
     let stinkPhase: Int
+    let lightsOn: Bool
 
     init(
         leftSprite: SpriteFrame,
         rightSprite: SpriteFrame? = nil,
         poopCount: Int = 0,
-        stinkPhase: Int = 0
+        stinkPhase: Int = 0,
+        lightsOn: Bool = true
     ) {
         self.leftSprite = leftSprite
         self.rightSprite = rightSprite
         self.poopCount = poopCount
         self.stinkPhase = stinkPhase
+        self.lightsOn = lightsOn
+    }
+
+    // MARK: - Inverted Colors
+
+    private var backgroundColor: Color {
+        lightsOn ? Color("LCDBackground") : Color(white: 0.07)
+    }
+
+    private var basePixelColor: Color {
+        lightsOn ? Color("LCDPixelOn") : .white
     }
 
     var body: some View {
@@ -62,7 +75,7 @@ struct LCDDisplay: View {
                 pixelHeight: pixelHeight
             )
         }
-        .background(Color("LCDBackground"))
+        .background(backgroundColor)
         .aspectRatio(2, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .accessibilityHidden(true)
@@ -76,7 +89,7 @@ struct LCDDisplay: View {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let gridColor = Color("LCDPixelOn").opacity(0.06)
+        let gridColor = basePixelColor.opacity(0.06)
 
         for col in stride(from: 0, through: 32, by: 4) {
             let x = Double(col) * pixelWidth
@@ -106,7 +119,7 @@ struct LCDDisplay: View {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let groundColor = Color("LCDPixelOn").opacity(0.12)
+        let groundColor = basePixelColor.opacity(0.12)
 
         let groundY = 15.0 * pixelHeight
         let groundLine = Path(
@@ -118,7 +131,7 @@ struct LCDDisplay: View {
         context.fill(groundLine, with: .color(groundColor))
 
         let tufts: [Int] = [1, 5, 10, 15, 21, 26, 30]
-        let tuftColor = Color("LCDPixelOn").opacity(0.10)
+        let tuftColor = basePixelColor.opacity(0.10)
         for col in tufts {
             let rect = CGRect(
                 x: Double(col) * pixelWidth,
@@ -139,7 +152,7 @@ struct LCDDisplay: View {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let pixelColor: Color = Color("LCDPixelOn")
+        let pixelColor = basePixelColor
 
         for y in 0..<SpriteFrame.size {
             for x in 0..<SpriteFrame.size {
@@ -166,7 +179,7 @@ struct LCDDisplay: View {
         pixelHeight: CGFloat
     ) {
         guard poopCount > 0 else { return }
-        let color = Color("LCDPixelOn")
+        let color = basePixelColor
 
         // Poop pile positions on the 32x16 LCD
         let bases: [(x: Int, y: Int)] = [
@@ -203,7 +216,7 @@ struct LCDDisplay: View {
         }
 
         // Stink wavy lines above poop area
-        let stinkColor = Color("LCDPixelOn").opacity(0.7)
+        let stinkColor = basePixelColor.opacity(0.7)
         let stinkPixels: [(x: Int, y: Int)]
         if stinkPhase % 2 == 0 {
             stinkPixels = [(26, 8), (28, 7), (30, 8)]

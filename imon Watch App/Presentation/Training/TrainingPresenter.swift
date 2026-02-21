@@ -42,6 +42,7 @@ final class TrainingPresenter {
         )
         viewModel.showingNumber = true
         viewModel.roundResults.append(result.won)
+        viewModel.lastGuessHigh = guess == .high
 
         enterAttacking(won: result.won)
     }
@@ -59,9 +60,7 @@ final class TrainingPresenter {
         spriteAnimator.play(
             SpriteCatalog.animation(for: species, kind: .walk)
         )
-        targetAnimator.play(
-            .still(SharedSprites.trainingTarget)
-        )
+        targetAnimator.stop()
 
         Task {
             try? await Task.sleep(for: .milliseconds(600))
@@ -74,9 +73,6 @@ final class TrainingPresenter {
         viewModel.phase = .challenge
         spriteAnimator.play(
             SpriteCatalog.animation(for: species, kind: .idle)
-        )
-        targetAnimator.play(
-            .still(SharedSprites.trainingTarget)
         )
     }
 
@@ -91,7 +87,20 @@ final class TrainingPresenter {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
             guard viewModel.phase == .attacking else { return }
+            enterProjectile(won: won)
+        }
+    }
 
+    private func enterProjectile(won: Bool) {
+        viewModel.phase = .projectile
+        let animation = viewModel.lastGuessHigh
+            ? SharedSprites.projectileHigh
+            : SharedSprites.projectileLow
+        spriteAnimator.play(animation)
+
+        Task {
+            try? await Task.sleep(for: .milliseconds(700))
+            guard viewModel.phase == .projectile else { return }
             if won {
                 enterHit()
             } else {

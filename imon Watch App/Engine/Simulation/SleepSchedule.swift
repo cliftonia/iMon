@@ -13,7 +13,6 @@ nonisolated enum SleepSchedule {
 
         if shouldSleep, !state.isSleeping {
             state.isSleeping = true
-            state.lightsOn = false
         } else if !shouldSleep, state.isSleeping {
             state.isSleeping = false
             state.lightsOn = true

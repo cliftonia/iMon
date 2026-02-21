@@ -11,11 +11,13 @@ final class TrainingViewModel {
     var isComplete: Bool = false
     var didWinSession: Bool = false
     var showingNumber: Bool = false
+    var lastGuessHigh: Bool = true
 
     enum TrainingPhase: Sendable {
         case ready
         case challenge
         case attacking
+        case projectile
         case hit
         case miss
         case victory

@@ -7,9 +7,15 @@ extension PetScreen {
     @ViewBuilder
     var trainingLCD: some View {
         if let training = presenter.trainingPresenter {
+            let phase = training.viewModel.phase
+            let resultOnly = phase == .hit || phase == .miss
+            let showTarget = resultOnly || phase == .victory
+
             LCDDisplay(
-                leftSprite: training.petFrame,
-                rightSprite: training.targetFrame
+                leftSprite: resultOnly
+                    ? .empty : training.petFrame,
+                rightSprite: showTarget
+                    ? training.targetFrame : nil
             )
         }
     }
@@ -150,7 +156,7 @@ extension PetScreen {
         case .miss: "MISS"
         case .victory: "WIN!"
         case .defeat: "LOSE"
-        case .attacking: "..."
+        case .attacking, .projectile: "..."
         case .ready, .challenge: ""
         }
     }
@@ -161,7 +167,7 @@ extension PetScreen {
         switch training.viewModel.phase {
         case .hit, .victory: .green
         case .miss, .defeat: .red
-        case .ready, .challenge, .attacking: .white
+        case .ready, .challenge, .attacking, .projectile: .white
         }
     }
 }
