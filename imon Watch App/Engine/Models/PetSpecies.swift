@@ -1,0 +1,110 @@
+import Foundation
+
+nonisolated enum virtual petSpecies: String, Codable, Sendable, CaseIterable, Identifiable {
+    case dotkin
+    case hopkin
+    case emberkin
+    case marshkin
+    case rexkin
+    case blazekin
+    case dreadkin
+    case pyrekin
+    case galekin
+    case tidekin
+    case sludgekin
+    case steelkin
+    case orbkin
+    case plushkin
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .dotkin: "Dotkin"
+        case .hopkin: "Hopkin"
+        case .emberkin: "Emberkin"
+        case .marshkin: "Marshkin"
+        case .rexkin: "Rexkin"
+        case .blazekin: "Blazekin"
+        case .dreadkin: "Dreadkin"
+        case .pyrekin: "Pyrekin"
+        case .galekin: "Galekin"
+        case .tidekin: "Tidekin"
+        case .sludgekin: "Sludgekin"
+        case .steelkin: "Steelkin"
+        case .orbkin: "Orbkin"
+        case .plushkin: "Plushkin"
+        }
+    }
+
+    var stage: EvolutionStage {
+        switch self {
+        case .dotkin: .fresh
+        case .hopkin: .inTraining
+        case .emberkin, .marshkin: .rookie
+        case .rexkin, .blazekin, .dreadkin,
+             .pyrekin, .galekin, .tidekin, .sludgekin: .champion
+        case .steelkin, .orbkin, .plushkin: .ultimate
+        }
+    }
+
+    var attribute: Attribute {
+        switch self {
+        case .dotkin, .hopkin: .data
+        case .emberkin: .vaccine
+        case .marshkin: .virus
+        case .rexkin: .vaccine
+        case .blazekin: .data
+        case .dreadkin: .virus
+        case .pyrekin: .data
+        case .galekin: .vaccine
+        case .tidekin: .data
+        case .sludgekin: .virus
+        case .steelkin: .vaccine
+        case .orbkin: .data
+        case .plushkin: .vaccine
+        }
+    }
+
+    var basePower: Int {
+        switch self {
+        case .dotkin: 5
+        case .hopkin: 15
+        case .emberkin: 40
+        case .marshkin: 35
+        case .rexkin: 90
+        case .blazekin: 75
+        case .dreadkin: 85
+        case .pyrekin: 70
+        case .galekin: 80
+        case .tidekin: 78
+        case .sludgekin: 30
+        case .steelkin: 160
+        case .orbkin: 140
+        case .plushkin: 130
+        }
+    }
+
+    var baseWeight: Int {
+        switch self {
+        case .dotkin, .hopkin: 10
+        case .emberkin, .marshkin: 20
+        case .rexkin, .blazekin, .dreadkin,
+             .pyrekin, .galekin, .tidekin, .sludgekin: 30
+        case .steelkin, .orbkin, .plushkin: 40
+        }
+    }
+
+    var bedtimeHour: Int {
+        switch self {
+        case .dotkin, .hopkin: 20
+        case .dreadkin, .steelkin: 22
+        case .sludgekin: 19
+        case .emberkin, .marshkin, .rexkin, .blazekin,
+             .pyrekin, .galekin, .tidekin,
+             .orbkin, .plushkin: 21
+        }
+    }
+
+    var wakeHour: Int { 7 }
+}
