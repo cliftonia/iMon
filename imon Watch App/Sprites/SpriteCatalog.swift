@@ -12,6 +12,7 @@ nonisolated enum SpriteCatalog {
         case eat
         case sleep
         case attack
+        case refuse
     }
 
     static func animation(
@@ -45,6 +46,9 @@ nonisolated enum SpriteCatalog {
         case .attack:
             duration = 0.2
             loops = false
+        case .refuse:
+            duration = 0.15
+            loops = false
         }
 
         return SpriteAnimation(
@@ -63,7 +67,17 @@ extension SpriteCatalog {
         for species: DigimonSpecies,
         kind: AnimationKind
     ) -> [SpriteFrame] {
-        switch species {
+        if kind == .refuse {
+            let idle = frames(for: species, kind: .idle)
+            let base = idle[0]
+            return [
+                base.shiftedLeft(1),
+                base.shiftedRight(1),
+                base.shiftedLeft(1),
+                base
+            ]
+        }
+        return switch species {
         case .botamon: botamonFrames(kind)
         case .koromon: koromonFrames(kind)
         case .agumon: agumonFrames(kind)
@@ -224,6 +238,15 @@ extension SpriteCatalog {
                 idle1.shiftedLeft(2),
                 idle1.shiftedLeft(1)
                     .overlaying(SharedSprites.impactBurst),
+                idle1
+            ]
+
+        case .refuse:
+            // Head shake: left → right → left → idle
+            return [
+                idle1.shiftedLeft(1),
+                idle1.shiftedRight(1),
+                idle1.shiftedLeft(1),
                 idle1
             ]
         }

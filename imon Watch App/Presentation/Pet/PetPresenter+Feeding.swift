@@ -126,8 +126,12 @@ extension PetPresenter {
     // MARK: - Clean
 
     func cleanAction() {
+        guard !viewModel.isBusy else { return }
         guard CleanAction.canClean(state) else {
-            WKInterfaceDevice.rejectHaptic()
+            refuseTask?.cancel()
+            refuseTask = Task { [weak self] in
+                await self?.runRefuseSequence()
+            }
             return
         }
         cleaningTask?.cancel()

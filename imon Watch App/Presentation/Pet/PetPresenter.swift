@@ -18,6 +18,7 @@ final class PetPresenter {
     var feedingTask: Task<Void, Never>?
     var cleaningTask: Task<Void, Never>?
     var healingTask: Task<Void, Never>?
+    var refuseTask: Task<Void, Never>?
 
     // MARK: - Wander State
 
@@ -58,6 +59,8 @@ final class PetPresenter {
         cancelFeeding()
         cancelCleaning()
         cancelHealing()
+        refuseTask?.cancel()
+        refuseTask = nil
         dismissTraining()
         dismissBattle()
     }

@@ -133,6 +133,8 @@ extension SpriteCatalog {
                 attack2,
                 attack2.overlaying(SharedSprites.impactBurst)
             ]
+        case .refuse:
+            return defaultAnimationFromIdle(idle1, idle2, kind)
         }
     }
 }
