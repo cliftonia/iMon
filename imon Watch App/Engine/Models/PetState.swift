@@ -46,6 +46,7 @@ nonisolated struct PetState: Codable, Sendable {
     var injuredAt: Date?
     var pendingCareMistakeAt: Date?
     var pendingLightsMistakeAt: Date?
+    var lightsToggledDuringSleepAt: Date?
     var lastAdvancedAt: Date
 }
 
@@ -81,6 +82,7 @@ extension PetState {
             injuredAt: nil,
             pendingCareMistakeAt: nil,
             pendingLightsMistakeAt: nil,
+            lightsToggledDuringSleepAt: nil,
             lastAdvancedAt: date
         )
     }
@@ -114,6 +116,7 @@ extension PetState {
             injuredAt: nil,
             pendingCareMistakeAt: nil,
             pendingLightsMistakeAt: nil,
+            lightsToggledDuringSleepAt: nil,
             lastAdvancedAt: date
         )
     }
