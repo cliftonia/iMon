@@ -1,0 +1,166 @@
+import SwiftUI
+
+extension PetScreen {
+
+    // MARK: - Training LCD
+
+    @ViewBuilder
+    var trainingLCD: some View {
+        if let training = presenter.trainingPresenter {
+            LCDDisplay(
+                leftSprite: training.petFrame,
+                rightSprite: training.targetFrame
+            )
+        }
+    }
+
+    // MARK: - Training Info Row
+
+    @ViewBuilder
+    var trainingInfoRow: some View {
+        if let training = presenter.trainingPresenter {
+            HStack(spacing: 6) {
+                Text(trainingRoundText(training))
+                    .font(.system(size: 10, design: .monospaced))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+
+                trainingNumberBadge(training)
+
+                trainingScoreDots(training)
+
+                Text(trainingPhaseLabelText(training))
+                    .font(.system(
+                        size: 11,
+                        weight: .bold,
+                        design: .monospaced
+                    ))
+                    .foregroundStyle(
+                        trainingPhaseLabelColor(training)
+                    )
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+                    .frame(width: 36)
+                    .fixedSize()
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 20)
+        }
+    }
+
+    // MARK: - Training Buttons
+
+    @ViewBuilder
+    var trainingButtons: some View {
+        if let training = presenter.trainingPresenter {
+            let phase = training.viewModel.phase
+            let isComplete = phase == .victory || phase == .defeat
+
+            ZStack {
+                HStack(spacing: 4) {
+                    ActionButton(label: "HIGH") {
+                        training.guessAction(.high)
+                    }
+                    ActionButton(label: "LOW") {
+                        training.guessAction(.low)
+                    }
+                }
+                .opacity(phase == .challenge ? 1 : 0)
+                .allowsHitTesting(phase == .challenge)
+
+                HStack(spacing: 4) {
+                    ActionButton(label: "DONE") {
+                        presenter.dismissTraining()
+                    }
+                }
+                .opacity(isComplete ? 1 : 0)
+                .allowsHitTesting(isComplete)
+            }
+            .padding(.horizontal, 4)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    private func trainingRoundText(
+        _ training: TrainingPresenter
+    ) -> String {
+        "R\(training.viewModel.currentRound + 1)"
+            + "/\(TimeConstants.trainRounds)"
+    }
+
+    private func trainingNumberBadge(
+        _ training: TrainingPresenter
+    ) -> some View {
+        let text = training.viewModel.showingNumber
+            ? "\(training.viewModel.currentNumber)"
+            : "?"
+        return Text(text)
+            .font(.system(
+                size: 14,
+                weight: .bold,
+                design: .monospaced
+            ))
+            .minimumScaleFactor(0.7)
+            .lineLimit(1)
+            .frame(width: 24, height: 18)
+            .background(Color("LCDBackground"))
+            .foregroundStyle(Color("LCDPixelOn"))
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+            .fixedSize()
+    }
+
+    private func trainingScoreDots(
+        _ training: TrainingPresenter
+    ) -> some View {
+        HStack(spacing: 3) {
+            ForEach(
+                Array(
+                    training.viewModel.roundResults.enumerated()
+                ),
+                id: \.offset
+            ) { _, won in
+                Circle()
+                    .fill(won ? Color.green : Color.red)
+                    .frame(width: 6, height: 6)
+            }
+        }
+        .frame(width: 50, alignment: .leading)
+        .fixedSize(horizontal: true, vertical: true)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(trainingScoreLabel(training))
+    }
+
+    private func trainingScoreLabel(
+        _ training: TrainingPresenter
+    ) -> String {
+        let wins = training.viewModel.roundResults
+            .filter { $0 }.count
+        let total = training.viewModel.roundResults.count
+        return "Score: \(wins) of \(total) correct"
+    }
+
+    private func trainingPhaseLabelText(
+        _ training: TrainingPresenter
+    ) -> String {
+        switch training.viewModel.phase {
+        case .hit: "HIT!"
+        case .miss: "MISS"
+        case .victory: "WIN!"
+        case .defeat: "LOSE"
+        case .attacking: "..."
+        case .ready, .challenge: ""
+        }
+    }
+
+    private func trainingPhaseLabelColor(
+        _ training: TrainingPresenter
+    ) -> Color {
+        switch training.viewModel.phase {
+        case .hit, .victory: .green
+        case .miss, .defeat: .red
+        default: .white
+        }
+    }
+}
