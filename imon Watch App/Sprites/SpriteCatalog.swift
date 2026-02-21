@@ -78,6 +78,96 @@ extension SpriteCatalog {
     }
 }
 
+// MARK: - Species Projectile
+
+extension SpriteCatalog {
+
+    /// Species-specific projectile traveling left-to-right.
+    static func projectile(
+        for species: DigimonSpecies,
+        high: Bool
+    ) -> SpriteAnimation {
+        let shape = projectileShape(for: species)
+        let base = projectileFrame(shape: shape, high: high)
+        return SpriteAnimation(
+            frames: [
+                base,
+                base.shiftedRight(4),
+                base.shiftedRight(8),
+                base.shiftedRight(12)
+            ],
+            frameDuration: 0.15,
+            loops: false
+        )
+    }
+
+    private static func projectileShape(
+        for species: DigimonSpecies
+    ) -> (UInt16, UInt16, UInt16, UInt16) {
+        switch species {
+        case .botamon, .koromon:
+            // Bubble — small round
+            (0x6000, 0xF000, 0xF000, 0x6000)
+        case .agumon:
+            // Pepper Breath — fireball
+            (0x4000, 0xE000, 0xF000, 0x6000)
+        case .betamon:
+            // Electric Shock — zigzag bolt
+            (0xC000, 0x6000, 0xC000, 0x4000)
+        case .greymon:
+            // Nova Blast — large fireball
+            (0xE000, 0xF000, 0xF000, 0xE000)
+        case .tyrannomon:
+            // Fire Breath — flame
+            (0x4000, 0xE000, 0x7000, 0x2000)
+        case .devimon:
+            // Death Claw — slash marks
+            (0x9000, 0x6000, 0x6000, 0x9000)
+        case .meramon:
+            // Burning Fist — flame fist
+            (0x6000, 0xF000, 0xE000, 0x4000)
+        case .airdramon:
+            // Spinning Needle — wind spiral
+            (0xA000, 0x4000, 0xA000, 0x4000)
+        case .seadramon:
+            // Ice Arrow — diamond crystal
+            (0x4000, 0xE000, 0xE000, 0x4000)
+        case .numemon:
+            // Poop Toss — poop glob
+            (0x4000, 0xC000, 0xE000, 0x6000)
+        case .metalGreymon:
+            // Giga Blaster — missile
+            (0x2000, 0xF000, 0xF000, 0x2000)
+        case .mamemon:
+            // Smiley Bomb — bomb
+            (0x2000, 0x6000, 0xF000, 0x6000)
+        case .monzaemon:
+            // Hearts Attack — heart
+            (0xA000, 0xE000, 0x4000, 0x0000)
+        }
+    }
+
+    private static func projectileFrame(
+        shape: (UInt16, UInt16, UInt16, UInt16),
+        high: Bool
+    ) -> SpriteFrame {
+        let z: UInt16 = 0x0000
+        if high {
+            return SpriteFrame(rows: [
+                z, z, z,
+                shape.0, shape.1, shape.2, shape.3,
+                z, z, z, z, z, z, z, z, z
+            ])
+        } else {
+            return SpriteFrame(rows: [
+                z, z, z, z, z, z, z, z,
+                shape.0, shape.1, shape.2, shape.3,
+                z, z, z, z
+            ])
+        }
+    }
+}
+
 // MARK: - Default Animation Helpers
 
 extension SpriteCatalog {
