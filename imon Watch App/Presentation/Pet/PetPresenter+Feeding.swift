@@ -7,7 +7,10 @@ extension PetPresenter {
 
     func startFeeding() {
         guard FeedAction.canFeed(state) else {
-            WKInterfaceDevice.rejectHaptic()
+            refuseTask?.cancel()
+            refuseTask = Task { [weak self] in
+                await self?.runRefuseSequence()
+            }
             return
         }
         viewModel.feedingPhase = .selecting

@@ -120,17 +120,14 @@ final class PetPresenter {
             debugJourneyIndex = next >= journeys.count
                 ? 0 : next
             debugStepIndex = 0
+            updateViewModel()
+            save()
         } else {
-            state = EvolutionEngine.evolve(
-                state, to: journey[nextStep], at: .now
-            )
+            let target = journey[nextStep]
             debugStepIndex = nextStep
-            WKInterfaceDevice.evolveHaptic()
+            viewModel.showEvolution = true
+            viewModel.evolutionTarget = target
         }
-
-        updateViewModel()
-        updateAnimation()
-        save()
     }
 
     // MARK: - Lights
@@ -379,7 +376,10 @@ final class PetPresenter {
 
     func startTrainingMode() {
         guard TrainAction.canTrain(state) else {
-            WKInterfaceDevice.rejectHaptic()
+            refuseTask?.cancel()
+            refuseTask = Task { [weak self] in
+                await self?.runRefuseSequence()
+            }
             return
         }
         stopWandering()
