@@ -1,0 +1,100 @@
+import Foundation
+
+// MARK: - Betamon (Rookie) - amphibian/lizard, low to the ground
+
+extension SpriteCatalog {
+
+    // Betamon: wide frog-like body, fin on back, low stance
+
+    static func betamonFrames(
+        _ kind: AnimationKind
+    ) -> [SpriteFrame] {
+        let idle1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0200, //  ......#.........  fin tip
+            0x0700, //  .....###........  fin
+            0x0F80, //  ....#####.......  head
+            0x1FC0, //  ...#######......
+            0x3BC0, //  ..###.####......  eye
+            0x3FE0, //  ..#########.....
+            0x7FF0, //  .###########....  body
+            0x7FF0, //  .###########....
+            0x3FE0, //  ..#########.....
+            0x1FC0, //  ...#######......
+            0x1240, //  ...#..#..#.#....  feet
+            0x0000  //  ................
+        ])
+
+        let idle2 = SpriteFrame(rows: [
+            0x0000, 0x0000, 0x0000, 0x0000,
+            0x0000,
+            0x0200, //  fin tip
+            0x0700, //  fin
+            0x0F80, //  head
+            0x1FC0,
+            0x3BC0, //  eye
+            0x3FE0,
+            0x7FF0, //  body
+            0x7FF0,
+            0x3FE0,
+            0x1FC0,
+            0x1240  //  feet
+        ])
+
+        // Electric Shock (Dengeki) — crouches, fin raised, lightning bolt
+        let attack1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0200, //  ......#.........  fin raised higher
+            0x0700, //  .....###........  fin
+            0x0F80, //  ....#####.......  head
+            0x1FC0, //  ...#######......
+            0x3BC0, //  ..###.####......  eye, mouth opening
+            0x3FC0, //  ..########......
+            0x7FF0, //  .###########....  body crouched
+            0x7FF0, //  .###########....
+            0x3FE0, //  ..#########.....
+            0x1FC0, //  ...#######......
+            0x1FC0, //  ...#######......  feet planted
+            0x0000, //  ................
+            0x0000  //  ................
+        ])
+
+        let attack2 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0202, //  ......#.......#.  fin + bolt start
+            0x0704, //  .....###.....#..  zigzag
+            0x0F8E, //  ....#####...###.  bolt segment
+            0x1FC4, //  ...#######...#..  zigzag
+            0x3BCE, //  ..###.####.###..  bolt segment
+            0x3FC4, //  ..########...#..
+            0x7FF2, //  .###########..#.  bolt tip
+            0x7FF0, //  .###########....
+            0x3FE0, //  ..#########.....
+            0x1FC0, //  ...#######......
+            0x1FC0, //  ...#######......
+            0x0000, //  ................
+            0x0000  //  ................
+        ])
+
+        switch kind {
+        case .idle, .walk:
+            return [idle1, idle2]
+        case .happy, .eat, .sleep:
+            return defaultAnimationFromIdle(idle1, idle2, kind)
+        case .attack:
+            return [
+                idle1.shiftedRight(1),
+                attack1,
+                attack2,
+                attack2.overlaying(SharedSprites.impactBurst)
+            ]
+        }
+    }
+}
