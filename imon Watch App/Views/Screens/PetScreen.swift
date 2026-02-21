@@ -54,7 +54,9 @@ struct PetScreen: View {
                     : presenter.viewModel.status?.poopCount
                         ?? 0,
                 stinkPhase: presenter
-                    .spriteAnimator.currentFrameIndex
+                    .spriteAnimator.currentFrameIndex,
+                lightsOn: presenter.viewModel.status?
+                    .lightsOn ?? true
             )
         case .training:
             trainingLCD
