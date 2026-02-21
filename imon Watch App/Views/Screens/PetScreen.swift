@@ -5,6 +5,7 @@ struct PetScreen: View {
 
     let presenter: PetPresenter
     @Environment(AppPresenter.self) private var appPresenter
+    @State private var crownValue: Double = 0
 
     private var screenMode: PetViewModel.ScreenMode {
         presenter.viewModel.screenMode
@@ -24,6 +25,24 @@ struct PetScreen: View {
         .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 12)
         .padding(.top, 12)
+        .focusable()
+        .digitalCrownRotation(
+            $crownValue,
+            from: 0,
+            through: 7,
+            by: 1,
+            sensitivity: .medium,
+            isContinuous: false
+        )
+        .onChange(of: crownValue) { _, newValue in
+            guard !presenter.viewModel.isBusy else { return }
+            let allCases = PetViewModel.MenuAction.allCases
+            let index = Int(newValue.rounded()) % allCases.count
+            presenter.viewModel.menuSelection = allCases[index]
+        }
+        .onChange(of: presenter.viewModel.menuSelection) { _, newValue in
+            crownValue = Double(newValue.rawValue)
+        }
         .task {
             presenter.startGameLoop()
         }

@@ -6,8 +6,12 @@ extension PetPresenter {
     // MARK: - Healing (Inline LCD Ceremony)
 
     func healAction() {
+        guard !viewModel.isBusy else { return }
         guard HealAction.canHeal(state) else {
-            WKInterfaceDevice.rejectHaptic()
+            refuseTask?.cancel()
+            refuseTask = Task { [weak self] in
+                await self?.runRefuseSequence()
+            }
             return
         }
         healingTask?.cancel()
@@ -19,8 +23,28 @@ extension PetPresenter {
     func cancelHealing() {
         healingTask?.cancel()
         healingTask = nil
+        refuseTask?.cancel()
+        refuseTask = nil
         viewModel.isHealingAnimation = false
         feedingAnimator.stop()
+        updateAnimation()
+    }
+
+    func runRefuseSequence() async {
+        viewModel.isHealingAnimation = true
+
+        // Head shake only
+        spriteAnimator.play(
+            SpriteCatalog.animation(
+                for: state.species, kind: .refuse
+            )
+        )
+        WKInterfaceDevice.rejectHaptic()
+
+        try? await Task.sleep(for: .milliseconds(800))
+        guard !Task.isCancelled else { return }
+
+        viewModel.isHealingAnimation = false
         updateAnimation()
     }
 

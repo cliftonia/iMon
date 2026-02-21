@@ -136,6 +136,8 @@ extension SpriteCatalog {
                 attack2,
                 idle1
             ]
+        case .refuse:
+            return defaultAnimationFromIdle(idle1, idle2, kind)
         }
     }
 }
