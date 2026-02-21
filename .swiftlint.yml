@@ -1,0 +1,53 @@
+included:
+  - imon Watch App
+  - imon Watch AppTests
+
+excluded:
+  - imon Watch AppUITests
+  - imon Watch App/Sprites/SpriteCatalog.swift
+  - imon Watch App/Sprites/SharedSprites.swift
+
+line_length:
+  warning: 160
+  error: 200
+
+file_length:
+  warning: 400
+  error: 500
+
+function_body_length:
+  warning: 50
+  error: 80
+
+type_body_length:
+  warning: 250
+  error: 350
+
+function_parameter_count:
+  warning: 5
+  error: 8
+
+type_name:
+  excluded:
+    - imon_Watch_AppApp
+
+identifier_name:
+  min_length:
+    warning: 1
+  excluded:
+    - id
+
+nesting:
+  type_level: 2
+  function_level: 3
+
+disabled_rules:
+  - trailing_comma
+  - opening_brace
+  - identifier_name
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - private_outlet
+  - private_action

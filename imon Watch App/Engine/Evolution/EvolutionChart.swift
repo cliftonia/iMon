@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable function_body_length
-
 nonisolated enum EvolutionChart {
 
     // MARK: - Complete V1 Evolution Tree
@@ -23,16 +21,8 @@ nonisolated enum EvolutionChart {
         // Fresh -> In-Training (always after 1 hour)
         chart.append(
             EvolutionRequirement(
-                from: .dotkin,
-                to: .hopkin,
+                from: .dotkin, to: .hopkin,
                 minAwakeTime: TimeConstants.babyEvolutionTime,
-                maxCareMistakes: nil,
-                minCareMistakes: nil,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
                 isDefault: true
             )
         )
@@ -53,33 +43,17 @@ nonisolated enum EvolutionChart {
     // MARK: - In-Training Paths
 
     private static func hopkinPaths() -> [EvolutionRequirement] {
-        [
+        let time = TimeConstants.rookieEvolutionTime
+        return [
             // 0-1 care mistakes -> Emberkin
             EvolutionRequirement(
-                from: .hopkin,
-                to: .emberkin,
-                minAwakeTime: TimeConstants.rookieEvolutionTime,
-                maxCareMistakes: 1,
-                minCareMistakes: nil,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
-                isDefault: false
+                from: .hopkin, to: .emberkin,
+                minAwakeTime: time, maxCareMistakes: 1
             ),
             // 2+ care mistakes -> Marshkin (default)
             EvolutionRequirement(
-                from: .hopkin,
-                to: .marshkin,
-                minAwakeTime: TimeConstants.rookieEvolutionTime,
-                maxCareMistakes: nil,
-                minCareMistakes: 2,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
+                from: .hopkin, to: .marshkin,
+                minAwakeTime: time, minCareMistakes: 2,
                 isDefault: true
             ),
         ]
@@ -94,51 +68,29 @@ nonisolated enum EvolutionChart {
             EvolutionRequirement(
                 from: .emberkin, to: .rexkin,
                 minAwakeTime: time,
-                maxCareMistakes: 2, minCareMistakes: nil,
-                minBattleWins: 5, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                maxCareMistakes: 2, minBattleWins: 5
             ),
             // 4+ CM, overfeed (weight 40+) -> Blazekin
             EvolutionRequirement(
                 from: .emberkin, to: .blazekin,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: 40,
-                isDefault: false
+                minCareMistakes: 4, minWeight: 40
             ),
             // 0-3 CM, low training -> Dreadkin
             EvolutionRequirement(
                 from: .emberkin, to: .dreadkin,
-                minAwakeTime: time,
-                maxCareMistakes: 3, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minAwakeTime: time, maxCareMistakes: 3
             ),
             // 4+ CM, train 16+ -> Pyrekin
             EvolutionRequirement(
                 from: .emberkin, to: .pyrekin,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: 16,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minCareMistakes: 4, minTrainingCount: 16
             ),
             // Default -> Sludgekin
             EvolutionRequirement(
                 from: .emberkin, to: .sludgekin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
@@ -152,41 +104,23 @@ nonisolated enum EvolutionChart {
             EvolutionRequirement(
                 from: .marshkin, to: .dreadkin,
                 minAwakeTime: time,
-                maxCareMistakes: 3, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: 48,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                maxCareMistakes: 3, minTrainingCount: 48
             ),
             // 4+ CM -> Galekin
             EvolutionRequirement(
                 from: .marshkin, to: .galekin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minAwakeTime: time, minCareMistakes: 4
             ),
             // 4+ CM, weight 35+ -> Tidekin
             EvolutionRequirement(
                 from: .marshkin, to: .tidekin,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: 35,
-                isDefault: false
+                minCareMistakes: 4, minWeight: 35
             ),
             // Default -> Sludgekin
             EvolutionRequirement(
                 from: .marshkin, to: .sludgekin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
@@ -196,78 +130,36 @@ nonisolated enum EvolutionChart {
     private static func championPaths() -> [EvolutionRequirement] {
         let time = TimeConstants.ultimateEvolutionTime
         return [
-            // Rexkin -> Steelkin (15+ battles, 80%+ win rate)
             EvolutionRequirement(
                 from: .rexkin, to: .steelkin,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
                 minBattleWins: 15, minWinRate: 0.8,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
                 isDefault: true
             ),
-            // Blazekin -> Orbkin
             EvolutionRequirement(
                 from: .blazekin, to: .orbkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Dreadkin -> Steelkin
             EvolutionRequirement(
                 from: .dreadkin, to: .steelkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Pyrekin -> Orbkin
             EvolutionRequirement(
                 from: .pyrekin, to: .orbkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Galekin -> Steelkin
             EvolutionRequirement(
                 from: .galekin, to: .steelkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Tidekin -> Orbkin
             EvolutionRequirement(
                 from: .tidekin, to: .orbkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Sludgekin -> Plushkin
             EvolutionRequirement(
                 from: .sludgekin, to: .plushkin,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
 }
-
-// swiftlint:enable function_body_length

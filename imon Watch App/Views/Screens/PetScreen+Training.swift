@@ -109,6 +109,7 @@ extension PetScreen {
             .foregroundStyle(Color("LCDPixelOn"))
             .clipShape(RoundedRectangle(cornerRadius: 2))
             .fixedSize()
+            .accessibilityLabel("Number: \(text)")
     }
 
     private func trainingScoreDots(
@@ -160,7 +161,7 @@ extension PetScreen {
         switch training.viewModel.phase {
         case .hit, .victory: .green
         case .miss, .defeat: .red
-        default: .white
+        case .ready, .challenge, .attacking: .white
         }
     }
 }

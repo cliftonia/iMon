@@ -12,16 +12,13 @@ struct PetScreen: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            // LCD Display
             LCDBezel {
                 lcdContent
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            // Middle row — menu icons or context info
             middleRow
 
-            // Bottom row — buttons
             bottomRow
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -32,7 +29,10 @@ struct PetScreen: View {
         .onDisappear {
             presenter.stopGameLoop()
         }
-        .sheet(isPresented: evolutionBinding) {
+        .sheet(
+            isPresented: Bindable(presenter.viewModel)
+                .showEvolution
+        ) {
             evolutionSheet
         }
         .accessibilityElement(children: .contain)
@@ -70,7 +70,8 @@ struct PetScreen: View {
         switch screenMode {
         case .normal:
             MenuIconRow(
-                selectedIndex: presenter.viewModel.menuSelection
+                selectedIndex: presenter.viewModel
+                    .menuSelection.rawValue
             )
             .fixedSize()
         case .training:
@@ -170,13 +171,6 @@ struct PetScreen: View {
 
     // MARK: - Evolution Sheet
 
-    private var evolutionBinding: Binding<Bool> {
-        Binding(
-            get: { presenter.viewModel.showEvolution },
-            set: { presenter.viewModel.showEvolution = $0 }
-        )
-    }
-
     private var evolutionSheet: some View {
         VStack(spacing: 12) {
             Text("Evolving!")
@@ -202,21 +196,21 @@ struct PetScreen: View {
 
     private func executeMenuAction() {
         switch presenter.viewModel.menuSelection {
-        case 0:
+        case .stats:
             appPresenter.navigateToStats()
-        case 1:
+        case .feed:
             presenter.startFeeding()
-        case 2:
+        case .train:
             presenter.startTrainingMode()
-        case 3:
+        case .battle:
             presenter.startBattleMode()
-        case 4:
+        case .clean:
             presenter.cleanAction()
-        case 5:
+        case .lights:
             presenter.lightsAction()
-        case 6:
+        case .heal:
             presenter.healAction()
-        default:
+        case .call:
             break
         }
     }

@@ -15,7 +15,7 @@ struct PetComplicationView: View {
                     .lineLimit(1)
 
                 HStack(spacing: 1) {
-                    ForEach(0..<4, id: \.self) { index in
+                    ForEach(Array(0..<4), id: \.self) { index in
                         Image(
                             systemName: index < hungerHearts
                                 ? "heart.fill"
