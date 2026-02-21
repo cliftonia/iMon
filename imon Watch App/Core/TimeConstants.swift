@@ -42,6 +42,9 @@ nonisolated enum TimeConstants {
     /// Main simulation tick fires every 30 seconds
     static let gameTickInterval: TimeInterval = 30
 
+    /// Delay before a lights toggle during sleep takes effect
+    static let lightsToggleSleepDelay: TimeInterval = 5
+
     // MARK: - Limits
 
     /// Maximum poop piles on screen before health penalty

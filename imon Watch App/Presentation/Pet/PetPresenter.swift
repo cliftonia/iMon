@@ -19,6 +19,7 @@ final class PetPresenter {
     var cleaningTask: Task<Void, Never>?
     var healingTask: Task<Void, Never>?
     var refuseTask: Task<Void, Never>?
+    var sleepToggleTask: Task<Void, Never>?
 
     // MARK: - Wander State
 
@@ -61,6 +62,8 @@ final class PetPresenter {
         cancelHealing()
         refuseTask?.cancel()
         refuseTask = nil
+        sleepToggleTask?.cancel()
+        sleepToggleTask = nil
         dismissTraining()
         dismissBattle()
     }
@@ -75,7 +78,7 @@ final class PetPresenter {
         let wasSleeping = state.isSleeping
         state = GameEngine.advance(state, to: .now)
 
-        if viewModel.isBusy, !wasSleeping, state.isSleeping {
+        if !wasSleeping, state.isSleeping, viewModel.isBusy {
             state.isSleeping = false
             state.lightsOn = true
         }
@@ -137,8 +140,44 @@ final class PetPresenter {
             WKInterfaceDevice.rejectHaptic()
             return
         }
-        state = LightsAction.apply(to: state)
+        sleepToggleTask?.cancel()
+        sleepToggleTask = nil
+
+        let (newState, result) = LightsAction.apply(
+            to: state, at: .now
+        )
+        state = newState
         updateViewModel()
+        updateAnimation()
+        save()
+
+        if result == .toggledDuringSleep {
+            scheduleSleepToggleResolution()
+        }
+    }
+
+    private func scheduleSleepToggleResolution() {
+        sleepToggleTask = Task { [weak self] in
+            try? await Task.sleep(
+                for: .seconds(TimeConstants.lightsToggleSleepDelay)
+            )
+            guard !Task.isCancelled else { return }
+            self?.resolveSleepToggle()
+        }
+    }
+
+    private func resolveSleepToggle() {
+        guard state.lightsToggledDuringSleepAt != nil else {
+            return
+        }
+        if state.lightsOn {
+            state.isSleeping = false
+        } else {
+            state.isSleeping = true
+            state.lightsToggledDuringSleepAt = nil
+        }
+        updateViewModel()
+        updateAnimation()
         save()
     }
 
