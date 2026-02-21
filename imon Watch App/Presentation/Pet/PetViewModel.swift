@@ -21,7 +21,18 @@ final class PetViewModel {
 
     // MARK: - Menu
 
-    var menuSelection: Int = 0
+    enum MenuAction: Int, CaseIterable {
+        case stats = 0
+        case feed
+        case train
+        case battle
+        case clean
+        case lights
+        case heal
+        case call
+    }
+
+    var menuSelection: MenuAction = .stats
 
     // MARK: - Feeding
 

@@ -37,6 +37,12 @@ extension PetScreen {
                 .padding(8)
                 .background(Color("LCDBackground"))
                 .aspectRatio(2, contentMode: .fit)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    "\(battle.viewModel.petSpecies.displayName)"
+                        + " versus "
+                        + "\(battle.viewModel.opponentSpecies.displayName)"
+                )
 
             case .approach, .clash, .result:
                 LCDDisplay(

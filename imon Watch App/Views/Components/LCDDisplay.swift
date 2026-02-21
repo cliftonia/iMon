@@ -181,16 +181,23 @@ struct LCDDisplay: View {
             (1, 2)
         ]
 
+        func fillPixel(x: Int, y: Int, _ pixelColor: Color) {
+            let rect = CGRect(
+                x: Double(x) * pixelWidth,
+                y: Double(y) * pixelHeight,
+                width: pixelWidth + 0.5,
+                height: pixelHeight + 0.5
+            )
+            context.fill(Path(rect), with: .color(pixelColor))
+        }
+
         for i in 0..<min(poopCount, 4) {
             let base = bases[i]
             for p in pilePixels {
-                drawPixel(
+                fillPixel(
                     x: base.x + p.dx,
                     y: base.y + p.dy,
-                    color: color,
-                    in: context,
-                    pixelWidth: pixelWidth,
-                    pixelHeight: pixelHeight
+                    color
                 )
             }
         }
@@ -204,30 +211,7 @@ struct LCDDisplay: View {
             stinkPixels = [(25, 7), (27, 8), (31, 7)]
         }
         for p in stinkPixels {
-            drawPixel(
-                x: p.x, y: p.y,
-                color: stinkColor,
-                in: context,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
+            fillPixel(x: p.x, y: p.y, stinkColor)
         }
-    }
-
-    private func drawPixel(
-        x: Int,
-        y: Int,
-        color: Color,
-        in context: GraphicsContext,
-        pixelWidth: CGFloat,
-        pixelHeight: CGFloat
-    ) {
-        let rect = CGRect(
-            x: Double(x) * pixelWidth,
-            y: Double(y) * pixelHeight,
-            width: pixelWidth + 0.5,
-            height: pixelHeight + 0.5
-        )
-        context.fill(Path(rect), with: .color(color))
     }
 }

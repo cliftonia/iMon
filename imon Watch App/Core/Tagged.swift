@@ -2,10 +2,6 @@ import Foundation
 
 nonisolated struct Tagged<Phantom, RawValue>: Sendable where RawValue: Sendable {
     let rawValue: RawValue
-
-    init(rawValue: RawValue) {
-        self.rawValue = rawValue
-    }
 }
 
 extension Tagged: Equatable where RawValue: Equatable {}

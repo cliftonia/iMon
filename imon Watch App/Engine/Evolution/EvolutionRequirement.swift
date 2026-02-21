@@ -14,6 +14,32 @@ nonisolated struct EvolutionRequirement: Sendable {
     let minWeight: Int?
     let isDefault: Bool
 
+    init(
+        from: DigimonSpecies,
+        to: DigimonSpecies,
+        minAwakeTime: TimeInterval,
+        maxCareMistakes: Int? = nil,
+        minCareMistakes: Int? = nil,
+        minBattleWins: Int? = nil,
+        minWinRate: Double? = nil,
+        minTrainingCount: Int? = nil,
+        maxWeight: Int? = nil,
+        minWeight: Int? = nil,
+        isDefault: Bool = false
+    ) {
+        self.from = from
+        self.to = to
+        self.minAwakeTime = minAwakeTime
+        self.maxCareMistakes = maxCareMistakes
+        self.minCareMistakes = minCareMistakes
+        self.minBattleWins = minBattleWins
+        self.minWinRate = minWinRate
+        self.minTrainingCount = minTrainingCount
+        self.maxWeight = maxWeight
+        self.minWeight = minWeight
+        self.isDefault = isDefault
+    }
+
     // MARK: - Evaluation
 
     func isSatisfied(by state: PetState, at now: Date) -> Bool {

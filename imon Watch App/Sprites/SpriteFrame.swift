@@ -21,10 +21,8 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
     func mirrored() -> SpriteFrame {
         let mirroredRows = rows.map { row -> UInt16 in
             var result: UInt16 = 0
-            for i in 0..<16 {
-                if (row >> i) & 1 == 1 {
-                    result |= 1 << (15 - i)
-                }
+            for i in 0..<16 where (row >> i) & 1 == 1 {
+                result |= 1 << (15 - i)
             }
             return result
         }

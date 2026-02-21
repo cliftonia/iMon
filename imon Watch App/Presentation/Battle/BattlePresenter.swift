@@ -31,94 +31,101 @@ final class BattlePresenter {
     // MARK: - Actions
 
     func startBattle() {
-        let opponent = BattleOpponent.generate(matching: petState)
+        let opponent = BattleOpponent.generate(
+            matching: petState
+        )
         viewModel.petSpecies = petState.species
         viewModel.opponentSpecies = opponent.species
         viewModel.phase = .intro
 
         Task {
-            // Intro: VS screen
-            try? await Task.sleep(for: .seconds(1.5))
-
-            // Approach: both idle on LCD facing each other
-            viewModel.phase = .approach
-            petAnimator.play(
-                SpriteCatalog.animation(
-                    for: petState.species,
-                    kind: .idle
-                )
-            )
-            opponentAnimator.play(
-                SpriteCatalog.animation(
-                    for: opponent.species,
-                    kind: .idle
-                )
-            )
-            WKInterfaceDevice.battleHaptic()
-            try? await Task.sleep(for: .seconds(1.5))
-
-            // Clash: attack animations
-            viewModel.phase = .clash
-            petAnimator.play(
-                SpriteCatalog.animation(
-                    for: petState.species,
-                    kind: .attack
-                )
-            )
-            opponentAnimator.play(
-                SpriteCatalog.animation(
-                    for: opponent.species,
-                    kind: .attack
-                )
-            )
-            WKInterfaceDevice.battleHaptic()
-            try? await Task.sleep(for: .seconds(2))
-
-            // Calculate result
-            let result = BattleEngine.battle(
-                petState: petState,
-                opponent: opponent
-            )
-            viewModel.result = result
-            viewModel.phase = .result
-
-            // Result animations
-            switch result {
-            case .win:
-                petAnimator.play(
-                    SpriteCatalog.animation(
-                        for: petState.species,
-                        kind: .happy
-                    )
-                )
-                opponentAnimator.stop()
-                WKInterfaceDevice.battleWinHaptic()
-            case .lose:
-                petAnimator.stop()
-                opponentAnimator.play(
-                    SpriteCatalog.animation(
-                        for: opponent.species,
-                        kind: .happy
-                    )
-                )
-                WKInterfaceDevice.battleLoseHaptic()
-            case .draw:
-                petAnimator.play(
-                    SpriteCatalog.animation(
-                        for: petState.species,
-                        kind: .idle
-                    )
-                )
-                opponentAnimator.play(
-                    SpriteCatalog.animation(
-                        for: opponent.species,
-                        kind: .idle
-                    )
-                )
-                WKInterfaceDevice.buttonHaptic()
-            }
-
-            onComplete(result)
+            await runIntroPhase()
+            await runApproachPhase(opponent: opponent)
+            await runClashPhase(opponent: opponent)
+            showResult(opponent: opponent)
         }
+    }
+
+    // MARK: - Battle Phases
+
+    private func runIntroPhase() async {
+        try? await Task.sleep(for: .seconds(1.5))
+    }
+
+    private func runApproachPhase(
+        opponent: BattleOpponent
+    ) async {
+        viewModel.phase = .approach
+        petAnimator.play(
+            SpriteCatalog.animation(
+                for: petState.species, kind: .idle
+            )
+        )
+        opponentAnimator.play(
+            SpriteCatalog.animation(
+                for: opponent.species, kind: .idle
+            )
+        )
+        WKInterfaceDevice.battleHaptic()
+        try? await Task.sleep(for: .seconds(1.5))
+    }
+
+    private func runClashPhase(
+        opponent: BattleOpponent
+    ) async {
+        viewModel.phase = .clash
+        petAnimator.play(
+            SpriteCatalog.animation(
+                for: petState.species, kind: .attack
+            )
+        )
+        opponentAnimator.play(
+            SpriteCatalog.animation(
+                for: opponent.species, kind: .attack
+            )
+        )
+        WKInterfaceDevice.battleHaptic()
+        try? await Task.sleep(for: .seconds(2))
+    }
+
+    private func showResult(opponent: BattleOpponent) {
+        let result = BattleEngine.battle(
+            petState: petState, opponent: opponent
+        )
+        viewModel.result = result
+        viewModel.phase = .result
+
+        switch result {
+        case .win:
+            petAnimator.play(
+                SpriteCatalog.animation(
+                    for: petState.species, kind: .happy
+                )
+            )
+            opponentAnimator.stop()
+            WKInterfaceDevice.battleWinHaptic()
+        case .lose:
+            petAnimator.stop()
+            opponentAnimator.play(
+                SpriteCatalog.animation(
+                    for: opponent.species, kind: .happy
+                )
+            )
+            WKInterfaceDevice.battleLoseHaptic()
+        case .draw:
+            petAnimator.play(
+                SpriteCatalog.animation(
+                    for: petState.species, kind: .idle
+                )
+            )
+            opponentAnimator.play(
+                SpriteCatalog.animation(
+                    for: opponent.species, kind: .idle
+                )
+            )
+            WKInterfaceDevice.buttonHaptic()
+        }
+
+        onComplete(result)
     }
 }

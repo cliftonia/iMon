@@ -19,7 +19,7 @@ struct HeartMeter: View {
                 .frame(width: 40, alignment: .leading)
 
             HStack(spacing: 1) {
-                ForEach(0..<maxCount, id: \.self) { index in
+                ForEach(Array(0..<maxCount), id: \.self) { index in
                     Image(
                         systemName: index < filledCount
                             ? "heart.fill"

@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable function_body_length
-
 nonisolated enum EvolutionChart {
 
     // MARK: - Complete V1 Evolution Tree
@@ -23,16 +21,8 @@ nonisolated enum EvolutionChart {
         // Fresh -> In-Training (always after 1 hour)
         chart.append(
             EvolutionRequirement(
-                from: .botamon,
-                to: .koromon,
+                from: .botamon, to: .koromon,
                 minAwakeTime: TimeConstants.babyEvolutionTime,
-                maxCareMistakes: nil,
-                minCareMistakes: nil,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
                 isDefault: true
             )
         )
@@ -53,33 +43,17 @@ nonisolated enum EvolutionChart {
     // MARK: - In-Training Paths
 
     private static func koromonPaths() -> [EvolutionRequirement] {
-        [
+        let time = TimeConstants.rookieEvolutionTime
+        return [
             // 0-1 care mistakes -> Agumon
             EvolutionRequirement(
-                from: .koromon,
-                to: .agumon,
-                minAwakeTime: TimeConstants.rookieEvolutionTime,
-                maxCareMistakes: 1,
-                minCareMistakes: nil,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
-                isDefault: false
+                from: .koromon, to: .agumon,
+                minAwakeTime: time, maxCareMistakes: 1
             ),
             // 2+ care mistakes -> Betamon (default)
             EvolutionRequirement(
-                from: .koromon,
-                to: .betamon,
-                minAwakeTime: TimeConstants.rookieEvolutionTime,
-                maxCareMistakes: nil,
-                minCareMistakes: 2,
-                minBattleWins: nil,
-                minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil,
-                minWeight: nil,
+                from: .koromon, to: .betamon,
+                minAwakeTime: time, minCareMistakes: 2,
                 isDefault: true
             ),
         ]
@@ -94,51 +68,29 @@ nonisolated enum EvolutionChart {
             EvolutionRequirement(
                 from: .agumon, to: .greymon,
                 minAwakeTime: time,
-                maxCareMistakes: 2, minCareMistakes: nil,
-                minBattleWins: 5, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                maxCareMistakes: 2, minBattleWins: 5
             ),
             // 4+ CM, overfeed (weight 40+) -> Tyrannomon
             EvolutionRequirement(
                 from: .agumon, to: .tyrannomon,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: 40,
-                isDefault: false
+                minCareMistakes: 4, minWeight: 40
             ),
             // 0-3 CM, low training -> Devimon
             EvolutionRequirement(
                 from: .agumon, to: .devimon,
-                minAwakeTime: time,
-                maxCareMistakes: 3, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minAwakeTime: time, maxCareMistakes: 3
             ),
             // 4+ CM, train 16+ -> Meramon
             EvolutionRequirement(
                 from: .agumon, to: .meramon,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: 16,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minCareMistakes: 4, minTrainingCount: 16
             ),
             // Default -> Numemon
             EvolutionRequirement(
                 from: .agumon, to: .numemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
@@ -152,41 +104,23 @@ nonisolated enum EvolutionChart {
             EvolutionRequirement(
                 from: .betamon, to: .devimon,
                 minAwakeTime: time,
-                maxCareMistakes: 3, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: 48,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                maxCareMistakes: 3, minTrainingCount: 48
             ),
             // 4+ CM -> Airdramon
             EvolutionRequirement(
                 from: .betamon, to: .airdramon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: false
+                minAwakeTime: time, minCareMistakes: 4
             ),
             // 4+ CM, weight 35+ -> Seadramon
             EvolutionRequirement(
                 from: .betamon, to: .seadramon,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: 4,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: 35,
-                isDefault: false
+                minCareMistakes: 4, minWeight: 35
             ),
             // Default -> Numemon
             EvolutionRequirement(
                 from: .betamon, to: .numemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
@@ -196,78 +130,36 @@ nonisolated enum EvolutionChart {
     private static func championPaths() -> [EvolutionRequirement] {
         let time = TimeConstants.ultimateEvolutionTime
         return [
-            // Greymon -> MetalGreymon (15+ battles, 80%+ win rate)
             EvolutionRequirement(
                 from: .greymon, to: .metalGreymon,
                 minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
                 minBattleWins: 15, minWinRate: 0.8,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
                 isDefault: true
             ),
-            // Tyrannomon -> Mamemon
             EvolutionRequirement(
                 from: .tyrannomon, to: .mamemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Devimon -> MetalGreymon
             EvolutionRequirement(
                 from: .devimon, to: .metalGreymon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Meramon -> Mamemon
             EvolutionRequirement(
                 from: .meramon, to: .mamemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Airdramon -> MetalGreymon
             EvolutionRequirement(
                 from: .airdramon, to: .metalGreymon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Seadramon -> Mamemon
             EvolutionRequirement(
                 from: .seadramon, to: .mamemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
-            // Numemon -> Monzaemon
             EvolutionRequirement(
                 from: .numemon, to: .monzaemon,
-                minAwakeTime: time,
-                maxCareMistakes: nil, minCareMistakes: nil,
-                minBattleWins: nil, minWinRate: nil,
-                minTrainingCount: nil,
-                maxWeight: nil, minWeight: nil,
-                isDefault: true
+                minAwakeTime: time, isDefault: true
             ),
         ]
     }
 }
-
-// swiftlint:enable function_body_length

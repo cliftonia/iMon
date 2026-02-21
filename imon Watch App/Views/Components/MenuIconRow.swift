@@ -17,8 +17,11 @@ struct MenuIconRow: View {
 
     var body: some View {
         HStack(spacing: 2) {
-            ForEach(0..<8, id: \.self) { index in
-                Image(systemName: icons[index].0)
+            ForEach(
+                Array(icons.enumerated()),
+                id: \.offset
+            ) { index, icon in
+                Image(systemName: icon.0)
                     .font(.system(size: 10))
                     .frame(width: 16, height: 16)
                     .foregroundStyle(
@@ -32,7 +35,7 @@ struct MenuIconRow: View {
                                 .fill(Color.white.opacity(0.2))
                             : nil
                     )
-                    .accessibilityLabel(icons[index].1)
+                    .accessibilityLabel(icon.1)
             }
         }
     }
