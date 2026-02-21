@@ -93,9 +93,10 @@ final class TrainingPresenter {
 
     private func enterProjectile(won: Bool) {
         viewModel.phase = .projectile
-        let animation = viewModel.lastGuessHigh
-            ? SharedSprites.projectileHigh
-            : SharedSprites.projectileLow
+        let animation = SpriteCatalog.projectile(
+            for: species,
+            high: viewModel.lastGuessHigh
+        )
         spriteAnimator.play(animation)
 
         Task {
