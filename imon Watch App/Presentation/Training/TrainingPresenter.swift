@@ -93,9 +93,11 @@ final class TrainingPresenter {
 
     private func enterProjectile(won: Bool) {
         viewModel.phase = .projectile
+        let height: AttackHeight = viewModel.lastGuessHigh
+            ? .high : .low
         let animation = SpriteCatalog.projectile(
             for: species,
-            high: viewModel.lastGuessHigh
+            height: height
         )
         spriteAnimator.play(animation)
 

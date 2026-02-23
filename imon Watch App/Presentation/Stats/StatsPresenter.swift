@@ -14,6 +14,7 @@ final class StatsPresenter {
         viewModel.weightGrams = status.weightGrams
         viewModel.hungerHearts = status.hungerHearts.value
         viewModel.strengthHearts = status.strengthHearts.value
+        viewModel.battleHP = BattleHP.calculate(for: state)
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses
 

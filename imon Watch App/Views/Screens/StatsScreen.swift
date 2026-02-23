@@ -65,6 +65,10 @@ struct StatsScreen: View {
     private var battleStats: some View {
         VStack(alignment: .leading, spacing: 4) {
             statRow(
+                label: "HP",
+                value: "\(presenter.viewModel.battleHP)"
+            )
+            statRow(
                 label: "WIN",
                 value: "\(presenter.viewModel.battleWins)"
             )
