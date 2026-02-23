@@ -193,17 +193,17 @@ struct LCDDisplay: View {
         guard poopCount > 0 else { return }
         let color = basePixelColor
 
-        // Poop pile positions on the 32x20 LCD
+        // Poop pile positions on the 32x20 LCD (ground at row 19)
         let bases: [(x: Int, y: Int)] = [
-            (25, 14), (29, 14),
-            (25, 17), (29, 17)
+            (25, 16), (29, 16),
+            (25, 13), (29, 13)
         ]
 
-        // Classic poop pile: tip + body + base
+        // Coiled poop pile: tip + mound + base
         let pilePixels: [(dx: Int, dy: Int)] = [
             (1, 0),
-            (0, 1), (1, 1), (2, 1),
-            (1, 2)
+            (0, 1), (1, 1),
+            (0, 2), (1, 2), (2, 2)
         ]
 
         func fillPixel(x: Int, y: Int, _ pixelColor: Color) {

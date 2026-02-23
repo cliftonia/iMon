@@ -270,7 +270,7 @@ extension BattlePresenter {
 
         case .opponentHit:
             viewModel.petHP -= 1
-            petAnimator.play(SharedSprites.battleMiss)
+            petAnimator.play(SharedSprites.missStreaks)
             WKInterfaceDevice.battleLoseHaptic()
 
         case .clash:

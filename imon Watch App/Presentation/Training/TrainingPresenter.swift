@@ -132,7 +132,7 @@ final class TrainingPresenter {
         spriteAnimator.play(
             SpriteCatalog.animation(for: species, kind: .idle)
         )
-        targetAnimator.play(SharedSprites.trainingMissSequence)
+        targetAnimator.play(SharedSprites.missStreaks)
         WKInterfaceDevice.trainingMissHaptic()
 
         Task {

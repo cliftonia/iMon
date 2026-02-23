@@ -8,14 +8,18 @@ extension PetScreen {
     var trainingLCD: some View {
         if let training = presenter.trainingPresenter {
             let phase = training.viewModel.phase
-            let resultOnly = phase == .hit || phase == .miss
-            let showTarget = resultOnly || phase == .victory
+            let isMiss = phase == .miss
+            let resultOnly = phase == .hit || isMiss
+            let showTarget = (resultOnly || phase == .victory)
+                && !isMiss
 
             LCDDisplay(
-                leftSprite: resultOnly
-                    ? .empty : training.petFrame,
+                leftSprite: isMiss
+                    ? training.targetFrame
+                    : resultOnly ? .empty : training.petFrame,
                 rightSprite: showTarget
                     ? training.targetFrame : nil,
+                leftSpriteOffsetY: isMiss ? 2 : 4,
                 rightSpriteOffsetY: 0
             )
         }
