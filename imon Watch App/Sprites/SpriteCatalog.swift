@@ -63,7 +63,7 @@ nonisolated enum SpriteCatalog {
 
 extension SpriteCatalog {
 
-    private static func frames(
+    static func frames(
         for species: DigimonSpecies,
         kind: AnimationKind
     ) -> [SpriteFrame] {
@@ -103,16 +103,35 @@ extension SpriteCatalog {
     /// Species-specific projectile traveling left-to-right.
     static func projectile(
         for species: DigimonSpecies,
-        high: Bool
+        height: AttackHeight
     ) -> SpriteAnimation {
         let shape = projectileShape(for: species)
-        let base = projectileFrame(shape: shape, high: high)
+        let base = projectileFrame(shape: shape, height: height)
         return SpriteAnimation(
             frames: [
                 base,
                 base.shiftedRight(4),
                 base.shiftedRight(8),
                 base.shiftedRight(12)
+            ],
+            frameDuration: 0.15,
+            loops: false
+        )
+    }
+
+    /// Species-specific projectile traveling right-to-left (opponent).
+    static func projectileReversed(
+        for species: DigimonSpecies,
+        height: AttackHeight
+    ) -> SpriteAnimation {
+        let shape = projectileShape(for: species)
+        let base = projectileFrame(shape: shape, height: height)
+        return SpriteAnimation(
+            frames: [
+                base.shiftedRight(12),
+                base.shiftedRight(8),
+                base.shiftedRight(4),
+                base
             ],
             frameDuration: 0.15,
             loops: false
@@ -167,20 +186,27 @@ extension SpriteCatalog {
 
     private static func projectileFrame(
         shape: (UInt16, UInt16, UInt16, UInt16),
-        high: Bool
+        height: AttackHeight
     ) -> SpriteFrame {
         let z: UInt16 = 0x0000
-        if high {
+        switch height {
+        case .high:
             return SpriteFrame(rows: [
-                z, z, z,
+                z, z,
                 shape.0, shape.1, shape.2, shape.3,
-                z, z, z, z, z, z, z, z, z
+                z, z, z, z, z, z, z, z, z, z
             ])
-        } else {
+        case .medium:
             return SpriteFrame(rows: [
-                z, z, z, z, z, z, z, z,
+                z, z, z, z, z, z,
                 shape.0, shape.1, shape.2, shape.3,
-                z, z, z, z
+                z, z, z, z, z, z
+            ])
+        case .low:
+            return SpriteFrame(rows: [
+                z, z, z, z, z, z, z, z, z, z,
+                shape.0, shape.1, shape.2, shape.3,
+                z, z
             ])
         }
     }

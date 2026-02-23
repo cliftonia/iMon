@@ -9,6 +9,7 @@ final class StatsViewModel {
     var weightGrams: Int = 0
     var hungerHearts: Int = 0
     var strengthHearts: Int = 0
+    var battleHP: Int = 0
     var battleWins: Int = 0
     var battleLosses: Int = 0
     var winRate: String = "0%"

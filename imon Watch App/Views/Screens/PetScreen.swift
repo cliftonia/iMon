@@ -19,10 +19,15 @@ struct PetScreen: View {
             .fixedSize(horizontal: false, vertical: true)
 
             middleRow
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
 
             bottomRow
+                .frame(
+                    maxHeight: .infinity,
+                    alignment: .bottom
+                )
         }
-        .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 12)
         .padding(.top, 12)
         .focusable()
@@ -97,7 +102,6 @@ struct PetScreen: View {
                 selectedIndex: presenter.viewModel
                     .menuSelection.rawValue
             )
-            .fixedSize()
         case .training:
             trainingInfoRow
         case .battle:
@@ -133,8 +137,6 @@ struct PetScreen: View {
                 handleButtonC()
             }
         }
-        .padding(.horizontal, 4)
-        .fixedSize(horizontal: false, vertical: true)
     }
 
     // MARK: - Button Labels

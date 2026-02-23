@@ -16,14 +16,15 @@ struct MenuIconRow: View {
     ]
 
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 0) {
             ForEach(
                 Array(icons.enumerated()),
                 id: \.offset
             ) { index, icon in
                 Image(systemName: icon.0)
-                    .font(.system(size: 10))
-                    .frame(width: 16, height: 16)
+                    .font(.system(size: 14))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 22)
                     .foregroundStyle(
                         index == selectedIndex
                             ? Color.white
