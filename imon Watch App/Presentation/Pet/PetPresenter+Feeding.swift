@@ -58,6 +58,10 @@ extension PetPresenter {
             ? SharedSprites.meatServing
             : SharedSprites.vitaminServing
         feedingAnimator.play(servingAnim)
+
+        let idle = SpriteCatalog.animation(for: state.species, kind: .idle)
+        spriteAnimator.play(idle.mirrored())
+
         try? await Task.sleep(for: .milliseconds(800))
     }
 
@@ -70,13 +74,13 @@ extension PetPresenter {
             : [SharedSprites.vitaminBite1, SharedSprites.vitaminBite2,
                SharedSprites.vitaminEmpty]
 
+        let chomp = SpriteCatalog.animation(
+            for: state.species, kind: .eat
+        ).mirrored()
+
         for (index, stage) in foodStages.enumerated() {
             viewModel.feedingPhase = .bite(index + 1)
-            spriteAnimator.play(
-                SpriteCatalog.animation(
-                    for: state.species, kind: .eat
-                )
-            )
+            spriteAnimator.play(chomp)
             try? await Task.sleep(for: .milliseconds(300))
             guard !Task.isCancelled else { return }
 
@@ -92,11 +96,10 @@ extension PetPresenter {
     ) async {
         viewModel.feedingPhase = .satisfied
         feedingAnimator.play(.still(SharedSprites.satisfactionHeart))
-        spriteAnimator.play(
-            SpriteCatalog.animation(
-                for: state.species, kind: .happy
-            )
-        )
+        let happy = SpriteCatalog.animation(
+            for: state.species, kind: .happy
+        ).mirrored()
+        spriteAnimator.play(happy)
         WKInterfaceDevice.feedHaptic()
 
         state = FeedAction.apply(to: state, food: food, at: .now)

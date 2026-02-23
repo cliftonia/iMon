@@ -40,6 +40,15 @@ nonisolated struct SpriteAnimation: Sendable, Hashable {
         )
     }
 
+    /// Return a copy with every frame horizontally mirrored.
+    func mirrored() -> SpriteAnimation {
+        SpriteAnimation(
+            frames: frames.map { $0.mirrored() },
+            frameDuration: frameDuration,
+            loops: loops
+        )
+    }
+
     /// Single-frame "animation" (static sprite).
     static func still(_ frame: SpriteFrame) -> SpriteAnimation {
         SpriteAnimation(frames: [frame], frameDuration: 1.0, loops: false)

@@ -67,16 +67,6 @@ extension SpriteCatalog {
         for species: DigimonSpecies,
         kind: AnimationKind
     ) -> [SpriteFrame] {
-        if kind == .refuse {
-            let idle = frames(for: species, kind: .idle)
-            let base = idle[0]
-            return [
-                base.shiftedLeft(1),
-                base.shiftedRight(1),
-                base.shiftedLeft(1),
-                base
-            ]
-        }
         return switch species {
         case .botamon: botamonFrames(kind)
         case .koromon: koromonFrames(kind)

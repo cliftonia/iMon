@@ -4,9 +4,13 @@ import Foundation
 
 extension SpriteCatalog {
 
+    // swiftlint:disable:next function_body_length
     static func airdramonFrames(
         _ kind: AnimationKind
     ) -> [SpriteFrame] {
+
+        // MARK: Idle
+
         let idle1 = SpriteFrame(rows: [
             0x0000, //  ................
             0x0F00, //  ....####........  head
@@ -17,7 +21,7 @@ extension SpriteCatalog {
             0x0FC0, //  ....######......
             0x3FF0, //  ..##########....  wings
             0x7FF8, //  .############...
-            0xC00C, //  ##..........##..  wing tips
+            0xCFCC, //  ##..######..##..  wing tips
             0x0FC0, //  ....######......  body
             0x07E0, //  .....######.....
             0x03F0, //  ......######....  tail curving
@@ -27,22 +31,110 @@ extension SpriteCatalog {
         ])
 
         let idle2 = SpriteFrame(rows: [
-            0x0000,
-            0x0F00, 0x1F80, 0x1D80, 0x0F00,
-            0x0780,
-            0x0FC0,
-            0x7FF8, //  wings up
-            0x3FF0,
-            0x0FC0,
-            0x0FC0,
-            0x07E0,
-            0x03F0,
-            0x01F8,
-            0x00FC,
-            0x0038
+            0x0000, //  ................
+            0x0F00, //  ....####........  head
+            0x1F80, //  ...######.......
+            0x1D80, //  ...###.##.......  eye
+            0x0F00, //  ....####........
+            0x0780, //  .....####.......  neck
+            0x0FC0, //  ....######......
+            0x7FF8, //  .############...  wings up
+            0x3FF0, //  ..##########....
+            0x6FD8, //  .##.######.##...  wing tips folded
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...  tail tip
         ])
 
-        // Spinning Needle (God Tornado) — head lunges, spiral wind marks
+        // MARK: Eat — head dips, jaw chomps
+
+        // Head sinks 1 row, neck compresses, jaw opens
+        let eat1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0F00, //  ....####........  head dipped
+            0x1F80, //  ...######.......
+            0x1D80, //  ...###.##.......  eye
+            0x0F80, //  ....#####.......  jaw open
+            0x0FC0, //  ....######......  neck into body
+            0x3FF0, //  ..##########....  wings
+            0x7FF8, //  .############...
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...
+        ])
+
+        // Jaw snaps shut
+        let eat2 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0000, //  ................
+            0x0F00, //  ....####........  head dipped
+            0x1F80, //  ...######.......
+            0x1D80, //  ...###.##.......  eye
+            0x0780, //  .....####.......  jaw clamped
+            0x0FC0, //  ....######......  neck into body
+            0x3FF0, //  ..##########....  wings
+            0x7FF8, //  .############...
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...
+        ])
+
+        // MARK: Happy — wings spread wide, soar up
+
+        // Wings flare to maximum spread, eyes close
+        let happy1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0F00, //  ....####........  head
+            0x1F80, //  ...######.......
+            0x1F80, //  ...######.......  eyes closed
+            0x0F00, //  ....####........
+            0x0780, //  .....####.......  neck
+            0x0FC0, //  ....######......
+            0x7FF8, //  .############...  wings wide
+            0xFFFC, //  ##############..  maximum spread
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...
+        ])
+
+        // Soar up — whole body lifts 1 row
+        let happy2 = SpriteFrame(rows: [
+            0x0F00, //  ....####........  head (up 1)
+            0x1F80, //  ...######.......
+            0x1F80, //  ...######.......  eyes closed
+            0x0F00, //  ....####........
+            0x0780, //  .....####.......  neck
+            0x0FC0, //  ....######......
+            0x3FF0, //  ..##########....  wings
+            0x7FF8, //  .############...
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......  body
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....  tail
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038, //  ..........###...  tail tip
+            0x0000  //  ................
+        ])
+
+        // MARK: Attack — Spinning Needle (God Tornado)
+
         let attack1 = SpriteFrame(rows: [
             0x0000, //  ................
             0x0F00, //  ....####........  head
@@ -53,7 +145,7 @@ extension SpriteCatalog {
             0x0FC0, //  ....######......
             0x7FF8, //  .############...  wings fully spread
             0xFFFC, //  ##############..
-            0xC00C, //  ##..........##..  wing tips
+            0xCFCC, //  ##..######..##..  wing tips
             0x0FC0, //  ....######......
             0x07E0, //  .....######.....
             0x03F0, //  ......######....
@@ -72,7 +164,7 @@ extension SpriteCatalog {
             0x0FC4, //  ....######...#..  wind mark
             0x7FFA, //  .############.#.  spinning
             0xFFFC, //  ##############..
-            0xC00C, //  ##..........##..
+            0xCFCC, //  ##..######..##..
             0x0FC0, //  ....######......
             0x07E0, //  .....######.....
             0x03F0, //  ......######....
@@ -81,7 +173,50 @@ extension SpriteCatalog {
             0x0038  //  ..........###...
         ])
 
-        // Side-walk: serpentine dragon side, wings, long body
+        // MARK: Refuse — head shakes, body anchored
+
+        // Head/neck shift left, wings and tail stay
+        let refuse1 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x1E00, //  ...####.........  head left
+            0x3F00, //  ..######........
+            0x3B00, //  ..###.##........  eye
+            0x1E00, //  ...####.........
+            0x0F00, //  ....####........  neck left
+            0x0FC0, //  ....######......  body (stays)
+            0x3FF0, //  ..##########....  wings
+            0x7FF8, //  .############...
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...
+        ])
+
+        // Head/neck shift right
+        let refuse2 = SpriteFrame(rows: [
+            0x0000, //  ................
+            0x0780, //  .....####.......  head right
+            0x0FC0, //  ....######......
+            0x0EC0, //  ....###.##......  eye
+            0x0780, //  .....####.......
+            0x03C0, //  ......####......  neck right
+            0x0FC0, //  ....######......  body (stays)
+            0x3FF0, //  ..##########....  wings
+            0x7FF8, //  .############...
+            0xCFCC, //  ##..######..##..  wing tips
+            0x0FC0, //  ....######......
+            0x07E0, //  .....######.....
+            0x03F0, //  ......######....
+            0x01F8, //  .......######...
+            0x00FC, //  ........######..
+            0x0038  //  ..........###...
+        ])
+
+        // MARK: Side-walk
+
         let sideWalk1 = SpriteFrame(rows: [
             0x0000, //  ................
             0x0F00, //  ....####........  head
@@ -120,12 +255,23 @@ extension SpriteCatalog {
             0x0018  //  ...........##...  tail tip
         ])
 
+        // MARK: Animation dispatch
+
         switch kind {
         case .idle, .walk:
             return [idle1, idle2]
         case .sideWalk:
             return [sideWalk1, sideWalk2]
-        case .happy, .eat, .sleep:
+        case .happy:
+            return [
+                idle1.shiftedDown(1),
+                happy1,
+                happy2,
+                idle1
+            ]
+        case .eat:
+            return [eat1, eat2, eat1, idle1]
+        case .sleep:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         case .attack:
             return [
@@ -135,7 +281,7 @@ extension SpriteCatalog {
                 idle1
             ]
         case .refuse:
-            return defaultAnimationFromIdle(idle1, idle2, kind)
+            return [refuse1, refuse2, refuse1, idle1]
         }
     }
 }
