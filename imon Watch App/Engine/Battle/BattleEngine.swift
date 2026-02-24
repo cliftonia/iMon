@@ -26,7 +26,6 @@ nonisolated enum BattleEngine {
             against: petState.species.attribute
         )
 
-        // RNG variance
         let variance = TimeConstants.battleRNGVariance
         let petRNG = Double.random(in: (1 - variance)...(1 + variance))
         let opponentRNG = Double.random(in: (1 - variance)...(1 + variance))

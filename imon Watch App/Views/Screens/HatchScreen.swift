@@ -20,8 +20,6 @@ struct HatchScreen: View {
         .accessibilityLabel("Egg hatching screen")
     }
 
-    // MARK: - Phase Label
-
     private var phaseLabel: some View {
         Group {
             switch presenter.viewModel.phase {
