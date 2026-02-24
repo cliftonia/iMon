@@ -107,7 +107,7 @@ final class AppPresenter {
         router.navigate(to: .stats)
     }
 
-    /// Check if pet has died (called periodically by PetPresenter)
+    /// Check if pet has died after a debug evolution cycle.
     func checkDeath() {
         guard let petPresenter else { return }
         let state = petPresenter.getCurrentState()

@@ -19,8 +19,6 @@ struct StatsScreen: View {
         .navigationTitle("Stats")
     }
 
-    // MARK: - Sections
-
     private var speciesHeader: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(presenter.viewModel.speciesName)

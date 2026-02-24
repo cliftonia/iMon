@@ -31,7 +31,7 @@ struct LCDDisplay: View {
         self.rightSpriteOffsetY = rightSpriteOffsetY
     }
 
-    // MARK: - Inverted Colors
+    // MARK: - Colors
 
     private var backgroundColor: Color {
         lightsOn ? Color("LCDBackground") : Color(white: 0.07)
@@ -92,7 +92,7 @@ struct LCDDisplay: View {
         .accessibilityHidden(true)
     }
 
-    // MARK: - Background
+    // MARK: - Grid & Ground
 
     private func drawGrid(
         in context: GraphicsContext,
