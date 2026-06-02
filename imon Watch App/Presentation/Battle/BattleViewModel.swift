@@ -5,8 +5,8 @@ import Observation
 final class BattleViewModel {
 
     var phase: BattlePhase = .intro
-    var petSpecies: virtual petSpecies = .emberkin
-    var opponentSpecies: virtual petSpecies = .marshkin
+    var petSpecies: PetSpecies = .emberkin
+    var opponentSpecies: PetSpecies = .marshkin
     var petHP: Int = 3
     var petMaxHP: Int = 3
     var opponentHP: Int = 3

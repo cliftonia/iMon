@@ -1,6 +1,6 @@
 import Foundation
 
-/// Pixel art sprite data for all virtual pet species.
+/// Pixel art sprite data for all Creature species.
 /// Each sprite is a 16x16 monochrome bitmap encoded as 16 UInt16 rows (MSB = left).
 nonisolated enum SpriteCatalog {
 
@@ -16,7 +16,7 @@ nonisolated enum SpriteCatalog {
     }
 
     static func animation(
-        for species: virtual petSpecies,
+        for species: PetSpecies,
         kind: AnimationKind
     ) -> SpriteAnimation {
         let frames = self.frames(for: species, kind: kind)
@@ -64,7 +64,15 @@ nonisolated enum SpriteCatalog {
 extension SpriteCatalog {
 
     static func frames(
-        for species: virtual petSpecies,
+        for species: PetSpecies,
+        kind: AnimationKind
+    ) -> [SpriteFrame] {
+        let raw = speciesFrames(for: species, kind: kind)
+        return kind == .attack ? enhancedAttack(raw) : raw
+    }
+
+    private static func speciesFrames(
+        for species: PetSpecies,
         kind: AnimationKind
     ) -> [SpriteFrame] {
         return switch species {
@@ -84,123 +92,21 @@ extension SpriteCatalog {
         case .plushkin: plushkinFrames(kind)
         }
     }
-}
 
-// MARK: - Species Projectile
-
-extension SpriteCatalog {
-
-    /// Species-specific projectile traveling left-to-right.
-    static func projectile(
-        for species: virtual petSpecies,
-        height: AttackHeight
-    ) -> SpriteAnimation {
-        let shape = projectileShape(for: species)
-        let base = projectileFrame(shape: shape, height: height)
-        return SpriteAnimation(
-            frames: [
-                base,
-                base.shiftedRight(4),
-                base.shiftedRight(8),
-                base.shiftedRight(12)
-            ],
-            frameDuration: 0.15,
-            loops: false
-        )
-    }
-
-    /// Species-specific projectile traveling right-to-left (opponent).
-    static func projectileReversed(
-        for species: virtual petSpecies,
-        height: AttackHeight
-    ) -> SpriteAnimation {
-        let shape = projectileShape(for: species)
-        let base = projectileFrame(shape: shape, height: height)
-        return SpriteAnimation(
-            frames: [
-                base.shiftedRight(12),
-                base.shiftedRight(8),
-                base.shiftedRight(4),
-                base
-            ],
-            frameDuration: 0.15,
-            loops: false
-        )
-    }
-
-    private static func projectileShape(
-        for species: virtual petSpecies
-    ) -> (UInt16, UInt16, UInt16, UInt16) {
-        switch species {
-        case .dotkin, .hopkin:
-            // Bubble — small round
-            (0x6000, 0xF000, 0xF000, 0x6000)
-        case .emberkin:
-            // Pepper Breath — fireball
-            (0x4000, 0xE000, 0xF000, 0x6000)
-        case .marshkin:
-            // Electric Shock — zigzag bolt
-            (0xC000, 0x6000, 0xC000, 0x4000)
-        case .rexkin:
-            // Nova Blast — large fireball
-            (0xE000, 0xF000, 0xF000, 0xE000)
-        case .blazekin:
-            // Fire Breath — flame
-            (0x4000, 0xE000, 0x7000, 0x2000)
-        case .dreadkin:
-            // Death Claw — slash marks
-            (0x9000, 0x6000, 0x6000, 0x9000)
-        case .pyrekin:
-            // Burning Fist — flame fist
-            (0x6000, 0xF000, 0xE000, 0x4000)
-        case .galekin:
-            // Spinning Needle — wind spiral
-            (0xA000, 0x4000, 0xA000, 0x4000)
-        case .tidekin:
-            // Ice Arrow — diamond crystal
-            (0x4000, 0xE000, 0xE000, 0x4000)
-        case .sludgekin:
-            // Poop Toss — poop glob
-            (0x4000, 0xC000, 0xE000, 0x6000)
-        case .steelkin:
-            // Giga Blaster — missile
-            (0x2000, 0xF000, 0xF000, 0x2000)
-        case .orbkin:
-            // Smiley Bomb — bomb
-            (0x2000, 0x6000, 0xF000, 0x6000)
-        case .plushkin:
-            // Hearts Attack — heart
-            (0xA000, 0xE000, 0x4000, 0x0000)
-        }
-    }
-
-    private static func projectileFrame(
-        shape: (UInt16, UInt16, UInt16, UInt16),
-        height: AttackHeight
-    ) -> SpriteFrame {
-        let z: UInt16 = 0x0000
-        switch height {
-        case .high:
-            return SpriteFrame(rows: [
-                z, z,
-                shape.0, shape.1, shape.2, shape.3,
-                z, z, z, z, z, z, z, z, z, z
-            ])
-        case .medium:
-            return SpriteFrame(rows: [
-                z, z, z, z, z, z,
-                shape.0, shape.1, shape.2, shape.3,
-                z, z, z, z, z, z
-            ])
-        case .low:
-            return SpriteFrame(rows: [
-                z, z, z, z, z, z, z, z, z, z,
-                shape.0, shape.1, shape.2, shape.3,
-                z, z
-            ])
-        }
+    /// The strike is a simple mouth-open tell using the species'
+    /// first attack pose. The projectile-forming pose is dropped —
+    /// the actual projectile is shown in its own phase.
+    private static func enhancedAttack(
+        _ raw: [SpriteFrame]
+    ) -> [SpriteFrame] {
+        guard raw.count >= 2 else { return raw }
+        let neutral = raw[0]
+        let openMouth = raw[1]
+        return [neutral, openMouth, openMouth, neutral]
     }
 }
+
+// Species projectiles live in SpriteCatalog+Projectiles.swift.
 
 // MARK: - Default Animation Helpers
 

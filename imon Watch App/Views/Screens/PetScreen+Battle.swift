@@ -9,34 +9,46 @@ extension PetScreen {
         if let battle = presenter.battlePresenter {
             switch battle.viewModel.phase {
             case .intro:
-                HStack(spacing: 0) {
-                    Text(battle.viewModel.petSpecies.displayName)
+                LCDDisplay(
+                    leftSprite: .empty,
+                    lightsOn: battle.viewModel.lightsOn
+                )
+                .overlay {
+                    HStack(spacing: 0) {
+                        Text(
+                            battle.viewModel.petSpecies
+                                .displayName
+                        )
                         .font(.system(
                             size: 9,
                             design: .monospaced
                         ))
+                        .minimumScaleFactor(0.7)
+                        .lineLimit(1)
                         .frame(maxWidth: .infinity)
 
-                    Text("VS")
+                        Text("VS")
+                            .font(.system(
+                                size: 10,
+                                weight: .bold,
+                                design: .monospaced
+                            ))
+                            .fixedSize()
+
+                        Text(
+                            battle.viewModel.opponentSpecies
+                                .displayName
+                        )
                         .font(.system(
-                            size: 8,
-                            weight: .bold,
+                            size: 9,
                             design: .monospaced
                         ))
-
-                    Text(
-                        battle.viewModel.opponentSpecies
-                            .displayName
-                    )
-                    .font(.system(
-                        size: 9,
-                        design: .monospaced
-                    ))
-                    .frame(maxWidth: .infinity)
+                        .minimumScaleFactor(0.7)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.horizontal, 4)
                 }
-                .padding(8)
-                .background(Color("LCDBackground"))
-                .aspectRatio(32.0 / 20.0, contentMode: .fit)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
                     "\(battle.viewModel.petSpecies.displayName)"
@@ -48,6 +60,7 @@ extension PetScreen {
                 LCDDisplay(
                     leftSprite: battle.activeFrame,
                     lightsOn: battle.viewModel.lightsOn,
+                    leftSpriteOffsetX: battle.activeOffsetX,
                     leftSpriteOffsetY: battleSpriteOffsetY(
                         battle
                     )
@@ -61,16 +74,19 @@ extension PetScreen {
     @ViewBuilder
     var battleInfoRow: some View {
         if let battle = presenter.battlePresenter {
-            VStack(spacing: 2) {
-                battleHPRow(battle)
-                Text(battlePhaseText(battle))
+            let phaseText = battlePhaseText(battle)
+            if phaseText.isEmpty {
+                choosingInfoRow(battle)
+            } else {
+                Text(phaseText)
                     .font(.system(
-                        size: 12,
+                        size: 11,
                         weight: .bold,
                         design: .monospaced
                     ))
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: .infinity)
             }
-            .frame(height: 28)
         }
     }
 
@@ -92,8 +108,6 @@ extension PetScreen {
                         battle.pickAction(.low)
                     }
                 }
-                .padding(.horizontal, 4)
-                .fixedSize(horizontal: false, vertical: true)
 
             case .victory, .defeat:
                 HStack(spacing: 4) {
@@ -101,8 +115,6 @@ extension PetScreen {
                         presenter.dismissBattle()
                     }
                 }
-                .padding(.horizontal, 4)
-                .fixedSize(horizontal: false, vertical: true)
 
             default:
                 EmptyView()
@@ -121,50 +133,46 @@ extension PetScreen {
         return isCenteredImpact ? 2 : 4
     }
 
-    private func battleHPRow(
+    private func choosingInfoRow(
         _ battle: BattlePresenter
     ) -> some View {
-        let petHearts = String(
-            repeating: "\u{2665}",
-            count: battle.viewModel.petHP
-        ) + String(
-            repeating: "\u{2661}",
-            count: max(
-                0,
-                battle.viewModel.petMaxHP
-                    - battle.viewModel.petHP
-            )
+        let petHearts = BattleHP.heartsString(
+            hp: battle.viewModel.petHP,
+            maxHP: battle.viewModel.petMaxHP
         )
-        let oppHearts = String(
-            repeating: "\u{2665}",
-            count: battle.viewModel.opponentHP
-        ) + String(
-            repeating: "\u{2661}",
-            count: max(
-                0,
-                battle.viewModel.opponentMaxHP
-                    - battle.viewModel.opponentHP
-            )
+        let oppHearts = BattleHP.heartsString(
+            hp: battle.viewModel.opponentHP,
+            maxHP: battle.viewModel.opponentMaxHP
         )
-        return Text("YOU \(petHearts)  FOE \(oppHearts)")
-            .font(.system(
-                size: 9,
-                weight: .medium,
-                design: .monospaced
-            ))
-            .accessibilityLabel(
-                "You \(battle.viewModel.petHP) HP,"
-                    + " Foe \(battle.viewModel.opponentHP) HP"
-            )
+        let petName = battle.viewModel.petSpecies.displayName
+        let oppName = battle.viewModel.opponentSpecies
+            .displayName
+        return HStack(spacing: 2) {
+            Text("\(petName) \(petHearts)")
+            Text("|")
+            Text("\(oppName) \(oppHearts)")
+        }
+        .font(.system(
+            size: 9,
+            weight: .medium,
+            design: .monospaced
+        ))
+        .minimumScaleFactor(0.7)
+        .lineLimit(1)
+        .accessibilityLabel(
+            "\(petName) \(battle.viewModel.petHP) HP,"
+                + " \(oppName) \(battle.viewModel.opponentHP) HP"
+        )
     }
+
 
     private func battlePhaseText(
         _ battle: BattlePresenter
     ) -> String {
         switch battle.viewModel.phase {
-        case .intro: "VS"
+        case .intro: ""
         case .approach: "FIGHT!"
-        case .choosing: "CHOOSE!"
+        case .choosing: ""
         case .attacking, .projectile: "ATTACK!"
         case .opponentAttacking: "COUNTER!"
         case .opponentProjectile: "INCOMING!"

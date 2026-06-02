@@ -2,7 +2,7 @@ import Foundation
 @testable import imon_Watch_App
 
 func makeTestState(
-    species: virtual petSpecies = .emberkin,
+    species: PetSpecies = .emberkin,
     hunger: Int = 4,
     strength: Int = 4,
     weight: Int = 20,

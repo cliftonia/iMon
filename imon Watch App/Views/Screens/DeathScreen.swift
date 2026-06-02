@@ -33,7 +33,7 @@ struct DeathScreen: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(
-            "Death screen. Your virtual pet has passed away."
+            "Death screen. Your Creature has passed away."
         )
     }
 }

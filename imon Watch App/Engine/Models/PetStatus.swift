@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct PetStatus: Sendable {
-    let species: virtual petSpecies
+    let species: PetSpecies
     let stage: EvolutionStage
     let hungerHearts: StatHearts
     let strengthHearts: StatHearts

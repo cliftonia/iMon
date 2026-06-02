@@ -36,6 +36,35 @@ struct BattleEngineTests {
         #expect(state.battleLosses == 1)
     }
 
+    // MARK: - canBattle
+
+    @Test
+    func `canBattle true for healthy awake pet`() {
+        let state = makeTestState()
+        #expect(BattleEngine.canBattle(state))
+    }
+
+    @Test
+    func `canBattle false when sleeping`() {
+        var state = makeTestState()
+        state.isSleeping = true
+        #expect(!BattleEngine.canBattle(state))
+    }
+
+    @Test
+    func `canBattle false when dead`() {
+        var state = makeTestState()
+        state.isDead = true
+        #expect(!BattleEngine.canBattle(state))
+    }
+
+    @Test
+    func `canBattle false when egg`() {
+        var state = makeTestState()
+        state.isEgg = true
+        #expect(!BattleEngine.canBattle(state))
+    }
+
     // MARK: - resolveRound
 
     @Test
@@ -159,14 +188,14 @@ struct BattleEngineTests {
     // MARK: - BattleHP stages
 
     @Test(arguments: [
-        (virtual petSpecies.dotkin, 0, 0, 1),
-        (virtual petSpecies.hopkin, 0, 0, 2),
-        (virtual petSpecies.emberkin, 0, 0, 3),
-        (virtual petSpecies.rexkin, 0, 0, 4),
-        (virtual petSpecies.steelkin, 0, 0, 5)
+        (PetSpecies.dotkin, 0, 0, 1),
+        (PetSpecies.hopkin, 0, 0, 2),
+        (PetSpecies.emberkin, 0, 0, 3),
+        (PetSpecies.rexkin, 0, 0, 4),
+        (PetSpecies.steelkin, 0, 0, 5)
     ])
     func `BattleHP base matches stage`(
-        species: virtual petSpecies,
+        species: PetSpecies,
         hunger: Int,
         strength: Int,
         expectedHP: Int
@@ -193,6 +222,45 @@ struct BattleEngineTests {
         let state = makeTestState(species: .emberkin)
         let opp = BattleOpponent.generate(matching: state)
         #expect(opp.power > 0)
+    }
+
+    @Test(arguments: PetSpecies.allCases)
+    func `opponent is never the same species`(
+        species: PetSpecies
+    ) {
+        let state = makeTestState(species: species)
+        for _ in 0..<50 {
+            let opp = BattleOpponent.generate(matching: state)
+            #expect(opp.species != species)
+        }
+    }
+
+    // MARK: - heartsString
+
+    @Test
+    func `heartsString full HP shows all filled`() {
+        let result = BattleHP.heartsString(hp: 3, maxHP: 3)
+        #expect(result == "\u{2665}\u{2665}\u{2665}")
+    }
+
+    @Test
+    func `heartsString zero HP shows all empty`() {
+        let result = BattleHP.heartsString(hp: 0, maxHP: 3)
+        #expect(result == "\u{2661}\u{2661}\u{2661}")
+    }
+
+    @Test
+    func `heartsString partial HP shows mixed`() {
+        let result = BattleHP.heartsString(hp: 2, maxHP: 5)
+        #expect(
+            result == "\u{2665}\u{2665}\u{2661}\u{2661}\u{2661}"
+        )
+    }
+
+    @Test
+    func `heartsString hp exceeding maxHP clamps empty to zero`() {
+        let result = BattleHP.heartsString(hp: 5, maxHP: 3)
+        #expect(result == "\u{2665}\u{2665}\u{2665}\u{2665}\u{2665}")
     }
 
     // MARK: - battleHP all stages covered

@@ -27,7 +27,7 @@ extension SpriteCatalog {
             0x0000, //  ................
             0x0700, //  .....###........
             0x0F80, //  ....#####.......
-            0x0D80, //  ....##.##.......
+            0x0A80, //  ....##.##.......
             0x0F80, //  ....#####.......
             0x0F00, //  ....####........
             0x1FC0, //  ...#######......
@@ -46,7 +46,7 @@ extension SpriteCatalog {
             0x0000, //  ................
             0x0700, //  .....###........
             0x0F80, //  ....#####.......
-            0x0D80, //  ....##.##.......
+            0x0A80, //  ....##.##.......
             0x0F80, //  ....#####.......
             0x0F00, //  ....####........
             0x1FC0, //  ...#######......
@@ -62,7 +62,7 @@ extension SpriteCatalog {
 
         let walk1 = SpriteFrame(rows: [
             0x0000, 0x0000,
-            0x0700, 0x0F80, 0x0D80, 0x0F80,
+            0x0700, 0x0F80, 0x0A80, 0x0F80,
             0x0F00,
             0x1FC0,
             0x3F80,
@@ -77,7 +77,7 @@ extension SpriteCatalog {
 
         let walk2 = SpriteFrame(rows: [
             0x0000, 0x0000,
-            0x0700, 0x0F80, 0x0D80, 0x0F80,
+            0x0700, 0x0F80, 0x0A80, 0x0F80,
             0x0F00,
             0x1FC0,
             0x3F80,
@@ -130,7 +130,7 @@ extension SpriteCatalog {
             0x0000, 0x0000,
             0x0700,
             0x0F80,
-            0x0D80,
+            0x0A80,
             0x0F80,
             0x0E00, //  ....###.........  mouth open
             0x1FC0,
@@ -148,7 +148,7 @@ extension SpriteCatalog {
             0x0000, 0x0000,
             0x0700,
             0x0F80,
-            0x0D80,
+            0x0A80,
             0x0F80,
             0x0F00, //  mouth closed
             0x1FC0,
@@ -205,7 +205,7 @@ extension SpriteCatalog {
             0x0000, 0x0000,
             0x0700,
             0x0F80,
-            0x0D80,
+            0x0A80,
             0x0FC0, //  ....######......  head forward
             0x0E00, //  ....###.........  mouth open
             0x1FC0,
@@ -223,7 +223,7 @@ extension SpriteCatalog {
             0x0000, 0x0000,
             0x0700,
             0x0F80,
-            0x0D80,
+            0x0A80,
             0x0FC6, //  ....######...##.  fireball
             0x0E0F, //  ....###.....####  fireball
             0x1FC6, //  ...#######...##.

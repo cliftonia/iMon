@@ -5,7 +5,7 @@ nonisolated struct PetState: Codable, Sendable {
     // MARK: - Identity
 
     let id: Tagged<PetState, UUID>
-    var species: virtual petSpecies
+    var species: PetSpecies
 
     // MARK: - Vital Stats
 

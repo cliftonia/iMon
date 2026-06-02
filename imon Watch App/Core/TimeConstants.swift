@@ -20,7 +20,7 @@ nonisolated enum TimeConstants {
     /// Owner has 20 minutes to respond to a care call before it counts as a care mistake
     static let careMistakeWindow: TimeInterval = 1_200
 
-    /// Hour of the day the virtual pet wakes up (7 AM)
+    /// Hour of the day the Creature wakes up (7 AM)
     static let sleepWakeHour: Int = 7
 
     // MARK: - Evolution Timers
@@ -61,10 +61,10 @@ nonisolated enum TimeConstants {
 
     // MARK: - Death Thresholds
 
-    /// Total care mistakes before the virtual pet dies
+    /// Total care mistakes before the Creature dies
     static let maxCareMistakesBeforeDeath: Int = 20
 
-    /// Total untreated injuries before the virtual pet dies
+    /// Total untreated injuries before the Creature dies
     static let maxInjuriesBeforeDeath: Int = 20
 
     /// An untreated injury leads to death after 6 hours

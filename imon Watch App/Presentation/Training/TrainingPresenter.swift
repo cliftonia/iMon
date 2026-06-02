@@ -7,7 +7,7 @@ final class TrainingPresenter {
     let spriteAnimator = SpriteAnimator()
     let targetAnimator = SpriteAnimator()
 
-    private let species: virtual petSpecies
+    private let species: PetSpecies
     private let onComplete: (Bool) -> Void
 
     // MARK: - Computed
@@ -18,7 +18,7 @@ final class TrainingPresenter {
     // MARK: - Init
 
     init(
-        species: virtual petSpecies,
+        species: PetSpecies,
         onComplete: @escaping (Bool) -> Void
     ) {
         self.species = species
@@ -58,7 +58,7 @@ final class TrainingPresenter {
     private func enterReady() {
         viewModel.phase = .ready
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .walk)
+            SpriteCatalog.sideApproach(for: species)
         )
         targetAnimator.stop()
 
@@ -72,15 +72,14 @@ final class TrainingPresenter {
     private func enterChallenge() {
         viewModel.phase = .challenge
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .idle)
+            SpriteCatalog.sideStance(for: species)
         )
     }
 
     private func enterAttacking(won: Bool) {
         viewModel.phase = .attacking
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .attack)
-                .withFrameDuration(0.2)
+            SpriteCatalog.sideAttack(for: species)
         )
         WKInterfaceDevice.battleHaptic()
 
@@ -130,7 +129,7 @@ final class TrainingPresenter {
     private func enterMiss() {
         viewModel.phase = .miss
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .idle)
+            SpriteCatalog.sideStance(for: species)
         )
         targetAnimator.play(SharedSprites.missStreaks)
         WKInterfaceDevice.trainingMissHaptic()

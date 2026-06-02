@@ -8,7 +8,7 @@ nonisolated enum EvolutionEngine {
     static func checkEvolution(
         for state: PetState,
         at now: Date
-    ) -> virtual petSpecies? {
+    ) -> PetSpecies? {
         guard state.species.stage != .ultimate else { return nil }
 
         let candidates = EvolutionChart.evolutions(for: state.species)
@@ -31,7 +31,7 @@ nonisolated enum EvolutionEngine {
     /// Apply evolution to state, resetting stage-specific counters.
     static func evolve(
         _ state: PetState,
-        to species: virtual petSpecies,
+        to species: PetSpecies,
         at now: Date
     ) -> PetState {
         var state = state

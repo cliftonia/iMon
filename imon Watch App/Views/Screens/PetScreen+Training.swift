@@ -55,7 +55,6 @@ extension PetScreen {
                     .fixedSize()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 20)
         }
     }
 
@@ -87,8 +86,6 @@ extension PetScreen {
                 .opacity(isComplete ? 1 : 0)
                 .allowsHitTesting(isComplete)
             }
-            .padding(.horizontal, 4)
-            .fixedSize(horizontal: false, vertical: true)
         }
     }
 

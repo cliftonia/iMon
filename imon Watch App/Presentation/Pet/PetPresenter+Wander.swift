@@ -152,6 +152,13 @@ extension PetPresenter {
     // MARK: - Battle Mode (Inline)
 
     func startBattleMode() {
+        guard BattleEngine.canBattle(state) else {
+            refuseTask?.cancel()
+            refuseTask = Task { [weak self] in
+                await self?.runRefuseSequence()
+            }
+            return
+        }
         stopWandering()
         let presenter = BattlePresenter(
             petState: state

@@ -2,17 +2,23 @@ import Foundation
 
 nonisolated struct BattleOpponent: Sendable {
 
-    let species: virtual petSpecies
+    let species: PetSpecies
     let power: Double
     let attribute: Attribute
 
     /// Generate an opponent matched to the player's current stage.
-    /// Picks a random species of the same evolution stage.
+    /// Prefers a different species of the same evolution stage, falling
+    /// back to any other species so the pet never battles itself.
     static func generate(matching state: PetState) -> BattleOpponent {
-        let sameStage = virtual petSpecies.allCases.filter {
+        let sameStage = PetSpecies.allCases.filter {
             $0.stage == state.species.stage && $0 != state.species
         }
-        let opponent = sameStage.randomElement() ?? state.species
+        let others = PetSpecies.allCases.filter {
+            $0 != state.species
+        }
+        let opponent = sameStage.randomElement()
+            ?? others.randomElement()
+            ?? state.species
         let power = Double(opponent.basePower) + Double.random(in: -10...10)
         return BattleOpponent(
             species: opponent,

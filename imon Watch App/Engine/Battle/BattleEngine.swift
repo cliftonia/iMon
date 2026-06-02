@@ -8,6 +8,12 @@ nonisolated enum RoundOutcome: Equatable, Sendable {
 
 nonisolated enum BattleEngine {
 
+    // MARK: - Query
+
+    static func canBattle(_ state: PetState) -> Bool {
+        !state.isDead && !state.isEgg && !state.isSleeping
+    }
+
     /// Run a battle between pet and opponent.
     /// Applies attribute advantages and RNG variance to determine outcome.
     static func battle(

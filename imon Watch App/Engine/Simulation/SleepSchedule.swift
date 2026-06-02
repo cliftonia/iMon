@@ -35,7 +35,7 @@ nonisolated enum SleepSchedule {
     }
 
     /// Check if a given hour falls within sleep hours for a species.
-    static func isSleepTime(hour: Int, for species: virtual petSpecies) -> Bool {
+    static func isSleepTime(hour: Int, for species: PetSpecies) -> Bool {
         hour >= species.bedtimeHour || hour < species.wakeHour
     }
 

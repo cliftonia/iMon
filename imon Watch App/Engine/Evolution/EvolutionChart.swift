@@ -8,7 +8,7 @@ nonisolated enum EvolutionChart {
 
     /// Get possible evolutions for a species
     static func evolutions(
-        for species: virtual petSpecies
+        for species: PetSpecies
     ) -> [EvolutionRequirement] {
         requirements.filter { $0.from == species }
     }

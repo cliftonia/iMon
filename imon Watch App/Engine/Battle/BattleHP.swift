@@ -8,4 +8,12 @@ nonisolated enum BattleHP {
         let strengthBonus = state.strengthHearts.value >= 3 ? 1 : 0
         return base + hungerBonus + strengthBonus
     }
+
+    static func heartsString(hp: Int, maxHP: Int) -> String {
+        String(repeating: "\u{2665}", count: hp)
+            + String(
+                repeating: "\u{2661}",
+                count: max(0, maxHP - hp)
+            )
+    }
 }

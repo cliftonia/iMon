@@ -12,114 +12,126 @@ struct PetScreen: View {
     }
 
     var body: some View {
+        screenContent
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            .overlay(alignment: .topLeading) {
+                debugNameOverlay
+            }
+            .focusable()
+            .digitalCrownRotation(
+                $crownValue,
+                from: 0,
+                through: 7,
+                by: 1,
+                sensitivity: .medium,
+                isContinuous: false
+            )
+            .onChange(of: crownValue) { _, newValue in
+                guard !presenter.viewModel.isBusy else { return }
+                let allCases = PetViewModel.MenuAction.allCases
+                let index = Int(newValue.rounded()) % allCases.count
+                presenter.viewModel.menuSelection = allCases[index]
+            }
+            .onChange(of: presenter.viewModel.menuSelection) { _, newValue in
+                crownValue = Double(newValue.rawValue)
+            }
+            .task {
+                presenter.startGameLoop()
+            }
+            .onDisappear {
+                presenter.stopGameLoop()
+            }
+            .sheet(
+                isPresented: Bindable(presenter.viewModel)
+                    .showEvolution
+            ) {
+                evolutionSheet
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Creature virtual pet")
+    }
+
+    // MARK: - Debug Overlay
+
+    @ViewBuilder
+    private var debugNameOverlay: some View {
+        #if DEBUG
+        if let species = presenter.viewModel.status?.species {
+            Text(species.displayName)
+                .font(.system(
+                    size: 9,
+                    weight: .bold,
+                    design: .monospaced
+                ))
+                .foregroundStyle(.yellow)
+                .padding(.leading, 4)
+                .accessibilityHidden(true)
+        }
+        #endif
+    }
+
+    // MARK: - Screen Content
+
+    @ViewBuilder
+    private var screenContent: some View {
+        switch screenMode {
+        case .normal:
+            normalLayout
+        case .training:
+            GameModeLayout {
+                trainingLCD
+            } info: {
+                trainingInfoRow
+            } buttons: {
+                trainingButtons
+            }
+        case .battle:
+            GameModeLayout {
+                battleLCD
+            } info: {
+                battleInfoRow
+            } buttons: {
+                battleButtons
+            }
+        }
+    }
+
+    // MARK: - Normal Layout
+
+    private var normalLayout: some View {
         VStack(spacing: 4) {
             LCDBezel {
-                lcdContent
+                LCDDisplay(
+                    leftSprite: presenter
+                        .spriteAnimator.currentFrame,
+                    rightSprite: effectRightSprite,
+                    poopCount: presenter.viewModel.isBusy
+                        ? 0
+                        : presenter.viewModel.status?.poopCount
+                            ?? 0,
+                    stinkPhase: presenter
+                        .spriteAnimator.currentFrameIndex,
+                    lightsOn: presenter.viewModel.status?
+                        .lightsOn ?? true,
+                    leftSpriteOffsetX: presenter.viewModel
+                        .petOffsetX
+                )
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            middleRow
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-
-            bottomRow
-                .frame(
-                    maxHeight: .infinity,
-                    alignment: .bottom
-                )
-        }
-        .padding(.horizontal, 12)
-        .padding(.top, 12)
-        .focusable()
-        .digitalCrownRotation(
-            $crownValue,
-            from: 0,
-            through: 7,
-            by: 1,
-            sensitivity: .medium,
-            isContinuous: false
-        )
-        .onChange(of: crownValue) { _, newValue in
-            guard !presenter.viewModel.isBusy else { return }
-            let allCases = PetViewModel.MenuAction.allCases
-            let index = Int(newValue.rounded()) % allCases.count
-            presenter.viewModel.menuSelection = allCases[index]
-        }
-        .onChange(of: presenter.viewModel.menuSelection) { _, newValue in
-            crownValue = Double(newValue.rawValue)
-        }
-        .task {
-            presenter.startGameLoop()
-        }
-        .onDisappear {
-            presenter.stopGameLoop()
-        }
-        .sheet(
-            isPresented: Bindable(presenter.viewModel)
-                .showEvolution
-        ) {
-            evolutionSheet
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("virtual pet virtual pet")
-    }
-
-    // MARK: - LCD Content
-
-    @ViewBuilder
-    private var lcdContent: some View {
-        switch screenMode {
-        case .normal:
-            LCDDisplay(
-                leftSprite: presenter
-                    .spriteAnimator.currentFrame,
-                rightSprite: effectRightSprite,
-                poopCount: presenter.viewModel.isBusy
-                    ? 0
-                    : presenter.viewModel.status?.poopCount
-                        ?? 0,
-                stinkPhase: presenter
-                    .spriteAnimator.currentFrameIndex,
-                lightsOn: presenter.viewModel.status?
-                    .lightsOn ?? true,
-                leftSpriteOffsetX: presenter.viewModel
-                    .petOffsetX
-            )
-        case .training:
-            trainingLCD
-        case .battle:
-            battleLCD
-        }
-    }
-
-    // MARK: - Middle Row
-
-    @ViewBuilder
-    private var middleRow: some View {
-        switch screenMode {
-        case .normal:
             MenuIconRow(
                 selectedIndex: presenter.viewModel
                     .menuSelection.rawValue
             )
-        case .training:
-            trainingInfoRow
-        case .battle:
-            battleInfoRow
-        }
-    }
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
 
-    // MARK: - Bottom Row
-
-    @ViewBuilder
-    private var bottomRow: some View {
-        switch screenMode {
-        case .normal:
             normalButtons
-        case .training:
-            trainingButtons
-        case .battle:
-            battleButtons
+                .frame(
+                    maxHeight: .infinity,
+                    alignment: .bottom
+                )
         }
     }
 

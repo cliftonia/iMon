@@ -28,10 +28,44 @@ final class BattlePresenter {
 
     // MARK: - Computed
 
-    var petFrame: SpriteFrame { petAnimator.currentFrame }
+    // Canonical battle layout:
+    //   Pet   — left side,  faces right, fires left→right.
+    //   Enemy — right side, faces left,  fires right→left.
+    // Sprites are drawn facing LEFT natively (per the wander convention).
 
+    /// Pet faces right (mirrored from native-left).
+    var petFrame: SpriteFrame {
+        petAnimator.currentFrame.mirrored()
+    }
+
+    /// Enemy faces left (native, no mirror).
     var opponentFrame: SpriteFrame {
-        opponentAnimator.currentFrame.mirrored()
+        opponentAnimator.currentFrame
+    }
+
+    private static let petOffsetX = 1
+    private static let opponentOffsetX = 15
+
+    /// Horizontal position of the active sprite — pet on the left,
+    /// enemy on the right, projectiles cross through the centre.
+    var activeOffsetX: Int {
+        switch viewModel.phase {
+        case .intro, .choosing, .projectile, .opponentProjectile:
+            return 8
+        case .approach, .attacking:
+            return Self.petOffsetX
+        case .opponentAttacking, .defeat:
+            return Self.opponentOffsetX
+        case .impact:
+            switch viewModel.lastRoundOutcome {
+            case .playerHit: return Self.opponentOffsetX
+            case .opponentHit: return Self.petOffsetX
+            case .clash, .none: return 8
+            }
+        case .victory:
+            return viewModel.result == .lose
+                ? Self.opponentOffsetX : Self.petOffsetX
+        }
     }
 
     /// Single active sprite — only one thing on screen at a time.
@@ -39,18 +73,25 @@ final class BattlePresenter {
         switch viewModel.phase {
         case .intro:
             return .empty
-        case .approach, .choosing, .attacking, .projectile:
+        case .approach, .choosing:
+            // Front idle/walk faces right natively — no mirror.
+            return petAnimator.currentFrame
+        case .attacking:
+            // Side profile is native-left, so mirror to face right.
             return petFrame
+        case .projectile:
+            // Raw frame — projectile already goes L→R
+            return petAnimator.currentFrame
         case .opponentAttacking:
             return opponentFrame
         case .opponentProjectile:
-            // No mirror — projectileReversed already goes R→L
+            // Raw frame — projectileReversed already goes R→L
             return opponentAnimator.currentFrame
         case .impact:
             switch viewModel.lastRoundOutcome {
             case .playerHit: return opponentFrame
             case .opponentHit, .clash, .none:
-                return petAnimator.currentFrame
+                return petFrame
             }
         case .victory:
             return viewModel.result == .lose
@@ -201,9 +242,7 @@ extension BattlePresenter {
     private func runAttacking() async {
         viewModel.phase = .attacking
         petAnimator.play(
-            SpriteCatalog.animation(
-                for: petState.species, kind: .attack
-            ).withFrameDuration(0.25)
+            SpriteCatalog.sideAttack(for: petState.species)
         )
         WKInterfaceDevice.battleHaptic()
         try? await Task.sleep(for: .milliseconds(800))
@@ -216,16 +255,14 @@ extension BattlePresenter {
                 for: petState.species, height: height
             )
         )
-        try? await Task.sleep(for: .seconds(1))
+        try? await Task.sleep(for: .milliseconds(600))
     }
 
     private func runOpponentAttacking() async {
         guard let opp = opponent else { return }
         viewModel.phase = .opponentAttacking
         opponentAnimator.play(
-            SpriteCatalog.animation(
-                for: opp.species, kind: .attack
-            ).withFrameDuration(0.25)
+            SpriteCatalog.sideAttack(for: opp.species)
         )
         try? await Task.sleep(for: .milliseconds(800))
     }
@@ -241,7 +278,7 @@ extension BattlePresenter {
             )
         )
         WKInterfaceDevice.battleHaptic()
-        try? await Task.sleep(for: .seconds(1))
+        try? await Task.sleep(for: .milliseconds(600))
     }
 
     private func runImpact(outcome: RoundOutcome) async {

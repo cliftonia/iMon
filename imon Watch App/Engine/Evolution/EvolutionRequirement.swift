@@ -2,8 +2,8 @@ import Foundation
 
 nonisolated struct EvolutionRequirement: Sendable {
 
-    let from: virtual petSpecies
-    let to: virtual petSpecies
+    let from: PetSpecies
+    let to: PetSpecies
     let minAwakeTime: TimeInterval
     let maxCareMistakes: Int?
     let minCareMistakes: Int?
@@ -15,8 +15,8 @@ nonisolated struct EvolutionRequirement: Sendable {
     let isDefault: Bool
 
     init(
-        from: virtual petSpecies,
-        to: virtual petSpecies,
+        from: PetSpecies,
+        to: PetSpecies,
         minAwakeTime: TimeInterval,
         maxCareMistakes: Int? = nil,
         minCareMistakes: Int? = nil,

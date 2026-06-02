@@ -91,7 +91,7 @@ final class PetPresenter {
 
     /// Debug: walk through each evolution journey, resetting
     /// to egg between them. Loops back to journey 1 at the end.
-    private static let debugJourneys: [[virtual petSpecies]] = [
+    private static let debugJourneys: [[PetSpecies]] = [
         [.dotkin, .hopkin, .emberkin, .rexkin, .steelkin],
         [.dotkin, .hopkin, .marshkin, .blazekin, .orbkin],
         [.dotkin, .hopkin, .emberkin, .dreadkin, .steelkin],

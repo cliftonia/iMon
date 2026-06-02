@@ -70,7 +70,7 @@ final class PetViewModel {
     // MARK: - Evolution
 
     var showEvolution: Bool = false
-    var evolutionTarget: virtual petSpecies?
+    var evolutionTarget: PetSpecies?
 
     // MARK: - Error
 
