@@ -13,6 +13,11 @@ final class PetPresenter {
 
     var state: PetState
     let store: PetStateStore
+
+    /// Returns whether it is currently night (e.g. from WeatherKit daylight),
+    /// or nil to fall back to the fixed bedtime/wake schedule.
+    private let currentNight: () -> Bool?
+
     private var gameTimer: Timer?
     var wanderTimer: Timer?
     var feedingTask: Task<Void, Never>?
@@ -32,9 +37,14 @@ final class PetPresenter {
 
     // MARK: - Init
 
-    init(state: PetState, store: PetStateStore) {
+    init(
+        state: PetState,
+        store: PetStateStore,
+        currentNight: @escaping () -> Bool? = { nil }
+    ) {
         self.state = state
         self.store = store
+        self.currentNight = currentNight
         updateViewModel()
     }
 
@@ -74,9 +84,16 @@ final class PetPresenter {
         save()
     }
 
+    /// Re-applies environment-driven state (e.g. weather day/night) right away,
+    /// so the dark screen follows real dusk without waiting for the next tick.
+    func environmentDidChange() {
+        advanceState()
+        save()
+    }
+
     private func advanceState() {
         let wasSleeping = state.isSleeping
-        state = GameEngine.advance(state, to: .now)
+        state = GameEngine.advance(state, to: .now, isNight: currentNight())
 
         if !wasSleeping, state.isSleeping, viewModel.isBusy {
             state.isSleeping = false

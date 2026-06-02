@@ -7,7 +7,11 @@ nonisolated enum GameEngine {
 
     /// Advance the full game state to the supplied date, running every
     /// simulator in the correct order and checking death conditions.
-    static func advance(_ state: PetState, to now: Date) -> PetState {
+    static func advance(
+        _ state: PetState,
+        to now: Date,
+        isNight: Bool? = nil
+    ) -> PetState {
         var state = state
 
         guard !state.isDead, !state.isEgg else {
@@ -20,7 +24,7 @@ nonisolated enum GameEngine {
         state.age = calendar.dateComponents([.day], from: state.bornAt, to: now).day ?? state.age
 
         // Apply simulators in dependency order
-        state = SleepSchedule.apply(to: state, at: now)
+        state = SleepSchedule.apply(to: state, at: now, isNight: isNight)
         state = HungerSimulator.apply(to: state, at: now)
         state = StrengthSimulator.apply(to: state, at: now)
         state = PoopSimulator.apply(to: state, at: now)

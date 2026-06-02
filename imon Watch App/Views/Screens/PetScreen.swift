@@ -5,6 +5,7 @@ struct PetScreen: View {
 
     let presenter: PetPresenter
     @Environment(AppPresenter.self) private var appPresenter
+    @Environment(\.scenePhase) private var scenePhase
     @State private var crownValue: Double = 0
 
     private var screenMode: PetViewModel.ScreenMode {
@@ -15,9 +16,6 @@ struct PetScreen: View {
         screenContent
             .padding(.horizontal, 12)
             .padding(.top, 12)
-            .overlay(alignment: .topLeading) {
-                debugNameOverlay
-            }
             .focusable()
             .digitalCrownRotation(
                 $crownValue,
@@ -38,6 +36,15 @@ struct PetScreen: View {
             }
             .task {
                 presenter.startGameLoop()
+                appPresenter.weatherStore.refreshIfStale()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .active {
+                    appPresenter.weatherStore.refreshIfStale()
+                }
+            }
+            .onChange(of: appPresenter.weatherStore.snapshot) { _, _ in
+                presenter.environmentDidChange()
             }
             .onDisappear {
                 presenter.stopGameLoop()
@@ -50,6 +57,19 @@ struct PetScreen: View {
             }
             .accessibilityElement(children: .contain)
             .accessibilityLabel("Creature virtual pet")
+    }
+
+    // MARK: - Weather
+
+    @ViewBuilder
+    private var weatherHeader: some View {
+        HStack(spacing: 0) {
+            if let snapshot = appPresenter.weatherStore.snapshot {
+                WeatherOverlay(snapshot: snapshot)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(height: 18)
     }
 
     // MARK: - Debug Overlay
@@ -65,7 +85,6 @@ struct PetScreen: View {
                     design: .monospaced
                 ))
                 .foregroundStyle(.yellow)
-                .padding(.leading, 4)
                 .accessibilityHidden(true)
         }
         #endif
@@ -101,6 +120,8 @@ struct PetScreen: View {
 
     private var normalLayout: some View {
         VStack(spacing: 4) {
+            weatherHeader
+
             LCDBezel {
                 LCDDisplay(
                     leftSprite: presenter
@@ -115,7 +136,9 @@ struct PetScreen: View {
                     lightsOn: presenter.viewModel.status?
                         .lightsOn ?? true,
                     leftSpriteOffsetX: presenter.viewModel
-                        .petOffsetX
+                        .petOffsetX,
+                    weatherCondition: appPresenter
+                        .weatherStore.snapshot?.condition
                 )
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -127,11 +150,14 @@ struct PetScreen: View {
             .lineLimit(1)
             .minimumScaleFactor(0.7)
 
-            normalButtons
-                .frame(
-                    maxHeight: .infinity,
-                    alignment: .bottom
-                )
+            VStack(spacing: 2) {
+                normalButtons
+                debugNameOverlay
+            }
+            .frame(
+                maxHeight: .infinity,
+                alignment: .bottom
+            )
         }
     }
 

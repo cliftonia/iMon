@@ -1,10 +1,18 @@
 import Foundation
 
 /// Determines if the pet should be sleeping based on the current hour
-/// and the species' bedtime/wake schedule.
+/// and the species' bedtime/wake schedule. The dark screen ("night mode")
+/// can additionally follow real-world daylight via `isNight`.
 nonisolated enum SleepSchedule {
 
-    static func apply(to state: PetState, at now: Date) -> PetState {
+    /// - Parameter isNight: when non-nil (e.g. from WeatherKit daylight),
+    ///   drives the dark screen so it follows the real sunset/sunrise. Sleep
+    ///   itself stays on the fixed bedtime/wake hours regardless.
+    static func apply(
+        to state: PetState,
+        at now: Date,
+        isNight: Bool? = nil
+    ) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
@@ -29,6 +37,14 @@ nonisolated enum SleepSchedule {
                 state.lightsOn = true
             }
             state.lightsToggledDuringSleepAt = nil
+        }
+
+        // 4. Dark mode follows real-world night even while awake (winter dusk
+        //    is earlier than bedtime), unless the user is mid lights-toggle.
+        if let isNight,
+           !state.isSleeping,
+           state.lightsToggledDuringSleepAt == nil {
+            state.lightsOn = !isNight
         }
 
         return state

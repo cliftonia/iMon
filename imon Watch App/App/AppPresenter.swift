@@ -21,13 +21,18 @@ final class AppPresenter {
     private(set) var deathPresenter: DeathPresenter?
 
     let router = AppRouter()
+    let weatherStore: WeatherStore
 
     private let store: PetStateStore
 
     // MARK: - Init
 
-    init(store: PetStateStore = JSONPetStateStore.live()) {
+    init(
+        store: PetStateStore = JSONPetStateStore.live(),
+        weatherStore: WeatherStore = .makeDefault()
+    ) {
         self.store = store
+        self.weatherStore = weatherStore
     }
 
     // MARK: - Lifecycle
@@ -71,7 +76,13 @@ final class AppPresenter {
 
     private func startAlive(state: PetState) {
         phase = .alive
-        let presenter = PetPresenter(state: state, store: store)
+        let presenter = PetPresenter(
+            state: state,
+            store: store,
+            currentNight: { [weatherStore] in
+                weatherStore.snapshot.map { !$0.isDaylight }
+            }
+        )
         petPresenter = presenter
         statsPresenter = StatsPresenter()
         hatchPresenter = nil

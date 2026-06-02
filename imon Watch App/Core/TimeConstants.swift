@@ -93,4 +93,9 @@ nonisolated enum TimeConstants {
 
     /// RNG variance applied to battle power calculations
     static let battleRNGVariance: Double = 0.20
+
+    // MARK: - Weather
+
+    /// Cache window before re-fetching current weather (30 minutes)
+    static let weatherCacheInterval: TimeInterval = 1_800
 }

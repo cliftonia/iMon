@@ -1,0 +1,67 @@
+import Foundation
+import os
+
+/// Holds the current weather snapshot and refreshes it on demand, throttled to
+/// the cache window. Leaves `snapshot` nil when weather is unavailable, so the
+/// UI can simply hide the overlay.
+@Observable
+final class WeatherStore {
+
+    private(set) var snapshot: WeatherSnapshot?
+
+    private let provider: WeatherProvider
+    private let fallback: WeatherSnapshot?
+    private var lastFetch: Date?
+    private var fetchTask: Task<Void, Never>?
+
+    /// - Parameter fallback: shown only when a fetch fails and no real reading
+    ///   exists yet. Left nil in Release so the overlay simply hides.
+    init(provider: WeatherProvider = .live(), fallback: WeatherSnapshot? = nil) {
+        self.provider = provider
+        self.fallback = fallback
+    }
+
+    /// Kicks off a refresh unless one is in flight or the last fetch is still
+    /// within the cache window. Returns the spawned task (nil if skipped).
+    @discardableResult
+    func refreshIfStale(now: Date = .now) -> Task<Void, Never>? {
+        guard shouldRefresh(now: now) else { return nil }
+        let task = Task { [weak self] in
+            guard let self else { return }
+            await self.refresh(now: now)
+        }
+        fetchTask = task
+        return task
+    }
+
+    /// Fetches and stores a snapshot, leaving the existing value on failure.
+    func refresh(now: Date = .now) async {
+        defer { fetchTask = nil }
+        do {
+            snapshot = try await provider.fetchCurrent()
+            lastFetch = now
+        } catch {
+            Log.weather.error("Weather fetch failed: \(error, privacy: .public)")
+            if snapshot == nil { snapshot = fallback }
+        }
+    }
+
+    /// Live store with a DEBUG-only placeholder so the overlay is visible before
+    /// the WeatherKit capability is provisioned. Release shows real data only.
+    static func makeDefault() -> WeatherStore {
+        #if DEBUG
+        return WeatherStore(provider: .live(), fallback: .sample)
+        #else
+        return WeatherStore(provider: .live())
+        #endif
+    }
+
+    private func shouldRefresh(now: Date) -> Bool {
+        guard fetchTask == nil else { return false }
+        if let last = lastFetch,
+           now.timeIntervalSince(last) < TimeConstants.weatherCacheInterval {
+            return false
+        }
+        return true
+    }
+}
