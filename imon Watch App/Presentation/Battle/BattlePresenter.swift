@@ -33,14 +33,14 @@ final class BattlePresenter {
     //   Enemy — right side, faces left,  fires right→left.
     // Sprites are drawn facing LEFT natively (per the wander convention).
 
-    /// Pet faces right (mirrored from native-left).
+    /// Pet faces right (toward the enemy on the right).
     var petFrame: SpriteFrame {
-        petAnimator.currentFrame.mirrored()
+        petAnimator.currentFrame.facing(.right)
     }
 
-    /// Enemy faces left (native, no mirror).
+    /// Enemy faces left (toward the pet on the left).
     var opponentFrame: SpriteFrame {
-        opponentAnimator.currentFrame
+        opponentAnimator.currentFrame.facing(.left)
     }
 
     private static let petOffsetX = 1
@@ -73,14 +73,11 @@ final class BattlePresenter {
         switch viewModel.phase {
         case .intro:
             return .empty
-        case .approach, .choosing:
-            // Front idle/walk faces right natively — no mirror.
-            return petAnimator.currentFrame
-        case .attacking:
-            // Side profile is native-left, so mirror to face right.
+        case .approach, .choosing, .attacking:
+            // Pet faces the enemy on the right.
             return petFrame
         case .projectile:
-            // Raw frame — projectile already goes L→R
+            // Raw frame — projectile already travels left→right.
             return petAnimator.currentFrame
         case .opponentAttacking:
             return opponentFrame

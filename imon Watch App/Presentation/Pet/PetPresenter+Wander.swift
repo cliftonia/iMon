@@ -67,7 +67,7 @@ extension PetPresenter {
             for: state.species, kind: .sideWalk
         )
         spriteAnimator.play(
-            direction > 0 ? walk.mirrored() : walk
+            walk.facing(direction > 0 ? .right : .left)
         )
 
         wanderTimer = Timer.scheduledTimer(

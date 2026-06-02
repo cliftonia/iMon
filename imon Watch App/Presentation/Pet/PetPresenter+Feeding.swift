@@ -60,7 +60,7 @@ extension PetPresenter {
         feedingAnimator.play(servingAnim)
 
         let idle = SpriteCatalog.animation(for: state.species, kind: .idle)
-        spriteAnimator.play(idle.mirrored())
+        spriteAnimator.play(idle.facing(.left))
 
         try? await Task.sleep(for: .milliseconds(800))
     }
@@ -76,7 +76,7 @@ extension PetPresenter {
 
         let chomp = SpriteCatalog.animation(
             for: state.species, kind: .eat
-        ).mirrored()
+        ).facing(.left)
 
         for (index, stage) in foodStages.enumerated() {
             viewModel.feedingPhase = .bite(index + 1)
@@ -98,7 +98,7 @@ extension PetPresenter {
         feedingAnimator.play(.still(SharedSprites.satisfactionHeart))
         let happy = SpriteCatalog.animation(
             for: state.species, kind: .happy
-        ).mirrored()
+        ).facing(.left)
         spriteAnimator.play(happy)
         WKInterfaceDevice.feedHaptic()
 

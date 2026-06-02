@@ -58,7 +58,7 @@ final class TrainingPresenter {
     private func enterReady() {
         viewModel.phase = .ready
         spriteAnimator.play(
-            SpriteCatalog.sideApproach(for: species)
+            SpriteCatalog.sideApproach(for: species).facing(.right)
         )
         targetAnimator.stop()
 
@@ -72,14 +72,14 @@ final class TrainingPresenter {
     private func enterChallenge() {
         viewModel.phase = .challenge
         spriteAnimator.play(
-            SpriteCatalog.sideStance(for: species)
+            SpriteCatalog.sideStance(for: species).facing(.right)
         )
     }
 
     private func enterAttacking(won: Bool) {
         viewModel.phase = .attacking
         spriteAnimator.play(
-            SpriteCatalog.sideAttack(for: species)
+            SpriteCatalog.sideAttack(for: species).facing(.right)
         )
         WKInterfaceDevice.battleHaptic()
 
@@ -114,7 +114,7 @@ final class TrainingPresenter {
     private func enterHit() {
         viewModel.phase = .hit
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .happy)
+            SpriteCatalog.animation(for: species, kind: .happy).facing(.right)
         )
         targetAnimator.play(SharedSprites.trainingHitSequence)
         WKInterfaceDevice.trainingHitHaptic()
@@ -129,7 +129,7 @@ final class TrainingPresenter {
     private func enterMiss() {
         viewModel.phase = .miss
         spriteAnimator.play(
-            SpriteCatalog.sideStance(for: species)
+            SpriteCatalog.sideStance(for: species).facing(.right)
         )
         targetAnimator.play(SharedSprites.missStreaks)
         WKInterfaceDevice.trainingMissHaptic()
@@ -170,7 +170,7 @@ final class TrainingPresenter {
     private func enterVictory() {
         viewModel.phase = .victory
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .happy)
+            SpriteCatalog.animation(for: species, kind: .happy).facing(.right)
         )
         targetAnimator.play(SharedSprites.trainingVictorySparkle)
         WKInterfaceDevice.trainingWinHaptic()
@@ -182,6 +182,7 @@ final class TrainingPresenter {
             SpriteCatalog.animation(for: species, kind: .sleep)
                 .withFrameDuration(0.8)
                 .withLoops(true)
+                .facing(.right)
         )
         targetAnimator.stop()
         WKInterfaceDevice.trainingLoseHaptic()
