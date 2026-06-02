@@ -24,3 +24,7 @@ CLAUDE.md
 
 # Secrets
 *.env
+
+# Sprite tooling generated artifacts
+Tools/__pycache__/
+Tools/sprites_png/
