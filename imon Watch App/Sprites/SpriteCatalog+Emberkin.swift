@@ -276,43 +276,56 @@ extension SpriteCatalog {
             0x0000  //  ................
         ])
 
+        // Emberkin's frames were authored facing left; flip them so it faces
+        // right — toward the food, the menu, and battle opponents — and recentre.
+        func faceRight(_ frame: SpriteFrame) -> SpriteFrame {
+            frame.mirrored().shiftedLeft(4)
+        }
+
         switch kind {
         case .idle:
-            return [idle1, idle2]
+            return [faceRight(idle1), faceRight(idle2)]
         case .walk:
             return [
-                walk1,
-                walk1.shiftedDown(1),
-                walk2,
-                walk2.shiftedDown(1)
+                faceRight(walk1),
+                faceRight(walk1).shiftedDown(1),
+                faceRight(walk2),
+                faceRight(walk2).shiftedDown(1)
             ]
         case .sideWalk:
             return [sideWalk1, sideWalk2]
         case .happy:
             return [
-                idle1.shiftedDown(1),
-                happy1,
-                happy2,
-                idle1.overlaying(SharedSprites.landingDust)
+                faceRight(idle1).shiftedDown(1),
+                faceRight(happy1),
+                faceRight(happy2),
+                faceRight(idle1).overlaying(SharedSprites.landingDust)
             ]
         case .eat:
-            return [eat1, eat2, eat1, idle1]
+            return [
+                faceRight(idle1),
+                faceRight(eat1),
+                faceRight(eat2),
+                faceRight(eat1)
+            ]
         case .sleep:
             return [
-                sleep1,
-                idle1.overlaying(SharedSprites.sleepZ2),
-                sleep2,
-                idle2.overlaying(SharedSprites.sleepZ3)
+                faceRight(sleep1),
+                faceRight(idle1).overlaying(SharedSprites.sleepZ2),
+                faceRight(sleep2),
+                faceRight(idle2).overlaying(SharedSprites.sleepZ3)
             ]
         case .attack:
             return [
-                idle1.shiftedRight(1),
-                attack1,
-                attack2,
-                attack2.overlaying(SharedSprites.impactBurst)
+                faceRight(idle1),
+                faceRight(attack1),
+                faceRight(attack2),
+                faceRight(attack2).overlaying(SharedSprites.impactBurst)
             ]
         case .refuse:
-            return defaultAnimationFromIdle(idle1, idle2, kind)
+            return defaultAnimationFromIdle(
+                faceRight(idle1), faceRight(idle2), kind
+            )
         }
     }
 }
