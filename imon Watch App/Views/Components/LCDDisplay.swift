@@ -58,10 +58,11 @@ struct LCDDisplay: View {
     var body: some View {
         if hasWeatherEffect {
             TimelineView(.periodic(from: .now, by: Self.weatherFrameInterval)) { timeline in
-                let phase = Int(
-                    timeline.date.timeIntervalSinceReferenceDate
-                        / Self.weatherFrameInterval
-                )
+                // Wrap the tick count well within 32-bit Int range (watchOS is
+                // arm64_32) — the effects all cycle on `% n` so a slow wrap is fine.
+                let ticks = timeline.date.timeIntervalSinceReferenceDate
+                    / Self.weatherFrameInterval
+                let phase = Int(ticks.truncatingRemainder(dividingBy: 1_000_000))
                 styledCanvas(weatherPhase: phase)
             }
         } else {
