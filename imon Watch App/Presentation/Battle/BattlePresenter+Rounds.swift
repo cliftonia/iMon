@@ -1,0 +1,166 @@
+import Foundation
+import WatchKit
+
+// MARK: - Round Loop & Outcomes
+
+extension BattlePresenter {
+
+    func runSingleRound() async -> Bool {
+        enterChoosing()
+        let playerHeight = await waitForPick()
+        guard !Task.isCancelled else { return false }
+
+        let opponentHeight = AttackHeight.allCases
+            .randomElement() ?? .medium
+        let outcome = BattleEngine.resolveRound(
+            playerHeight: playerHeight,
+            opponentHeight: opponentHeight
+        )
+        viewModel.lastRoundOutcome = outcome
+
+        await runAttacking()
+        guard !Task.isCancelled else { return false }
+
+        await runProjectile(height: playerHeight)
+        guard !Task.isCancelled else { return false }
+
+        await runOpponentAttacking()
+        guard !Task.isCancelled else { return false }
+
+        await runOpponentProjectile(height: opponentHeight)
+        guard !Task.isCancelled else { return false }
+
+        await runImpact(outcome: outcome)
+        return !Task.isCancelled
+    }
+
+    private func enterChoosing() {
+        viewModel.phase = .choosing
+        viewModel.lastRoundOutcome = nil
+        petAnimator.play(
+            SpriteCatalog.animation(for: petState.species, kind: .idle)
+        )
+    }
+
+    private func waitForPick() async -> AttackHeight {
+        await withCheckedContinuation { continuation in
+            self.pickContinuation = continuation
+        }
+    }
+
+    private func runAttacking() async {
+        viewModel.phase = .attacking
+        petAnimator.play(
+            SpriteCatalog.sideAttack(for: petState.species)
+        )
+        WKInterfaceDevice.battleHaptic()
+        try? await Task.sleep(for: .milliseconds(800))
+    }
+
+    private func runProjectile(height: AttackHeight) async {
+        viewModel.phase = .projectile
+        petAnimator.play(
+            SpriteCatalog.projectile(for: petState.species, height: height)
+        )
+        try? await Task.sleep(for: .milliseconds(600))
+    }
+
+    private func runOpponentAttacking() async {
+        guard let opp = opponent else { return }
+        viewModel.phase = .opponentAttacking
+        opponentAnimator.play(
+            SpriteCatalog.sideAttack(for: opp.species)
+        )
+        try? await Task.sleep(for: .milliseconds(800))
+    }
+
+    private func runOpponentProjectile(height: AttackHeight) async {
+        guard let opp = opponent else { return }
+        viewModel.phase = .opponentProjectile
+        opponentAnimator.play(
+            SpriteCatalog.projectileReversed(for: opp.species, height: height)
+        )
+        WKInterfaceDevice.battleHaptic()
+        try? await Task.sleep(for: .milliseconds(600))
+    }
+
+    private func runImpact(outcome: RoundOutcome) async {
+        guard let opp = opponent else { return }
+        viewModel.phase = .impact
+
+        switch outcome {
+        case .playerHit:
+            viewModel.opponentHP -= 1
+            let base = SpriteCatalog.frames(for: opp.species, kind: .idle)[0]
+            let hit = SpriteAnimation(
+                frames: [
+                    base.overlaying(SharedSprites.explosion1),
+                    SharedSprites.explosion2,
+                    SharedSprites.explosion3,
+                    .empty,
+                    base
+                ],
+                frameDuration: 0.25,
+                loops: false
+            )
+            opponentAnimator.play(hit)
+            WKInterfaceDevice.battleWinHaptic()
+
+        case .opponentHit:
+            viewModel.petHP -= 1
+            petAnimator.play(SharedSprites.missStreaks)
+            WKInterfaceDevice.battleLoseHaptic()
+
+        case .clash:
+            petAnimator.play(SharedSprites.explosion)
+            WKInterfaceDevice.buttonHaptic()
+        }
+
+        try? await Task.sleep(for: .seconds(1.5))
+    }
+
+    func resolveTiebreaker() {
+        switch (viewModel.petHP, viewModel.opponentHP) {
+        case let (pet, opp) where pet > opp: showVictory()
+        case let (pet, opp) where opp > pet: showDefeat()
+        default: showDraw()
+        }
+    }
+
+    func showVictory() {
+        viewModel.result = .win
+        viewModel.phase = .victory
+        petAnimator.play(
+            SpriteCatalog.animation(for: petState.species, kind: .happy)
+        )
+        opponentAnimator.stop()
+        WKInterfaceDevice.battleWinHaptic()
+        onComplete(.win)
+    }
+
+    func showDefeat() {
+        guard let opp = opponent else { return }
+        viewModel.result = .lose
+        viewModel.phase = .defeat
+        petAnimator.stop()
+        opponentAnimator.play(
+            SpriteCatalog.animation(for: opp.species, kind: .happy)
+        )
+        WKInterfaceDevice.battleLoseHaptic()
+        onComplete(.lose)
+    }
+
+    func showDraw() {
+        guard let opp = opponent else { return }
+        viewModel.result = .draw
+        viewModel.phase = .victory
+        petAnimator.play(
+            SpriteCatalog.animation(for: petState.species, kind: .idle)
+        )
+        opponentAnimator.play(
+            SpriteCatalog.animation(for: opp.species, kind: .idle)
+        )
+        WKInterfaceDevice.buttonHaptic()
+        onComplete(.draw)
+    }
+}

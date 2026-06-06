@@ -7,14 +7,13 @@ final class BattlePresenter {
     let petAnimator = SpriteAnimator()
     let opponentAnimator = SpriteAnimator()
 
-    private let petState: PetState
-    private let onComplete: (BattleResult) -> Void
+    // Read by the `+Frames` and `+Rounds` extensions.
+    let petState: PetState
+    let onComplete: (BattleResult) -> Void
+    var opponent: BattleOpponent?
+    var pickContinuation: CheckedContinuation<AttackHeight, Never>?
 
-    private var opponent: BattleOpponent?
-    private var petEffectivePower: Double = 0
-    private var opponentEffectivePower: Double = 0
     private var battleTask: Task<Void, Never>?
-    private var pickContinuation: CheckedContinuation<AttackHeight, Never>?
 
     // MARK: - Init
 
@@ -26,95 +25,11 @@ final class BattlePresenter {
         self.onComplete = onComplete
     }
 
-    // MARK: - Computed
-
-    // Canonical battle layout:
-    //   Pet   — left side,  faces right, fires left→right.
-    //   Enemy — right side, faces left,  fires right→left.
-    // Sprites are drawn facing LEFT natively (per the wander convention).
-
-    /// Pet faces right (toward the enemy on the right).
-    var petFrame: SpriteFrame {
-        petAnimator.currentFrame.facing(.right)
-    }
-
-    /// Enemy faces left (toward the pet on the left).
-    var opponentFrame: SpriteFrame {
-        opponentAnimator.currentFrame.facing(.left)
-    }
-
-    private static let petOffsetX = 1
-    private static let opponentOffsetX = 15
-
-    /// Horizontal position of the active sprite — pet on the left,
-    /// enemy on the right, projectiles cross through the centre.
-    var activeOffsetX: Int {
-        switch viewModel.phase {
-        case .intro, .choosing, .projectile, .opponentProjectile:
-            return 8
-        case .approach, .attacking:
-            return Self.petOffsetX
-        case .opponentAttacking, .defeat:
-            return Self.opponentOffsetX
-        case .impact:
-            switch viewModel.lastRoundOutcome {
-            case .playerHit: return Self.opponentOffsetX
-            case .opponentHit: return Self.petOffsetX
-            case .clash, .none: return 8
-            }
-        case .victory:
-            return viewModel.result == .lose
-                ? Self.opponentOffsetX : Self.petOffsetX
-        }
-    }
-
-    /// Single active sprite — only one thing on screen at a time.
-    var activeFrame: SpriteFrame {
-        switch viewModel.phase {
-        case .intro:
-            return .empty
-        case .approach, .choosing, .attacking:
-            // Pet faces the enemy on the right.
-            return petFrame
-        case .projectile:
-            // Raw frame — projectile already travels left→right.
-            return petAnimator.currentFrame
-        case .opponentAttacking:
-            return opponentFrame
-        case .opponentProjectile:
-            // Raw frame — projectileReversed already goes R→L
-            return opponentAnimator.currentFrame
-        case .impact:
-            switch viewModel.lastRoundOutcome {
-            case .playerHit: return opponentFrame
-            case .opponentHit, .clash, .none:
-                return petFrame
-            }
-        case .victory:
-            return viewModel.result == .lose
-                ? opponentFrame : petFrame
-        case .defeat:
-            return opponentFrame
-        }
-    }
-
     // MARK: - Actions
 
     func startBattle() {
         let opp = BattleOpponent.generate(matching: petState)
         self.opponent = opp
-
-        let petPower = BattlePower.calculate(for: petState)
-        petEffectivePower = BattleEngine.effectivePower(
-            basePower: petPower,
-            attribute: petState.species.attribute,
-            against: opp.attribute
-        )
-        opponentEffectivePower = BattleEngine.effectivePower(
-            basePower: opp.power,
-            attribute: opp.attribute,
-            against: petState.species.attribute
-        )
 
         viewModel.petSpecies = petState.species
         viewModel.opponentSpecies = opp.species
@@ -159,9 +74,7 @@ final class BattlePresenter {
     private func runApproachPhase() async {
         viewModel.phase = .approach
         petAnimator.play(
-            SpriteCatalog.animation(
-                for: petState.species, kind: .walk
-            )
+            SpriteCatalog.animation(for: petState.species, kind: .walk)
         )
         WKInterfaceDevice.battleHaptic()
         try? await Task.sleep(for: .seconds(2))
@@ -184,189 +97,5 @@ final class BattlePresenter {
             }
         }
         resolveTiebreaker()
-    }
-}
-
-// MARK: - Phase Runners
-
-extension BattlePresenter {
-
-    private func runSingleRound() async -> Bool {
-        enterChoosing()
-        let playerHeight = await waitForPick()
-        guard !Task.isCancelled else { return false }
-
-        let opponentHeight = AttackHeight.allCases
-            .randomElement() ?? .medium
-        let outcome = BattleEngine.resolveRound(
-            playerHeight: playerHeight,
-            opponentHeight: opponentHeight
-        )
-        viewModel.lastRoundOutcome = outcome
-
-        await runAttacking()
-        guard !Task.isCancelled else { return false }
-
-        await runProjectile(height: playerHeight)
-        guard !Task.isCancelled else { return false }
-
-        await runOpponentAttacking()
-        guard !Task.isCancelled else { return false }
-
-        await runOpponentProjectile(height: opponentHeight)
-        guard !Task.isCancelled else { return false }
-
-        await runImpact(outcome: outcome)
-        return !Task.isCancelled
-    }
-
-    private func enterChoosing() {
-        viewModel.phase = .choosing
-        viewModel.lastRoundOutcome = nil
-        petAnimator.play(
-            SpriteCatalog.animation(
-                for: petState.species, kind: .idle
-            )
-        )
-    }
-
-    private func waitForPick() async -> AttackHeight {
-        await withCheckedContinuation { continuation in
-            self.pickContinuation = continuation
-        }
-    }
-
-    private func runAttacking() async {
-        viewModel.phase = .attacking
-        petAnimator.play(
-            SpriteCatalog.sideAttack(for: petState.species)
-        )
-        WKInterfaceDevice.battleHaptic()
-        try? await Task.sleep(for: .milliseconds(800))
-    }
-
-    private func runProjectile(height: AttackHeight) async {
-        viewModel.phase = .projectile
-        petAnimator.play(
-            SpriteCatalog.projectile(
-                for: petState.species, height: height
-            )
-        )
-        try? await Task.sleep(for: .milliseconds(600))
-    }
-
-    private func runOpponentAttacking() async {
-        guard let opp = opponent else { return }
-        viewModel.phase = .opponentAttacking
-        opponentAnimator.play(
-            SpriteCatalog.sideAttack(for: opp.species)
-        )
-        try? await Task.sleep(for: .milliseconds(800))
-    }
-
-    private func runOpponentProjectile(
-        height: AttackHeight
-    ) async {
-        guard let opp = opponent else { return }
-        viewModel.phase = .opponentProjectile
-        opponentAnimator.play(
-            SpriteCatalog.projectileReversed(
-                for: opp.species, height: height
-            )
-        )
-        WKInterfaceDevice.battleHaptic()
-        try? await Task.sleep(for: .milliseconds(600))
-    }
-
-    private func runImpact(outcome: RoundOutcome) async {
-        guard let opp = opponent else { return }
-        viewModel.phase = .impact
-
-        switch outcome {
-        case .playerHit:
-            viewModel.opponentHP -= 1
-            let base = SpriteCatalog.frames(
-                for: opp.species, kind: .idle
-            )[0]
-            let hit = SpriteAnimation(
-                frames: [
-                    base.overlaying(SharedSprites.explosion1),
-                    SharedSprites.explosion2,
-                    SharedSprites.explosion3,
-                    .empty,
-                    base
-                ],
-                frameDuration: 0.25,
-                loops: false
-            )
-            opponentAnimator.play(hit)
-            WKInterfaceDevice.battleWinHaptic()
-
-        case .opponentHit:
-            viewModel.petHP -= 1
-            petAnimator.play(SharedSprites.missStreaks)
-            WKInterfaceDevice.battleLoseHaptic()
-
-        case .clash:
-            petAnimator.play(SharedSprites.explosion)
-            WKInterfaceDevice.buttonHaptic()
-        }
-
-        try? await Task.sleep(for: .seconds(1.5))
-    }
-
-    private func resolveTiebreaker() {
-        switch (viewModel.petHP, viewModel.opponentHP) {
-        case let (pet, opp) where pet > opp: showVictory()
-        case let (pet, opp) where opp > pet: showDefeat()
-        default: showDraw()
-        }
-    }
-
-    // MARK: - Outcomes
-
-    private func showVictory() {
-        viewModel.result = .win
-        viewModel.phase = .victory
-        petAnimator.play(
-            SpriteCatalog.animation(
-                for: petState.species, kind: .happy
-            )
-        )
-        opponentAnimator.stop()
-        WKInterfaceDevice.battleWinHaptic()
-        onComplete(.win)
-    }
-
-    private func showDefeat() {
-        guard let opp = opponent else { return }
-        viewModel.result = .lose
-        viewModel.phase = .defeat
-        petAnimator.stop()
-        opponentAnimator.play(
-            SpriteCatalog.animation(
-                for: opp.species, kind: .happy
-            )
-        )
-        WKInterfaceDevice.battleLoseHaptic()
-        onComplete(.lose)
-    }
-
-    private func showDraw() {
-        guard let opp = opponent else { return }
-        viewModel.result = .draw
-        viewModel.phase = .victory
-        petAnimator.play(
-            SpriteCatalog.animation(
-                for: petState.species, kind: .idle
-            )
-        )
-        opponentAnimator.play(
-            SpriteCatalog.animation(
-                for: opp.species, kind: .idle
-            )
-        )
-        WKInterfaceDevice.buttonHaptic()
-        onComplete(.draw)
     }
 }
