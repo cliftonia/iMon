@@ -6,26 +6,32 @@ struct WeatherOverlay: View {
     let snapshot: WeatherSnapshot
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 3) {
             WeatherIconView(
                 frame: WeatherIconMapper.frame(
                     for: snapshot.condition,
                     isDaylight: snapshot.isDaylight
                 ),
-                pixelSize: 1.0
+                pixelSize: 0.85
             )
             separator
             Text(WeatherTemperatureFormatter.string(for: snapshot.temperature))
-                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .foregroundStyle(.white)
             separator
             Text(humidityText)
-                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.65))
+            separator
+            Text(snapshot.condition.displayName)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundStyle(.white)
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "Weather: \(String(describing: snapshot.condition)), "
+            "\(snapshot.condition.displayName), "
                 + WeatherTemperatureFormatter.string(for: snapshot.temperature)
                 + ", humidity \(humidityText)"
         )
@@ -33,7 +39,7 @@ struct WeatherOverlay: View {
 
     private var separator: some View {
         Text("|")
-            .font(.system(size: 13, weight: .bold, design: .monospaced))
+            .font(.system(size: 11, weight: .bold, design: .monospaced))
             .foregroundStyle(.white.opacity(0.35))
     }
 

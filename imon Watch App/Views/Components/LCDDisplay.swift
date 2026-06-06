@@ -54,6 +54,12 @@ struct LCDDisplay: View {
         lightsOn ? Color("LCDPixelOn") : .white
     }
 
+    /// A brighter shade of the LCD green for the lightning flash — the screen
+    /// surging, kept in palette rather than washing out to white.
+    private static let lightningFlashColor = Color(
+        red: 200 / 255, green: 230 / 255, blue: 160 / 255
+    )
+
     var body: some View {
         if hasWeatherEffect {
             TimelineView(.periodic(from: .now, by: Self.weatherFrameInterval)) { timeline in
@@ -119,6 +125,14 @@ struct LCDDisplay: View {
                 pixelWidth: pixelWidth,
                 pixelHeight: pixelHeight
             )
+
+            drawLightning(
+                phase: weatherPhase,
+                in: context,
+                size: size,
+                pixelWidth: pixelWidth,
+                pixelHeight: pixelHeight
+            )
         }
         .background(backgroundColor)
         .aspectRatio(32.0 / 20.0, contentMode: .fit)
@@ -134,37 +148,60 @@ struct LCDDisplay: View {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let cells: [(x: Int, y: Int)]
-        let color: Color
-        switch weatherCondition {
-        case .rain:
-            cells = Self.rainCells(phase: phase)
-            color = basePixelColor
-        case .storm:
-            cells = Self.rainCells(phase: phase) + Self.lightningCells(phase: phase)
-            color = basePixelColor
-        case .snow:
-            cells = Self.snowCells(phase: phase)
-            color = basePixelColor
-        case .wind:
-            cells = Self.windCells(phase: phase)
-            color = basePixelColor.opacity(0.8)
-        case .fog:
-            cells = Self.fogCells(phase: phase)
-            color = basePixelColor.opacity(0.4)
-        case .clear, .cloudy, .none:
-            cells = []
-            color = basePixelColor
+        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
+            for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
+                let rect = CGRect(
+                    x: Double(cell.x) * pixelWidth,
+                    y: Double(cell.y) * pixelHeight,
+                    width: pixelWidth + 0.5,
+                    height: pixelHeight + 0.5
+                )
+                context.fill(Path(rect), with: .color(color))
+            }
         }
 
-        for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
+        switch weatherCondition {
+        case .rain, .storm:
+            // Rain falls; storm adds the lightning flash (drawn over the scene).
+            fill(Self.rainCells(phase: phase), basePixelColor)
+        case .snow:
+            // Parallax depth: distant flakes dim and slow, near flakes bright and fast.
+            fill(Self.snowBackCells(phase: phase), basePixelColor.opacity(0.4))
+            fill(Self.snowFrontCells(phase: phase), basePixelColor)
+        case .wind:
+            fill(Self.windCells(phase: phase), basePixelColor.opacity(0.8))
+        case .fog:
+            fill(Self.fogCells(phase: phase), basePixelColor.opacity(0.4))
+        case .clear, .cloudy, .none:
+            break
+        }
+    }
+
+    /// Full-screen lightning: a bright flash plus jagged diagonal bolts spread
+    /// across the whole sky. Drawn over everything during storms.
+    private func drawLightning(
+        phase: Int,
+        in context: GraphicsContext,
+        size: CGSize,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        guard weatherCondition == .storm, Self.isLightningFlash(phase) else { return }
+        // Flash the LCD brighter in its own green palette (not white).
+        context.fill(
+            Path(CGRect(origin: .zero, size: size)),
+            with: .color(Self.lightningFlashColor.opacity(0.9))
+        )
+        // Bolts in the LCD pixel colour, dark against the lit screen.
+        for cell in Self.lightningBoltCells()
+        where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
             let rect = CGRect(
                 x: Double(cell.x) * pixelWidth,
                 y: Double(cell.y) * pixelHeight,
                 width: pixelWidth + 0.5,
                 height: pixelHeight + 0.5
             )
-            context.fill(Path(rect), with: .color(color))
+            context.fill(Path(rect), with: .color(basePixelColor))
         }
     }
 
@@ -181,13 +218,26 @@ struct LCDDisplay: View {
         return cells
     }
 
-    /// Slow drifting flakes that sway side to side.
-    private static func snowCells(phase: Int) -> [(x: Int, y: Int)] {
-        let columns = [2, 7, 12, 16, 21, 26, 30]
-        return columns.enumerated().map { index, col in
-            let y = (phase / 2 + index * 3) % 19
-            let sway = ((phase / 4 + index) % 4) < 2 ? 0 : 1
-            return (x: (col + sway) % 32, y: y)
+    /// Near snow layer — bright, faster fall, gentle sway.
+    private static func snowFrontCells(phase: Int) -> [(x: Int, y: Int)] {
+        let flakes: [(col: Int, offset: Int)] = [
+            (3, 0), (9, 7), (15, 3), (21, 12), (27, 5), (31, 15)
+        ]
+        return flakes.map { flake in
+            let y = (phase + flake.offset) % 20
+            let sway = (phase / 2 + flake.col) % 4
+            let dx = sway == 0 ? -1 : (sway == 2 ? 1 : 0)
+            return (x: (flake.col + dx + 32) % 32, y: y)
+        }
+    }
+
+    /// Far snow layer — dim, slow fall, no sway (distant).
+    private static func snowBackCells(phase: Int) -> [(x: Int, y: Int)] {
+        let flakes: [(col: Int, offset: Int)] = [
+            (1, 4), (7, 13), (12, 1), (18, 9), (24, 16), (29, 6)
+        ]
+        return flakes.map { flake in
+            (x: flake.col, y: (phase / 2 + flake.offset) % 20)
         }
     }
 
@@ -217,13 +267,28 @@ struct LCDDisplay: View {
         return cells
     }
 
-    /// A brief lightning bolt every ~16 frames.
-    private static func lightningCells(phase: Int) -> [(x: Int, y: Int)] {
-        guard phase % 16 == 0 else { return [] }
-        return [
-            (16, 1), (16, 2), (15, 3), (16, 4),
-            (15, 5), (14, 6), (15, 7), (14, 8)
-        ].map { (x: $0.0, y: $0.1) }
+    /// A quick double-blink every ~4 seconds, like a real lightning flicker.
+    private static func isLightningFlash(_ phase: Int) -> Bool {
+        let cycle = phase % 22
+        return cycle == 0 || cycle == 2
+    }
+
+    /// Several jagged diagonal bolts spread across the whole sky.
+    private static func lightningBoltCells() -> [(x: Int, y: Int)] {
+        var cells: [(x: Int, y: Int)] = []
+        for start in [2, 12, 22] {
+            var x = start
+            for y in 0..<20 {
+                cells.append((x: x, y: y))
+                cells.append((x: x + 1, y: y))
+                switch y % 3 {
+                case 0: x += 2
+                case 1: x += 1
+                default: x -= 1
+                }
+            }
+        }
+        return cells
     }
 
     // MARK: - Grid & Ground

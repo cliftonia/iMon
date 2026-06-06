@@ -9,6 +9,19 @@ nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable {
     case storm
     case fog
     case wind
+
+    /// Short human-readable label for the weather header.
+    var displayName: String {
+        switch self {
+        case .clear: "Clear"
+        case .cloudy: "Cloudy"
+        case .rain: "Rain"
+        case .snow: "Snow"
+        case .storm: "Storm"
+        case .fog: "Fog"
+        case .wind: "Windy"
+        }
+    }
 }
 
 /// Immutable current-weather reading. Temperature is kept raw so it can be

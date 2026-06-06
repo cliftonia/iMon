@@ -14,6 +14,40 @@ final class WeatherStore {
     private var lastFetch: Date?
     private var fetchTask: Task<Void, Never>?
 
+    /// The snapshot the UI should render. In Release this is just `snapshot`;
+    /// in DEBUG a preview override can force a condition to polish its effect.
+    var displaySnapshot: WeatherSnapshot? {
+        #if DEBUG
+        if let debugCondition {
+            let base = snapshot ?? .sample
+            return WeatherSnapshot(
+                temperature: base.temperature,
+                condition: debugCondition,
+                isDaylight: base.isDaylight,
+                humidity: base.humidity
+            )
+        }
+        #endif
+        return snapshot
+    }
+
+    #if DEBUG
+    /// Preview override for cycling through weather effects on-device.
+    private(set) var debugCondition: WeatherIconCondition?
+
+    /// Advance the preview: real → clear → cloudy → … → fog → wind → real.
+    func cycleDebugCondition() {
+        let all = WeatherIconCondition.allCases
+        switch debugCondition {
+        case .none:
+            debugCondition = all.first
+        case .some(let current):
+            let next = (all.firstIndex(of: current) ?? -1) + 1
+            debugCondition = next < all.count ? all[next] : nil
+        }
+    }
+    #endif
+
     /// - Parameter fallback: shown only when a fetch fails and no real reading
     ///   exists yet. Left nil in Release so the overlay simply hides.
     init(provider: WeatherProvider = .live(), fallback: WeatherSnapshot? = nil) {

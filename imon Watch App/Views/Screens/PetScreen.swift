@@ -64,12 +64,20 @@ struct PetScreen: View {
     @ViewBuilder
     private var weatherHeader: some View {
         HStack(spacing: 0) {
-            if let snapshot = appPresenter.weatherStore.snapshot {
+            if let snapshot = appPresenter.weatherStore.displaySnapshot {
                 WeatherOverlay(snapshot: snapshot)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Spacer(minLength: 0)
         }
+        // Reserve the top-right for the system clock (which can't be hidden).
+        .padding(.trailing, 58)
         .frame(height: 18)
+        .contentShape(Rectangle())
+        #if DEBUG
+        .onTapGesture {
+            appPresenter.weatherStore.cycleDebugCondition()
+        }
+        #endif
     }
 
     // MARK: - Debug Overlay
@@ -138,7 +146,7 @@ struct PetScreen: View {
                     leftSpriteOffsetX: presenter.viewModel
                         .petOffsetX,
                     weatherCondition: appPresenter
-                        .weatherStore.snapshot?.condition
+                        .weatherStore.displaySnapshot?.condition
                 )
             }
             .fixedSize(horizontal: false, vertical: true)
