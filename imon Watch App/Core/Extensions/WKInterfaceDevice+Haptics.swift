@@ -38,10 +38,6 @@ extension WKInterfaceDevice {
         WKInterfaceDevice.current().play(.failure)
     }
 
-    static func deathHaptic() {
-        WKInterfaceDevice.current().play(.failure)
-    }
-
     static func hatchHaptic() {
         WKInterfaceDevice.current().play(.start)
     }

@@ -53,12 +53,6 @@ nonisolated enum TimeConstants {
     /// Maximum hunger/strength hearts
     static let maxHearts: Int = 4
 
-    /// Maximum weight in grams
-    static let maxWeight: Int = 99
-
-    /// Minimum weight in grams
-    static let minWeight: Int = 5
-
     // MARK: - Death Thresholds
 
     /// Total care mistakes before the Creature dies
