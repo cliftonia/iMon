@@ -165,7 +165,6 @@ extension PetScreen {
         )
     }
 
-
     private func battlePhaseText(
         _ battle: BattlePresenter
     ) -> String {

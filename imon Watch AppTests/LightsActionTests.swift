@@ -14,7 +14,7 @@ struct LightsActionTests {
         components.hour = hour
         components.minute = 0
         components.second = 0
-        return Calendar.current.date(from: components)!
+        return Calendar.current.date(from: components) ?? .now
     }
 
     // MARK: - Outside Sleep Hours
