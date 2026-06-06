@@ -37,9 +37,7 @@ extension BattlePresenter {
     private func enterChoosing() {
         viewModel.phase = .choosing
         viewModel.lastRoundOutcome = nil
-        petAnimator.play(
-            SpriteCatalog.animation(for: petState.species, kind: .idle)
-        )
+        petAnimator.play(.idle, for: petState.species)
     }
 
     private func waitForPick() async -> AttackHeight {
@@ -130,9 +128,7 @@ extension BattlePresenter {
     func showVictory() {
         viewModel.result = .win
         viewModel.phase = .victory
-        petAnimator.play(
-            SpriteCatalog.animation(for: petState.species, kind: .happy)
-        )
+        petAnimator.play(.happy, for: petState.species)
         opponentAnimator.stop()
         WKInterfaceDevice.battleWinHaptic()
         onComplete(.win)
@@ -143,9 +139,7 @@ extension BattlePresenter {
         viewModel.result = .lose
         viewModel.phase = .defeat
         petAnimator.stop()
-        opponentAnimator.play(
-            SpriteCatalog.animation(for: opp.species, kind: .happy)
-        )
+        opponentAnimator.play(.happy, for: opp.species)
         WKInterfaceDevice.battleLoseHaptic()
         onComplete(.lose)
     }
@@ -154,12 +148,8 @@ extension BattlePresenter {
         guard let opp = opponent else { return }
         viewModel.result = .draw
         viewModel.phase = .victory
-        petAnimator.play(
-            SpriteCatalog.animation(for: petState.species, kind: .idle)
-        )
-        opponentAnimator.play(
-            SpriteCatalog.animation(for: opp.species, kind: .idle)
-        )
+        petAnimator.play(.idle, for: petState.species)
+        opponentAnimator.play(.idle, for: opp.species)
         WKInterfaceDevice.buttonHaptic()
         onComplete(.draw)
     }

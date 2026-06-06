@@ -30,9 +30,7 @@ final class HatchPresenter {
             try? await Task.sleep(for: .seconds(2))
 
             viewModel.phase = .hatched
-            spriteAnimator.play(
-                SpriteCatalog.animation(for: .dotkin, kind: .happy)
-            )
+            spriteAnimator.play(.happy, for: .dotkin)
 
             try? await Task.sleep(for: .seconds(1.5))
 

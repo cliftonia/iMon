@@ -1,6 +1,5 @@
 import Foundation
 import os
-import WatchKit
 
 final class PetPresenter {
 
@@ -25,6 +24,9 @@ final class PetPresenter {
     var healingTask: Task<Void, Never>?
     var refuseTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
+
+    /// Index into the current debug evolution journey (see `+Evolution`).
+    var debugStepIndex = 0
 
     // MARK: - Wander State
 
@@ -104,118 +106,16 @@ final class PetPresenter {
         updateAnimation()
     }
 
-    // MARK: - Debug Evolution
-
-    /// Debug: walk through each evolution journey, resetting
-    /// to egg between them. Loops back to journey 1 at the end.
-    private static let debugJourneys: [[PetSpecies]] = [
-        [.dotkin, .hopkin, .emberkin, .rexkin, .steelkin],
-        [.dotkin, .hopkin, .marshkin, .blazekin, .orbkin],
-        [.dotkin, .hopkin, .emberkin, .dreadkin, .steelkin],
-        [.dotkin, .hopkin, .emberkin, .pyrekin, .orbkin],
-        [.dotkin, .hopkin, .marshkin, .galekin, .steelkin],
-        [.dotkin, .hopkin, .marshkin, .tidekin, .orbkin],
-        [.dotkin, .hopkin, .emberkin, .sludgekin, .plushkin]
-    ]
-
-    private static let debugJourneyKey = "debugJourneyIndex"
-
-    private var debugJourneyIndex: Int {
-        get { UserDefaults.standard.integer(forKey: Self.debugJourneyKey) }
-        set { UserDefaults.standard.set(newValue, forKey: Self.debugJourneyKey) }
-    }
-
-    private var debugStepIndex = 0
-
-    func debugEvolve() {
-        guard !viewModel.isBusy else { return }
-
-        let journeys = Self.debugJourneys
-        let journey = journeys[debugJourneyIndex]
-
-        let nextStep = debugStepIndex + 1
-        if nextStep >= journey.count {
-            state.isDead = true
-            let next = debugJourneyIndex + 1
-            debugJourneyIndex = next >= journeys.count
-                ? 0 : next
-            debugStepIndex = 0
-            updateViewModel()
-            save()
-        } else {
-            let target = journey[nextStep]
-            debugStepIndex = nextStep
-            viewModel.showEvolution = true
-            viewModel.evolutionTarget = target
-        }
-    }
-
-    // MARK: - Lights
-
-    func lightsAction() {
-        guard LightsAction.canToggle(state) else {
-            WKInterfaceDevice.rejectHaptic()
-            return
-        }
-        sleepToggleTask?.cancel()
-        sleepToggleTask = nil
-
-        let (newState, result) = LightsAction.apply(
-            to: state, at: .now
-        )
-        state = newState
-        updateViewModel()
-        updateAnimation()
-        save()
-
-        if result == .toggledDuringSleep {
-            scheduleSleepToggleResolution()
-        }
-    }
-
-    private func scheduleSleepToggleResolution() {
-        sleepToggleTask = Task { [weak self] in
-            try? await Task.sleep(
-                for: .seconds(TimeConstants.lightsToggleSleepDelay)
-            )
-            guard !Task.isCancelled else { return }
-            self?.resolveSleepToggle()
-        }
-    }
-
-    private func resolveSleepToggle() {
-        guard state.timestamps.lightsToggledDuringSleepAt != nil else {
-            return
-        }
-        if state.lightsOn {
-            state.isSleeping = false
-        } else {
-            state.isSleeping = true
-            state.timestamps.lightsToggledDuringSleepAt = nil
-        }
-        updateViewModel()
-        updateAnimation()
-        save()
-    }
-
-    // MARK: - Training Result
+    // MARK: - Training & Battle Results
 
     func applyTrainingResult(won: Bool) {
-        state = TrainAction.applyResult(
-            to: state, won: won, at: .now
-        )
+        state = TrainAction.applyResult(to: state, won: won, at: .now)
         if won {
-            spriteAnimator.play(
-                SpriteCatalog.animation(
-                    for: state.species, kind: .happy
-                )
-            )
+            spriteAnimator.play(.happy, for: state.species)
         }
         updateViewModel()
         save()
     }
-
-    // MARK: - Battle Result
 
     func applyBattleResult(_ result: BattleResult) {
         state = BattleEngine.applyResult(result, to: state)
@@ -227,50 +127,17 @@ final class PetPresenter {
 
     func getCurrentState() -> PetState { state }
 
-    // MARK: - Evolution
-
-    private func checkEvolution() {
-        guard let target = EvolutionEngine.checkEvolution(
-            for: state, at: .now
-        ) else {
-            return
-        }
-        viewModel.showEvolution = true
-        viewModel.evolutionTarget = target
-    }
-
-    func applyEvolution() {
-        guard let target = viewModel.evolutionTarget else {
-            return
-        }
-        state = EvolutionEngine.evolve(
-            state, to: target, at: .now
-        )
-        if debugStepIndex > 0 {
-            state.poopCount = 1
-            state.isInjured = true
-        }
-        viewModel.showEvolution = false
-        viewModel.evolutionTarget = nil
-        updateViewModel()
-        updateAnimation()
-        save()
-        WKInterfaceDevice.evolveHaptic()
-    }
-
     // MARK: - Menu Navigation
 
     func selectNextMenu() {
         let all = PetViewModel.MenuAction.allCases
-        let index = (viewModel.menuSelection.rawValue + 1)
-            % all.count
+        let index = (viewModel.menuSelection.rawValue + 1) % all.count
         viewModel.menuSelection = all[index]
     }
 
     func selectPreviousMenu() {
         let all = PetViewModel.MenuAction.allCases
-        let index = (viewModel.menuSelection.rawValue - 1
-            + all.count) % all.count
+        let index = (viewModel.menuSelection.rawValue - 1 + all.count) % all.count
         viewModel.menuSelection = all[index]
     }
 
@@ -288,11 +155,7 @@ final class PetPresenter {
         case .inactive, .selecting:
             let kind: SpriteCatalog.AnimationKind =
                 state.isSleeping ? .sleep : .idle
-            spriteAnimator.play(
-                SpriteCatalog.animation(
-                    for: state.species, kind: kind
-                )
-            )
+            spriteAnimator.play(kind, for: state.species)
         case .serving, .bite, .satisfied:
             break
         }
@@ -307,5 +170,4 @@ final class PetPresenter {
             )
         }
     }
-
 }

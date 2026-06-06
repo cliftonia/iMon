@@ -73,9 +73,7 @@ final class BattlePresenter {
 
     private func runApproachPhase() async {
         viewModel.phase = .approach
-        petAnimator.play(
-            SpriteCatalog.animation(for: petState.species, kind: .walk)
-        )
+        petAnimator.play(.walk, for: petState.species)
         WKInterfaceDevice.battleHaptic()
         try? await Task.sleep(for: .seconds(2))
     }
