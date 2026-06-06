@@ -53,7 +53,7 @@ struct SleepScheduleTests {
         var state = makeTestState(at: bedtime)
         state.isSleeping = false
         state.lightsOn = true
-        state.lightsToggledDuringSleepAt = bedtime
+        state.timestamps.lightsToggledDuringSleepAt = bedtime
 
         state = SleepSchedule.apply(to: state, at: bedtime)
 
@@ -69,12 +69,12 @@ struct SleepScheduleTests {
         var state = makeTestState(at: toggleTime)
         state.isSleeping = true
         state.lightsOn = true
-        state.lightsToggledDuringSleepAt = toggleTime
+        state.timestamps.lightsToggledDuringSleepAt = toggleTime
 
         state = SleepSchedule.apply(to: state, at: resolveTime)
 
         #expect(state.isSleeping == false)
-        #expect(state.lightsToggledDuringSleepAt != nil)
+        #expect(state.timestamps.lightsToggledDuringSleepAt != nil)
     }
 
     @Test
@@ -84,7 +84,7 @@ struct SleepScheduleTests {
         var state = makeTestState(at: toggleTime)
         state.isSleeping = false
         state.lightsOn = true
-        state.lightsToggledDuringSleepAt = toggleTime
+        state.timestamps.lightsToggledDuringSleepAt = toggleTime
 
         state = SleepSchedule.apply(to: state, at: afterResolve)
 
@@ -98,12 +98,12 @@ struct SleepScheduleTests {
         var state = makeTestState(at: toggleTime)
         state.isSleeping = false
         state.lightsOn = false
-        state.lightsToggledDuringSleepAt = toggleTime
+        state.timestamps.lightsToggledDuringSleepAt = toggleTime
 
         state = SleepSchedule.apply(to: state, at: resolveTime)
 
         #expect(state.isSleeping == true)
-        #expect(state.lightsToggledDuringSleepAt == nil)
+        #expect(state.timestamps.lightsToggledDuringSleepAt == nil)
     }
 
     @Test
@@ -113,11 +113,11 @@ struct SleepScheduleTests {
         var state = makeTestState(at: toggleTime)
         state.isSleeping = true
         state.lightsOn = true
-        state.lightsToggledDuringSleepAt = toggleTime
+        state.timestamps.lightsToggledDuringSleepAt = toggleTime
 
         state = SleepSchedule.apply(to: state, at: tooEarly)
 
-        #expect(state.lightsToggledDuringSleepAt != nil)
+        #expect(state.timestamps.lightsToggledDuringSleepAt != nil)
         #expect(state.isSleeping == true)
     }
 
@@ -154,11 +154,11 @@ struct SleepScheduleTests {
         var state = makeTestState(at: morning)
         state.isSleeping = true
         state.lightsOn = false
-        state.lightsToggledDuringSleepAt = morning
+        state.timestamps.lightsToggledDuringSleepAt = morning
 
         state = SleepSchedule.apply(to: state, at: morning)
 
-        #expect(state.lightsToggledDuringSleepAt == nil)
+        #expect(state.timestamps.lightsToggledDuringSleepAt == nil)
     }
 
     @Test
@@ -167,11 +167,11 @@ struct SleepScheduleTests {
         var state = makeTestState(at: morning)
         state.isSleeping = false
         state.lightsOn = true
-        state.lightsToggledDuringSleepAt = morning
+        state.timestamps.lightsToggledDuringSleepAt = morning
 
         state = SleepSchedule.apply(to: state, at: morning)
 
-        #expect(state.lightsToggledDuringSleepAt == nil)
+        #expect(state.timestamps.lightsToggledDuringSleepAt == nil)
         #expect(state.isSleeping == false)
     }
 }

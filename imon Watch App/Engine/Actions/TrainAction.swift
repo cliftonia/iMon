@@ -61,18 +61,18 @@ nonisolated enum TrainAction {
         }
 
         state.trainingCount += 1
-        state.lastTrainedAt = date
+        state.timestamps.lastTrainedAt = date
         let roll = Int.random(in: 1...10)
         switch roll {
         case 1...6:
             state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + 1)
-            state.lastPoopAt = date
+            state.timestamps.lastPoopAt = date
         case 7...9:
             break
         default:
             if !state.isInjured {
                 state.isInjured = true
-                state.injuredAt = date
+                state.timestamps.injuredAt = date
                 state.injuryCount += 1
             }
         }

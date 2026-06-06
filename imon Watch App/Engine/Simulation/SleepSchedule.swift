@@ -25,7 +25,7 @@ nonisolated enum SleepSchedule {
         // 2. Bedtime transition
         if sleepTime,
            !state.isSleeping,
-           state.lightsToggledDuringSleepAt == nil {
+           state.timestamps.lightsToggledDuringSleepAt == nil {
             state.isSleeping = true
             state.lightsOn = false
         }
@@ -36,14 +36,14 @@ nonisolated enum SleepSchedule {
                 state.isSleeping = false
                 state.lightsOn = true
             }
-            state.lightsToggledDuringSleepAt = nil
+            state.timestamps.lightsToggledDuringSleepAt = nil
         }
 
         // 4. Dark mode follows real-world night even while awake (winter dusk
         //    is earlier than bedtime), unless the user is mid lights-toggle.
         if let isNight,
            !state.isSleeping,
-           state.lightsToggledDuringSleepAt == nil {
+           state.timestamps.lightsToggledDuringSleepAt == nil {
             state.lightsOn = !isNight
         }
 
@@ -61,7 +61,7 @@ nonisolated enum SleepSchedule {
         state: PetState,
         at now: Date
     ) -> PetState {
-        guard let toggledAt = state.lightsToggledDuringSleepAt else {
+        guard let toggledAt = state.timestamps.lightsToggledDuringSleepAt else {
             return state
         }
 
@@ -75,7 +75,7 @@ nonisolated enum SleepSchedule {
             state.isSleeping = false
         } else {
             state.isSleeping = true
-            state.lightsToggledDuringSleepAt = nil
+            state.timestamps.lightsToggledDuringSleepAt = nil
         }
         return state
     }

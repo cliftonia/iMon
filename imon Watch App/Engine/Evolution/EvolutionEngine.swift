@@ -37,7 +37,7 @@ nonisolated enum EvolutionEngine {
         var state = state
         state.species = species
         state.weight = Weight(species.baseWeight)
-        state.evolvedAt = now
+        state.timestamps.evolvedAt = now
         state.hungerHearts = .full
         state.strengthHearts = .full
         state.careMistakes = 0

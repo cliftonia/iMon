@@ -184,14 +184,14 @@ final class PetPresenter {
     }
 
     private func resolveSleepToggle() {
-        guard state.lightsToggledDuringSleepAt != nil else {
+        guard state.timestamps.lightsToggledDuringSleepAt != nil else {
             return
         }
         if state.lightsOn {
             state.isSleeping = false
         } else {
             state.isSleeping = true
-            state.lightsToggledDuringSleepAt = nil
+            state.timestamps.lightsToggledDuringSleepAt = nil
         }
         updateViewModel()
         updateAnimation()

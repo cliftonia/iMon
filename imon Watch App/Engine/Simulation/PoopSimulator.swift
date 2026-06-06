@@ -8,12 +8,12 @@ nonisolated enum PoopSimulator {
         var state = state
         guard !state.isDead, !state.isEgg, !state.isSleeping else { return state }
 
-        let elapsed = now.timeIntervalSince(state.lastPoopAt)
+        let elapsed = now.timeIntervalSince(state.timestamps.lastPoopAt)
         let newPoops = Int(elapsed / TimeConstants.poopInterval)
         guard newPoops > 0 else { return state }
 
         state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + newPoops)
-        state.lastPoopAt = state.lastPoopAt.addingTimeInterval(
+        state.timestamps.lastPoopAt = state.timestamps.lastPoopAt.addingTimeInterval(
             Double(newPoops) * TimeConstants.poopInterval
         )
         return state

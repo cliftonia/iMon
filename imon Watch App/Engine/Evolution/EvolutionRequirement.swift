@@ -43,7 +43,7 @@ nonisolated struct EvolutionRequirement: Sendable {
     // MARK: - Evaluation
 
     func isSatisfied(by state: PetState, at now: Date) -> Bool {
-        let awakeTime = now.timeIntervalSince(state.evolvedAt)
+        let awakeTime = now.timeIntervalSince(state.timestamps.evolvedAt)
         guard awakeTime >= minAwakeTime else { return false }
 
         if let max = maxCareMistakes, state.careMistakes > max { return false }

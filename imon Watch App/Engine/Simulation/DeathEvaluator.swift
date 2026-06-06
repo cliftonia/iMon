@@ -24,7 +24,7 @@ nonisolated enum DeathEvaluator {
             return .injuries
         }
 
-        if state.isInjured, let injuredAt = state.injuredAt {
+        if state.isInjured, let injuredAt = state.timestamps.injuredAt {
             let elapsed = now.timeIntervalSince(injuredAt)
             if elapsed >= TimeConstants.untreatedInjuryDeathTime {
                 return .untreatedInjury

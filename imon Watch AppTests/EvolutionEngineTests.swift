@@ -11,7 +11,7 @@ struct EvolutionEngineTests {
         var state = makeTestState(
             species: .dotkin, at: start
         )
-        state.evolvedAt = start
+        state.timestamps.evolvedAt = start
 
         let later = start.addingTimeInterval(
             TimeConstants.babyEvolutionTime + 1
@@ -28,7 +28,7 @@ struct EvolutionEngineTests {
         var state = makeTestState(
             species: .hopkin, at: start
         )
-        state.evolvedAt = start
+        state.timestamps.evolvedAt = start
         state.careMistakes = 0
 
         let later = start.addingTimeInterval(
@@ -46,7 +46,7 @@ struct EvolutionEngineTests {
         var state = makeTestState(
             species: .hopkin, at: start
         )
-        state.evolvedAt = start
+        state.timestamps.evolvedAt = start
         state.careMistakes = 3
 
         let later = start.addingTimeInterval(

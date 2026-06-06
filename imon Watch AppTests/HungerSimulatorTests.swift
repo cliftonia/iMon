@@ -9,7 +9,7 @@ struct HungerSimulatorTests {
     func `depletes one heart per interval`() {
         let start = Date.now
         var state = makeTestState(hunger: 4, at: start)
-        state.lastHungerDecayAt = start
+        state.timestamps.lastHungerDecayAt = start
 
         let later = start.addingTimeInterval(
             TimeConstants.hungerDepletionInterval
@@ -22,7 +22,7 @@ struct HungerSimulatorTests {
     func `multiple intervals deplete multiple hearts`() {
         let start = Date.now
         var state = makeTestState(hunger: 4, at: start)
-        state.lastHungerDecayAt = start
+        state.timestamps.lastHungerDecayAt = start
 
         let later = start.addingTimeInterval(
             TimeConstants.hungerDepletionInterval * 3
@@ -36,7 +36,7 @@ struct HungerSimulatorTests {
         let start = Date.now
         var state = makeTestState(hunger: 4, at: start)
         state.isSleeping = true
-        state.lastHungerDecayAt = start
+        state.timestamps.lastHungerDecayAt = start
 
         let later = start.addingTimeInterval(
             TimeConstants.hungerDepletionInterval * 5

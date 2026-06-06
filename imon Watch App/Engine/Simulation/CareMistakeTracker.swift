@@ -18,20 +18,20 @@ nonisolated enum CareMistakeTracker {
         let needsAttention = state.hungerHearts.isEmpty || state.strengthHearts.isEmpty
 
         if needsAttention {
-            if let pendingAt = state.pendingCareMistakeAt {
+            if let pendingAt = state.timestamps.pendingCareMistakeAt {
                 let elapsed = now.timeIntervalSince(pendingAt)
                 let mistakes = Int(elapsed / TimeConstants.careMistakeWindow)
                 if mistakes > 0 {
                     state.careMistakes += mistakes
-                    state.pendingCareMistakeAt = pendingAt.addingTimeInterval(
+                    state.timestamps.pendingCareMistakeAt = pendingAt.addingTimeInterval(
                         Double(mistakes) * TimeConstants.careMistakeWindow
                     )
                 }
             } else {
-                state.pendingCareMistakeAt = now
+                state.timestamps.pendingCareMistakeAt = now
             }
         } else {
-            state.pendingCareMistakeAt = nil
+            state.timestamps.pendingCareMistakeAt = nil
         }
 
         return state
@@ -47,20 +47,20 @@ nonisolated enum CareMistakeTracker {
         let lightsOnWhileSleeping = state.isSleeping && state.lightsOn
 
         if lightsOnWhileSleeping {
-            if let pendingAt = state.pendingLightsMistakeAt {
+            if let pendingAt = state.timestamps.pendingLightsMistakeAt {
                 let elapsed = now.timeIntervalSince(pendingAt)
                 let mistakes = Int(elapsed / TimeConstants.careMistakeWindow)
                 if mistakes > 0 {
                     state.careMistakes += mistakes
-                    state.pendingLightsMistakeAt = pendingAt.addingTimeInterval(
+                    state.timestamps.pendingLightsMistakeAt = pendingAt.addingTimeInterval(
                         Double(mistakes) * TimeConstants.careMistakeWindow
                     )
                 }
             } else {
-                state.pendingLightsMistakeAt = now
+                state.timestamps.pendingLightsMistakeAt = now
             }
         } else {
-            state.pendingLightsMistakeAt = nil
+            state.timestamps.pendingLightsMistakeAt = nil
         }
 
         return state

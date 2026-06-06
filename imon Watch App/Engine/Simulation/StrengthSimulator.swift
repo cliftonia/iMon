@@ -8,7 +8,7 @@ nonisolated enum StrengthSimulator {
         var state = state
         guard !state.isDead, !state.isEgg, !state.isSleeping else { return state }
 
-        let elapsed = now.timeIntervalSince(state.lastStrengthDecayAt)
+        let elapsed = now.timeIntervalSince(state.timestamps.lastStrengthDecayAt)
         let ticks = Int(elapsed / TimeConstants.strengthDepletionInterval)
         guard ticks > 0 else { return state }
 
@@ -16,7 +16,7 @@ nonisolated enum StrengthSimulator {
             state.strengthHearts.decrement()
         }
 
-        state.lastStrengthDecayAt = state.lastStrengthDecayAt.addingTimeInterval(
+        state.timestamps.lastStrengthDecayAt = state.timestamps.lastStrengthDecayAt.addingTimeInterval(
             Double(ticks) * TimeConstants.strengthDepletionInterval
         )
         return state

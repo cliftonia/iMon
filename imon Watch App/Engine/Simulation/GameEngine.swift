@@ -15,13 +15,13 @@ nonisolated enum GameEngine {
         var state = state
 
         guard !state.isDead, !state.isEgg else {
-            state.lastAdvancedAt = now
+            state.timestamps.lastAdvancedAt = now
             return state
         }
 
         // Update age (whole days since birth)
         let calendar = Calendar.current
-        state.age = calendar.dateComponents([.day], from: state.bornAt, to: now).day ?? state.age
+        state.age = calendar.dateComponents([.day], from: state.timestamps.bornAt, to: now).day ?? state.age
 
         // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, isNight: isNight)
@@ -37,7 +37,7 @@ nonisolated enum GameEngine {
             state = DeathEvaluator.applyDeath(to: state)
         }
 
-        state.lastAdvancedAt = now
+        state.timestamps.lastAdvancedAt = now
         return state
     }
 }

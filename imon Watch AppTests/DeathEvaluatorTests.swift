@@ -26,7 +26,7 @@ struct DeathEvaluatorTests {
         let start = Date.now
         var state = makeTestState()
         state.isInjured = true
-        state.injuredAt = start
+        state.timestamps.injuredAt = start
 
         let later = start.addingTimeInterval(
             TimeConstants.untreatedInjuryDeathTime + 1

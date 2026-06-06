@@ -15,7 +15,7 @@ nonisolated enum HealAction {
 
         var state = state
         state.isInjured = false
-        state.injuredAt = nil
+        state.timestamps.injuredAt = nil
         return state
     }
 }

@@ -11,14 +11,15 @@ nonisolated enum JSONPetStateStore {
     ) -> PetStateStore {
         PetStateStore(
             save: { state in
-                let data = try JSONEncoder().encode(state)
+                let data = try JSONEncoder().encode(PetStateDTO(from: state))
                 defaults.set(data, forKey: key)
             },
             load: {
                 guard let data = defaults.data(forKey: key) else {
                     return nil
                 }
-                return try JSONDecoder().decode(PetState.self, from: data)
+                let dto = try JSONDecoder().decode(PetStateDTO.self, from: data)
+                return PetState(from: dto)
             },
             delete: {
                 defaults.removeObject(forKey: key)

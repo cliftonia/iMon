@@ -34,7 +34,7 @@ nonisolated enum LightsAction {
         )
 
         if duringSleep {
-            state.lightsToggledDuringSleepAt = now
+            state.timestamps.lightsToggledDuringSleepAt = now
             return (state, .toggledDuringSleep)
         }
 

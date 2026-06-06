@@ -12,7 +12,7 @@ nonisolated enum InjurySimulator {
 
         if state.poopCount >= TimeConstants.maxPoopPiles {
             state.isInjured = true
-            state.injuredAt = now
+            state.timestamps.injuredAt = now
             state.injuryCount += 1
         }
 

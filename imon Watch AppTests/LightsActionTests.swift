@@ -31,7 +31,7 @@ struct LightsActionTests {
 
         #expect(result == .toggled)
         #expect(newState.lightsOn == false)
-        #expect(newState.lightsToggledDuringSleepAt == nil)
+        #expect(newState.timestamps.lightsToggledDuringSleepAt == nil)
     }
 
     // MARK: - During Sleep Hours
@@ -48,7 +48,7 @@ struct LightsActionTests {
 
         #expect(result == .toggledDuringSleep)
         #expect(newState.lightsOn == true)
-        #expect(newState.lightsToggledDuringSleepAt == nightTime)
+        #expect(newState.timestamps.lightsToggledDuringSleepAt == nightTime)
     }
 
     // MARK: - Blocked

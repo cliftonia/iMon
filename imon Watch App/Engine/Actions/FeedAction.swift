@@ -29,7 +29,7 @@ nonisolated enum FeedAction {
             state.weight.add(TimeConstants.vitaminWeightGain)
         }
 
-        state.lastFedAt = date
+        state.timestamps.lastFedAt = date
         return state
     }
 }

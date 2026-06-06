@@ -9,7 +9,7 @@ struct GameEngineTests {
     func `advance updates age in days`() {
         let start = Date.now.addingTimeInterval(-86400 * 3)
         var state = makeTestState(at: start)
-        state.bornAt = start
+        state.timestamps.bornAt = start
 
         state = GameEngine.advance(state, to: .now)
         #expect(state.age >= 3)
