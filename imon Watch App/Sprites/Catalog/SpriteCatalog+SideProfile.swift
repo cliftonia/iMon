@@ -15,17 +15,6 @@ extension SpriteCatalog {
         )
     }
 
-    /// Side-profile approach walk as the combatant closes in.
-    static func sideApproach(
-        for species: PetSpecies
-    ) -> SpriteAnimation {
-        SpriteAnimation(
-            frames: frames(for: species, kind: .sideWalk),
-            frameDuration: 0.3,
-            loops: true
-        )
-    }
-
     /// Species-specific side-profile attack pose. Species without a
     /// dedicated attack hold their side stance.
     static func sideAttack(

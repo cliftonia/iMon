@@ -57,9 +57,8 @@ final class TrainingPresenter {
 
     private func enterReady() {
         viewModel.phase = .ready
-        spriteAnimator.play(
-            SpriteCatalog.sideApproach(for: species).facing(.right)
-        )
+        // Face front while waiting — only turn side-on once the player attacks.
+        spriteAnimator.play(.idle, for: species)
         targetAnimator.stop()
 
         Task {
@@ -71,9 +70,8 @@ final class TrainingPresenter {
 
     private func enterChallenge() {
         viewModel.phase = .challenge
-        spriteAnimator.play(
-            SpriteCatalog.sideStance(for: species).facing(.right)
-        )
+        // Still facing front — the player hasn't chosen high or low yet.
+        spriteAnimator.play(.idle, for: species)
     }
 
     private func enterAttacking(won: Bool) {
