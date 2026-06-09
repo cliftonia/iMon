@@ -5,12 +5,12 @@ import Foundation
 /// record when the neglect period began.
 nonisolated enum CareMistakeTracker {
 
-    static func apply(to state: PetState, at now: Date) -> PetState {
+    static func apply(to state: PetState, at now: Date, night: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        // Lights-on-while-sleeping penalty (runs regardless of sleep state)
-        state = trackLightsMistake(state: state, at: now)
+        // Light left on at night keeps the pet awake — a care mistake.
+        state = trackLightsMistake(state: state, at: now, night: night)
 
         // Hunger/strength neglect only applies while awake
         guard !state.isSleeping else { return state }
@@ -41,12 +41,13 @@ nonisolated enum CareMistakeTracker {
 
     private static func trackLightsMistake(
         state: PetState,
-        at now: Date
+        at now: Date,
+        night: Bool
     ) -> PetState {
         var state = state
-        let lightsOnWhileSleeping = state.isSleeping && state.lightsOn
+        let keptAwakeAtNight = night && state.lightsOn
 
-        if lightsOnWhileSleeping {
+        if keptAwakeAtNight {
             if let pendingAt = state.timestamps.pendingLightsMistakeAt {
                 let elapsed = now.timeIntervalSince(pendingAt)
                 let mistakes = Int(elapsed / TimeConstants.careMistakeWindow)

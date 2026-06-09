@@ -4,14 +4,15 @@ nonisolated enum LightsAction {
 
     enum ToggleResult: Sendable {
         case toggled
-        case toggledDuringSleep
         case blocked
     }
 
     // MARK: - Query
 
-    static func canToggle(_ state: PetState) -> Bool {
-        !state.isDead && !state.isEgg
+    /// The light can only be toggled at night. By day it is forced on, so any
+    /// toggle (which could only turn it off) is refused.
+    static func canToggle(_ state: PetState, night: Bool) -> Bool {
+        !state.isDead && !state.isEgg && night
     }
 
     // MARK: - Apply
@@ -19,25 +20,16 @@ nonisolated enum LightsAction {
     @discardableResult
     static func apply(
         to state: PetState,
-        at now: Date
+        night: Bool
     ) -> (state: PetState, result: ToggleResult) {
-        guard canToggle(state) else {
+        guard canToggle(state, night: night) else {
             return (state, .blocked)
         }
 
         var state = state
         state.lightsOn.toggle()
-
-        let hour = Calendar.current.component(.hour, from: now)
-        let duringSleep = SleepSchedule.isSleepTime(
-            hour: hour, for: state.species
-        )
-
-        if duringSleep {
-            state.timestamps.lightsToggledDuringSleepAt = now
-            return (state, .toggledDuringSleep)
-        }
-
+        // At night, sleep follows the light immediately.
+        state.isSleeping = !state.lightsOn
         return (state, .toggled)
     }
 }

@@ -5,71 +5,58 @@ import Foundation
 @Suite("LightsAction")
 struct LightsActionTests {
 
-    // MARK: - Helpers
-
-    private func date(hour: Int) -> Date {
-        var components = Calendar.current.dateComponents(
-            [.year, .month, .day], from: .now
-        )
-        components.hour = hour
-        components.minute = 0
-        components.second = 0
-        return Calendar.current.date(from: components) ?? .now
-    }
-
-    // MARK: - Outside Sleep Hours
-
     @Test
-    func `toggle outside sleep hours returns toggled`() {
-        let afternoon = date(hour: 14)
-        var state = makeTestState(at: afternoon)
+    func `cannot toggle during the day`() {
+        var state = makeTestState(at: .now)
         state.lightsOn = true
 
-        let (newState, result) = LightsAction.apply(
-            to: state, at: afternoon
-        )
+        let (newState, result) = LightsAction.apply(to: state, night: false)
+
+        #expect(result == .blocked)
+        #expect(newState.lightsOn == true)
+    }
+
+    @Test
+    func `turning the light off at night sleeps the pet`() {
+        var state = makeTestState(at: .now)
+        state.lightsOn = true
+        state.isSleeping = false
+
+        let (newState, result) = LightsAction.apply(to: state, night: true)
 
         #expect(result == .toggled)
         #expect(newState.lightsOn == false)
-        #expect(newState.timestamps.lightsToggledDuringSleepAt == nil)
+        #expect(newState.isSleeping == true)
     }
-
-    // MARK: - During Sleep Hours
 
     @Test
-    func `toggle during sleep hours returns toggledDuringSleep`() {
-        let nightTime = date(hour: 22)
-        var state = makeTestState(at: nightTime)
+    func `turning the light on at night wakes the pet`() {
+        var state = makeTestState(at: .now)
         state.lightsOn = false
+        state.isSleeping = true
 
-        let (newState, result) = LightsAction.apply(
-            to: state, at: nightTime
-        )
+        let (newState, result) = LightsAction.apply(to: state, night: true)
 
-        #expect(result == .toggledDuringSleep)
+        #expect(result == .toggled)
         #expect(newState.lightsOn == true)
-        #expect(newState.timestamps.lightsToggledDuringSleepAt == nightTime)
+        #expect(newState.isSleeping == false)
     }
-
-    // MARK: - Blocked
 
     @Test
     func `cannot toggle dead pet`() {
-        let now = date(hour: 14)
-        var state = makeTestState(at: now)
+        var state = makeTestState(at: .now)
         state.isDead = true
 
-        let (_, result) = LightsAction.apply(to: state, at: now)
+        let (_, result) = LightsAction.apply(to: state, night: true)
 
         #expect(result == .blocked)
     }
 
     @Test
     func `cannot toggle egg`() {
-        let now = date(hour: 14)
-        let state = PetState.newEgg(at: now)
+        let state = PetState.newEgg(at: .now)
 
-        let (_, result) = LightsAction.apply(to: state, at: now)
+        let (_, result) = LightsAction.apply(to: state, night: true)
 
         #expect(result == .blocked)
     }

@@ -23,13 +23,18 @@ nonisolated enum GameEngine {
         let calendar = Calendar.current
         state.age = calendar.dateComponents([.day], from: state.timestamps.bornAt, to: now).day ?? state.age
 
+        // Resolve day/night once (weather, or fixed hours as fallback).
+        let night = SleepSchedule.isNight(
+            weatherNight: isNight, at: now, for: state.species
+        )
+
         // Apply simulators in dependency order
-        state = SleepSchedule.apply(to: state, at: now, isNight: isNight)
+        state = SleepSchedule.apply(to: state, night: night)
         state = HungerSimulator.apply(to: state, at: now)
         state = StrengthSimulator.apply(to: state, at: now)
         state = PoopSimulator.apply(to: state, at: now)
         state = InjurySimulator.apply(to: state, at: now)
-        state = CareMistakeTracker.apply(to: state, at: now)
+        state = CareMistakeTracker.apply(to: state, at: now, night: night)
 
         // Evaluate death
         if let cause = DeathEvaluator.evaluate(state, at: now) {

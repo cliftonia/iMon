@@ -93,6 +93,13 @@ final class PetPresenter {
         save()
     }
 
+    /// The resolved day/night state — weather daylight, or fixed hours fallback.
+    var currentlyNight: Bool {
+        SleepSchedule.isNight(
+            weatherNight: currentNight(), at: .now, for: state.species
+        )
+    }
+
     private func advanceState() {
         let wasSleeping = state.isSleeping
         state = GameEngine.advance(state, to: .now, isNight: currentNight())
@@ -102,6 +109,7 @@ final class PetPresenter {
             state.lightsOn = true
         }
 
+        viewModel.isNight = currentlyNight
         updateViewModel()
         updateAnimation()
     }

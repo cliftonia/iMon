@@ -1,82 +1,50 @@
 import Foundation
 
-/// Determines if the pet should be sleeping based on the current hour
-/// and the species' bedtime/wake schedule. The dark screen ("night mode")
-/// can additionally follow real-world daylight via `isNight`.
+/// Drives sleep and the light from a single day/night signal.
+///
+/// - **Day:** the light is always on and the pet is awake.
+/// - **Night:** the light is the player's switch; the pet sleeps when it's off.
+/// - **Transitions:** dusk turns the light off (pet sleeps), dawn turns it on
+///   (pet wakes). `wasNight` records the last state so we only act on a change.
 nonisolated enum SleepSchedule {
 
-    /// - Parameter isNight: when non-nil (e.g. from WeatherKit daylight),
-    ///   drives the dark screen so it follows the real sunset/sunrise. Sleep
-    ///   itself stays on the fixed bedtime/wake hours regardless.
-    static func apply(
-        to state: PetState,
+    /// Resolve whether it is night: the weather's daylight flag when available,
+    /// otherwise the species' fixed bedtime/wake hours.
+    static func isNight(
+        weatherNight: Bool?,
         at now: Date,
-        isNight: Bool? = nil
-    ) -> PetState {
+        for species: PetSpecies
+    ) -> Bool {
+        if let weatherNight { return weatherNight }
+        let hour = Calendar.current.component(.hour, from: now)
+        return isSleepTime(hour: hour, for: species)
+    }
+
+    /// Apply the resolved night signal to the light and sleep state.
+    static func apply(to state: PetState, night: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        let hour = Calendar.current.component(.hour, from: now)
-        let sleepTime = isSleepTime(hour: hour, for: state.species)
-
-        // 1. Resolve pending toggle if delay has elapsed
-        state = resolvePendingToggle(state: state, at: now)
-
-        // 2. Bedtime transition
-        if sleepTime,
-           !state.isSleeping,
-           state.timestamps.lightsToggledDuringSleepAt == nil {
-            state.isSleeping = true
-            state.lightsOn = false
+        // Dusk/dawn: flip the light automatically on the transition.
+        if night != state.wasNight {
+            state.lightsOn = !night
+            state.wasNight = night
         }
 
-        // 3. Leaving sleep hours — clear any user override
-        if !sleepTime {
-            if state.isSleeping {
-                state.isSleeping = false
-                state.lightsOn = true
-            }
-            state.timestamps.lightsToggledDuringSleepAt = nil
-        }
-
-        // 4. Dark mode follows real-world night even while awake (winter dusk
-        //    is earlier than bedtime), unless the user is mid lights-toggle.
-        if let isNight,
-           !state.isSleeping,
-           state.timestamps.lightsToggledDuringSleepAt == nil {
-            state.lightsOn = !isNight
+        if night {
+            // The player owns the light at night; sleep follows it.
+            state.isSleeping = !state.lightsOn
+        } else {
+            // Daytime is always lit and awake.
+            state.lightsOn = true
+            state.isSleeping = false
         }
 
         return state
     }
 
-    /// Check if a given hour falls within sleep hours for a species.
+    /// Whether a given hour falls within a species' fixed sleep window.
     static func isSleepTime(hour: Int, for species: PetSpecies) -> Bool {
         hour >= species.bedtimeHour || hour < species.wakeHour
-    }
-
-    // MARK: - Private
-
-    private static func resolvePendingToggle(
-        state: PetState,
-        at now: Date
-    ) -> PetState {
-        guard let toggledAt = state.timestamps.lightsToggledDuringSleepAt else {
-            return state
-        }
-
-        let elapsed = now.timeIntervalSince(toggledAt)
-        guard elapsed >= TimeConstants.lightsToggleSleepDelay else {
-            return state
-        }
-
-        var state = state
-        if state.lightsOn {
-            state.isSleeping = false
-        } else {
-            state.isSleeping = true
-            state.timestamps.lightsToggledDuringSleepAt = nil
-        }
-        return state
     }
 }

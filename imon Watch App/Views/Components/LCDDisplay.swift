@@ -13,6 +13,10 @@ struct LCDDisplay: View {
     let weatherCondition: WeatherIconCondition?
     let moonPhase: MoonPhase
 
+    /// Whether it is night — clear weather shows the moon (dark) or a bulb
+    /// (lit at night) rather than the sun.
+    let isNight: Bool
+
     /// Drives the storm lightning flash on its own (e.g. the battle "VS" beat),
     /// independent of the weather condition.
     let stormFlash: Bool
@@ -28,6 +32,7 @@ struct LCDDisplay: View {
         rightSpriteOffsetY: Int = 4,
         weatherCondition: WeatherIconCondition? = nil,
         moonPhase: MoonPhase = .full,
+        isNight: Bool = false,
         stormFlash: Bool = false
     ) {
         self.leftSprite = leftSprite
@@ -40,6 +45,7 @@ struct LCDDisplay: View {
         self.rightSpriteOffsetY = rightSpriteOffsetY
         self.weatherCondition = weatherCondition
         self.moonPhase = moonPhase
+        self.isNight = isNight
         self.stormFlash = stormFlash
     }
 

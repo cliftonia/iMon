@@ -34,6 +34,9 @@ nonisolated struct PetState: Sendable {
     var isDead: Bool = false
     var isEgg: Bool = false
 
+    /// Last-known day/night state, for detecting dusk/dawn transitions.
+    var wasNight: Bool = false
+
     // MARK: - Timestamps
 
     var timestamps: Timestamps
@@ -57,7 +60,6 @@ extension PetState {
         var injuredAt: Date?
         var pendingCareMistakeAt: Date?
         var pendingLightsMistakeAt: Date?
-        var lightsToggledDuringSleepAt: Date?
 
         /// A freshly created pet: every elapsed timer starts at `date`, with no
         /// pending events outstanding.
@@ -73,7 +75,6 @@ extension PetState {
             injuredAt = nil
             pendingCareMistakeAt = nil
             pendingLightsMistakeAt = nil
-            lightsToggledDuringSleepAt = nil
         }
 
         // Full memberwise init (a custom init above suppresses the synthesised one).
@@ -88,8 +89,7 @@ extension PetState {
             lastAdvancedAt: Date,
             injuredAt: Date?,
             pendingCareMistakeAt: Date?,
-            pendingLightsMistakeAt: Date?,
-            lightsToggledDuringSleepAt: Date?
+            pendingLightsMistakeAt: Date?
         ) {
             self.bornAt = bornAt
             self.lastFedAt = lastFedAt
@@ -102,7 +102,6 @@ extension PetState {
             self.injuredAt = injuredAt
             self.pendingCareMistakeAt = pendingCareMistakeAt
             self.pendingLightsMistakeAt = pendingLightsMistakeAt
-            self.lightsToggledDuringSleepAt = lightsToggledDuringSleepAt
         }
     }
 }

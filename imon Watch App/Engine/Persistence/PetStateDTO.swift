@@ -33,6 +33,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
 
     var isDead: Bool
     var isEgg: Bool
+    var wasNight: Bool?
 
     var bornAt: Date
     var lastFedAt: Date
@@ -44,7 +45,6 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var injuredAt: Date?
     var pendingCareMistakeAt: Date?
     var pendingLightsMistakeAt: Date?
-    var lightsToggledDuringSleepAt: Date?
     var lastAdvancedAt: Date
 }
 
@@ -72,6 +72,7 @@ nonisolated extension PetStateDTO {
         trainingCount = state.trainingCount
         isDead = state.isDead
         isEgg = state.isEgg
+        wasNight = state.wasNight
         bornAt = times.bornAt
         lastFedAt = times.lastFedAt
         lastTrainedAt = times.lastTrainedAt
@@ -82,7 +83,6 @@ nonisolated extension PetStateDTO {
         injuredAt = times.injuredAt
         pendingCareMistakeAt = times.pendingCareMistakeAt
         pendingLightsMistakeAt = times.pendingLightsMistakeAt
-        lightsToggledDuringSleepAt = times.lightsToggledDuringSleepAt
         lastAdvancedAt = times.lastAdvancedAt
     }
 }
@@ -108,6 +108,7 @@ nonisolated extension PetState {
             trainingCount: dto.trainingCount,
             isDead: dto.isDead,
             isEgg: dto.isEgg,
+            wasNight: dto.wasNight ?? false,
             timestamps: PetState.Timestamps(
                 bornAt: dto.bornAt,
                 lastFedAt: dto.lastFedAt,
@@ -119,8 +120,7 @@ nonisolated extension PetState {
                 lastAdvancedAt: dto.lastAdvancedAt,
                 injuredAt: dto.injuredAt,
                 pendingCareMistakeAt: dto.pendingCareMistakeAt,
-                pendingLightsMistakeAt: dto.pendingLightsMistakeAt,
-                lightsToggledDuringSleepAt: dto.lightsToggledDuringSleepAt
+                pendingLightsMistakeAt: dto.pendingLightsMistakeAt
             )
         )
     }

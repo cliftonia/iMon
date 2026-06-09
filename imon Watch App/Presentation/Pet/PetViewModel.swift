@@ -14,6 +14,9 @@ final class PetViewModel {
 
     var screenMode: ScreenMode = .normal
 
+    /// Whether it is currently night (drives the day/bulb vs night sky overlay).
+    var isNight: Bool = false
+
     // MARK: - Pet Display
 
     var status: PetStatus?

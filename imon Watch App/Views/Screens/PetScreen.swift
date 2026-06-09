@@ -147,7 +147,8 @@ struct PetScreen: View {
                         .petOffsetX,
                     weatherCondition: appPresenter
                         .weatherStore.displaySnapshot?.condition,
-                    moonPhase: MoonPhase.current(date: .now)
+                    moonPhase: MoonPhase.current(date: .now),
+                    isNight: presenter.viewModel.isNight
                 )
             }
             .fixedSize(horizontal: false, vertical: true)

@@ -46,12 +46,15 @@ extension LCDDisplay {
             fill(Self.fogBackCells(phase: phase), basePixelColor.opacity(0.25))
             fill(Self.fogFrontCells(phase: phase), basePixelColor.opacity(0.45))
         case .clear:
-            if lightsOn {
-                // Sun sits in the background — dim, like the far rain layer.
-                fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
-            } else {
-                // Night sky (moon, stars, meteors) reads bright in the dark.
+            if !lightsOn {
+                // Dark (night, lights off): moon, stars and meteors.
                 fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
+            } else if isNight {
+                // Lit at night — by the bulb, not the sun.
+                fill(Self.bulbCells(phase: phase), basePixelColor.opacity(0.4))
+            } else {
+                // Daylight: the sun in the background.
+                fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
             }
         case .cloudy:
             fill(Self.cloudCells(phase: phase), basePixelColor.opacity(0.55))
@@ -243,6 +246,31 @@ extension LCDDisplay {
         if (phase / 3) % 4 == 0 {
             let sx = 4, sy = 3
             cells += [(sx, sy), (sx - 1, sy), (sx + 1, sy), (sx, sy - 1), (sx, sy + 1)]
+        }
+        return cells
+    }
+
+    /// A light bulb where the sun would be — shown when the room is lit at
+    /// night, with a soft pulsing glow so it reads as switched on.
+    private static func bulbCells(phase: Int) -> [(x: Int, y: Int)] {
+        let cx = 25, cy = 5
+        let glass = [
+            (-1, -2), (0, -2), (1, -2),
+            (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1),
+            (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0),
+            (-1, 1), (0, 1), (1, 1)
+        ]
+        let base = [
+            (-1, 2), (0, 2), (1, 2),
+            (-1, 3), (0, 3), (1, 3),
+            (0, 4)
+        ]
+        var cells = (glass + base).map { (x: cx + $0.0, y: cy + $0.1) }
+        // Pulsing glow sparkles around the glass.
+        if (phase / 3) % 2 == 0 {
+            for (dx, dy) in [(-4, -1), (4, -1), (-3, -3), (3, -3)] {
+                cells.append((x: cx + dx, y: cy + dy))
+            }
         }
         return cells
     }
