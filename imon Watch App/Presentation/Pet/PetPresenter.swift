@@ -13,9 +13,12 @@ final class PetPresenter {
     var state: PetState
     let store: PetStateStore
 
-    /// Returns whether it is currently night (e.g. from WeatherKit daylight),
-    /// or nil to fall back to the fixed bedtime/wake schedule.
+    /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
+
+    /// Whether a weather fetch has completed — until it has, we hold the
+    /// persisted day/night state rather than guessing from the clock.
+    private let weatherSettled: () -> Bool
 
     private var gameTimer: Timer?
     var wanderTimer: Timer?
@@ -42,12 +45,23 @@ final class PetPresenter {
     init(
         state: PetState,
         store: PetStateStore,
-        currentNight: @escaping () -> Bool? = { nil }
+        currentNight: @escaping () -> Bool? = { nil },
+        weatherSettled: @escaping () -> Bool = { true }
     ) {
         self.state = state
         self.store = store
         self.currentNight = currentNight
+        self.weatherSettled = weatherSettled
         updateViewModel()
+    }
+
+    /// The night signal fed to the simulation:
+    /// - a weather reading when available,
+    /// - `nil` (clock fallback) once weather has settled with no reading,
+    /// - the persisted state while weather is still loading (avoids a flip).
+    private var nightSignal: Bool? {
+        if let weatherNight = currentNight() { return weatherNight }
+        return weatherSettled() ? nil : state.wasNight
     }
 
     // MARK: - Game Loop
@@ -96,13 +110,13 @@ final class PetPresenter {
     /// The resolved day/night state — weather daylight, or fixed hours fallback.
     var currentlyNight: Bool {
         SleepSchedule.isNight(
-            weatherNight: currentNight(), at: .now, for: state.species
+            weatherNight: nightSignal, at: .now, for: state.species
         )
     }
 
     private func advanceState() {
         let wasSleeping = state.isSleeping
-        state = GameEngine.advance(state, to: .now, isNight: currentNight())
+        state = GameEngine.advance(state, to: .now, isNight: nightSignal)
 
         if !wasSleeping, state.isSleeping, viewModel.isBusy {
             state.isSleeping = false

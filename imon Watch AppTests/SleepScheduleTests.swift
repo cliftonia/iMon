@@ -21,11 +21,9 @@ struct SleepScheduleTests {
 
     @Test
     func `weather daylight overrides the clock`() {
-        // 3pm by the clock, but the weather reports night.
         #expect(
             SleepSchedule.isNight(weatherNight: true, at: date(hour: 15), for: .emberkin)
         )
-        // 11pm by the clock, but the weather reports day.
         #expect(
             !SleepSchedule.isNight(weatherNight: false, at: date(hour: 23), for: .emberkin)
         )
@@ -42,7 +40,7 @@ struct SleepScheduleTests {
         )
     }
 
-    // MARK: - Apply
+    // MARK: - Day
 
     @Test
     func `daytime forces the light on and keeps the pet awake`() {
@@ -50,59 +48,100 @@ struct SleepScheduleTests {
         state.lightsOn = false
         state.isSleeping = true
 
-        state = SleepSchedule.apply(to: state, night: false)
+        state = SleepSchedule.apply(to: state, at: .now, night: false)
 
         #expect(state.lightsOn == true)
         #expect(state.isSleeping == false)
     }
 
+    // MARK: - Dusk / Dawn
+
     @Test
-    func `dusk turns the light off and sends the pet to sleep`() {
-        var state = makeTestState(at: .now)
+    func `dusk turns the light off and starts the settle countdown`() {
+        let now = Date()
+        var state = makeTestState(at: now)
         state.lightsOn = true
         state.isSleeping = false
         state.wasNight = false
 
-        state = SleepSchedule.apply(to: state, night: true)
+        state = SleepSchedule.apply(to: state, at: now, night: true)
 
         #expect(state.lightsOn == false)
-        #expect(state.isSleeping == true)
         #expect(state.wasNight == true)
+        #expect(state.isSleeping == false)              // not yet — settling
+        #expect(state.timestamps.lightsOffAt == now)
     }
 
     @Test
     func `dawn turns the light on and wakes the pet`() {
-        var state = makeTestState(at: .now)
+        let now = Date()
+        var state = makeTestState(at: now)
         state.lightsOn = false
         state.isSleeping = true
         state.wasNight = true
 
-        state = SleepSchedule.apply(to: state, night: false)
+        state = SleepSchedule.apply(to: state, at: now, night: false)
 
         #expect(state.lightsOn == true)
         #expect(state.isSleeping == false)
         #expect(state.wasNight == false)
     }
 
-    @Test
-    func `light left on at night keeps the pet awake`() {
-        var state = makeTestState(at: .now)
-        state.wasNight = true   // already night, no transition
-        state.lightsOn = true   // player turned it on
+    // MARK: - Settle Delay
 
-        state = SleepSchedule.apply(to: state, night: true)
+    @Test
+    func `pet sleeps once the settle delay has passed`() {
+        let now = Date()
+        var state = makeTestState(at: now)
+        state.wasNight = true
+        state.lightsOn = false
+        state.isSleeping = false
+        state.timestamps.lightsOffAt = now.addingTimeInterval(
+            -(TimeConstants.sleepDelay + 1)
+        )
+
+        state = SleepSchedule.apply(to: state, at: now, night: true)
+
+        #expect(state.isSleeping == true)
+        #expect(state.timestamps.lightsOffAt == nil)
+    }
+
+    @Test
+    func `pet stays awake before the settle delay`() {
+        let now = Date()
+        var state = makeTestState(at: now)
+        state.wasNight = true
+        state.lightsOn = false
+        state.isSleeping = false
+        state.timestamps.lightsOffAt = now.addingTimeInterval(-1)
+
+        state = SleepSchedule.apply(to: state, at: now, night: true)
+
+        #expect(state.isSleeping == false)
+    }
+
+    @Test
+    func `light on at night keeps the pet awake`() {
+        let now = Date()
+        var state = makeTestState(at: now)
+        state.wasNight = true
+        state.lightsOn = true
+
+        state = SleepSchedule.apply(to: state, at: now, night: true)
 
         #expect(state.lightsOn == true)
         #expect(state.isSleeping == false)
     }
 
     @Test
-    func `light off at night lets the pet sleep`() {
-        var state = makeTestState(at: .now)
+    func `sleeping pet stays asleep with the light off`() {
+        let now = Date()
+        var state = makeTestState(at: now)
         state.wasNight = true
         state.lightsOn = false
+        state.isSleeping = true
 
-        state = SleepSchedule.apply(to: state, night: true)
+        state = SleepSchedule.apply(to: state, at: now, night: true)
 
         #expect(state.isSleeping == true)
     }
@@ -115,7 +154,7 @@ struct SleepScheduleTests {
         state.isDead = true
         state.isSleeping = false
 
-        state = SleepSchedule.apply(to: state, night: true)
+        state = SleepSchedule.apply(to: state, at: .now, night: true)
 
         #expect(state.isSleeping == false)
     }
@@ -125,7 +164,7 @@ struct SleepScheduleTests {
         var state = PetState.newEgg(at: .now)
         state.isSleeping = false
 
-        state = SleepSchedule.apply(to: state, night: true)
+        state = SleepSchedule.apply(to: state, at: .now, night: true)
 
         #expect(state.isSleeping == false)
     }

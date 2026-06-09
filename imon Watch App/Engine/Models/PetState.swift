@@ -60,6 +60,8 @@ extension PetState {
         var injuredAt: Date?
         var pendingCareMistakeAt: Date?
         var pendingLightsMistakeAt: Date?
+        /// When the light was switched off at night — starts the sleep countdown.
+        var lightsOffAt: Date?
 
         /// A freshly created pet: every elapsed timer starts at `date`, with no
         /// pending events outstanding.
@@ -75,6 +77,7 @@ extension PetState {
             injuredAt = nil
             pendingCareMistakeAt = nil
             pendingLightsMistakeAt = nil
+            lightsOffAt = nil
         }
 
         // Full memberwise init (a custom init above suppresses the synthesised one).
@@ -89,7 +92,8 @@ extension PetState {
             lastAdvancedAt: Date,
             injuredAt: Date?,
             pendingCareMistakeAt: Date?,
-            pendingLightsMistakeAt: Date?
+            pendingLightsMistakeAt: Date?,
+            lightsOffAt: Date?
         ) {
             self.bornAt = bornAt
             self.lastFedAt = lastFedAt
@@ -102,6 +106,7 @@ extension PetState {
             self.injuredAt = injuredAt
             self.pendingCareMistakeAt = pendingCareMistakeAt
             self.pendingLightsMistakeAt = pendingLightsMistakeAt
+            self.lightsOffAt = lightsOffAt
         }
     }
 }

@@ -10,36 +10,46 @@ struct LightsActionTests {
         var state = makeTestState(at: .now)
         state.lightsOn = true
 
-        let (newState, result) = LightsAction.apply(to: state, night: false)
+        let (newState, result) = LightsAction.apply(
+            to: state, night: false, at: .now
+        )
 
         #expect(result == .blocked)
         #expect(newState.lightsOn == true)
     }
 
     @Test
-    func `turning the light off at night sleeps the pet`() {
-        var state = makeTestState(at: .now)
+    func `turning the light off at night starts the settle countdown`() {
+        let now = Date()
+        var state = makeTestState(at: now)
         state.lightsOn = true
         state.isSleeping = false
 
-        let (newState, result) = LightsAction.apply(to: state, night: true)
+        let (newState, result) = LightsAction.apply(
+            to: state, night: true, at: now
+        )
 
         #expect(result == .toggled)
         #expect(newState.lightsOn == false)
-        #expect(newState.isSleeping == true)
+        #expect(newState.isSleeping == false)            // not immediate
+        #expect(newState.timestamps.lightsOffAt == now)
     }
 
     @Test
-    func `turning the light on at night wakes the pet`() {
-        var state = makeTestState(at: .now)
+    func `turning the light on at night wakes the pet immediately`() {
+        let now = Date()
+        var state = makeTestState(at: now)
         state.lightsOn = false
         state.isSleeping = true
 
-        let (newState, result) = LightsAction.apply(to: state, night: true)
+        let (newState, result) = LightsAction.apply(
+            to: state, night: true, at: now
+        )
 
         #expect(result == .toggled)
         #expect(newState.lightsOn == true)
         #expect(newState.isSleeping == false)
+        #expect(newState.timestamps.lightsOffAt == nil)
     }
 
     @Test
@@ -47,7 +57,7 @@ struct LightsActionTests {
         var state = makeTestState(at: .now)
         state.isDead = true
 
-        let (_, result) = LightsAction.apply(to: state, night: true)
+        let (_, result) = LightsAction.apply(to: state, night: true, at: .now)
 
         #expect(result == .blocked)
     }
@@ -56,7 +66,7 @@ struct LightsActionTests {
     func `cannot toggle egg`() {
         let state = PetState.newEgg(at: .now)
 
-        let (_, result) = LightsAction.apply(to: state, night: true)
+        let (_, result) = LightsAction.apply(to: state, night: true, at: .now)
 
         #expect(result == .blocked)
     }

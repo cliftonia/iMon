@@ -20,7 +20,8 @@ nonisolated enum LightsAction {
     @discardableResult
     static func apply(
         to state: PetState,
-        night: Bool
+        night: Bool,
+        at now: Date
     ) -> (state: PetState, result: ToggleResult) {
         guard canToggle(state, night: night) else {
             return (state, .blocked)
@@ -28,8 +29,14 @@ nonisolated enum LightsAction {
 
         var state = state
         state.lightsOn.toggle()
-        // At night, sleep follows the light immediately.
-        state.isSleeping = !state.lightsOn
+        if state.lightsOn {
+            // Turned on — wake immediately.
+            state.isSleeping = false
+            state.timestamps.lightsOffAt = nil
+        } else {
+            // Turned off — start the settle countdown; stay awake for now.
+            state.timestamps.lightsOffAt = now
+        }
         return (state, .toggled)
     }
 }

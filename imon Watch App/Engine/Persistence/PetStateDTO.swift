@@ -45,6 +45,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var injuredAt: Date?
     var pendingCareMistakeAt: Date?
     var pendingLightsMistakeAt: Date?
+    var lightsOffAt: Date?
     var lastAdvancedAt: Date
 }
 
@@ -83,6 +84,7 @@ nonisolated extension PetStateDTO {
         injuredAt = times.injuredAt
         pendingCareMistakeAt = times.pendingCareMistakeAt
         pendingLightsMistakeAt = times.pendingLightsMistakeAt
+        lightsOffAt = times.lightsOffAt
         lastAdvancedAt = times.lastAdvancedAt
     }
 }
@@ -120,7 +122,8 @@ nonisolated extension PetState {
                 lastAdvancedAt: dto.lastAdvancedAt,
                 injuredAt: dto.injuredAt,
                 pendingCareMistakeAt: dto.pendingCareMistakeAt,
-                pendingLightsMistakeAt: dto.pendingLightsMistakeAt
+                pendingLightsMistakeAt: dto.pendingLightsMistakeAt,
+                lightsOffAt: dto.lightsOffAt
             )
         )
     }

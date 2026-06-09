@@ -29,7 +29,7 @@ nonisolated enum GameEngine {
         )
 
         // Apply simulators in dependency order
-        state = SleepSchedule.apply(to: state, night: night)
+        state = SleepSchedule.apply(to: state, at: now, night: night)
         state = HungerSimulator.apply(to: state, at: now)
         state = StrengthSimulator.apply(to: state, at: now)
         state = PoopSimulator.apply(to: state, at: now)

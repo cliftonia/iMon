@@ -42,8 +42,8 @@ nonisolated enum TimeConstants {
     /// Main simulation tick fires every 30 seconds
     static let gameTickInterval: TimeInterval = 30
 
-    /// Delay before a lights toggle during sleep takes effect
-    static let lightsToggleSleepDelay: TimeInterval = 5
+    /// How long after the light goes off at night before the pet falls asleep
+    static let sleepDelay: TimeInterval = 10
 
     // MARK: - Limits
 

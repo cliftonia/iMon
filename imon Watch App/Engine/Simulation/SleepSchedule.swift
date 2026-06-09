@@ -20,8 +20,9 @@ nonisolated enum SleepSchedule {
         return isSleepTime(hour: hour, for: species)
     }
 
-    /// Apply the resolved night signal to the light and sleep state.
-    static func apply(to state: PetState, night: Bool) -> PetState {
+    /// Apply the resolved night signal to the light and sleep state. At night
+    /// the pet only drops off `sleepDelay` seconds after the light goes out.
+    static func apply(to state: PetState, at now: Date, night: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
@@ -31,13 +32,30 @@ nonisolated enum SleepSchedule {
             state.wasNight = night
         }
 
-        if night {
-            // The player owns the light at night; sleep follows it.
-            state.isSleeping = !state.lightsOn
-        } else {
+        guard night else {
             // Daytime is always lit and awake.
             state.lightsOn = true
             state.isSleeping = false
+            state.timestamps.lightsOffAt = nil
+            return state
+        }
+
+        // Night, light on — wide awake.
+        if state.lightsOn {
+            state.isSleeping = false
+            state.timestamps.lightsOffAt = nil
+        } else if state.isSleeping {
+            // Already settled — stay asleep, no countdown.
+            state.timestamps.lightsOffAt = nil
+        } else if let offAt = state.timestamps.lightsOffAt {
+            // Light is off — drop off once the settle delay has passed.
+            if now.timeIntervalSince(offAt) >= TimeConstants.sleepDelay {
+                state.isSleeping = true
+                state.timestamps.lightsOffAt = nil
+            }
+        } else {
+            // Light just went out — start the settle countdown.
+            state.timestamps.lightsOffAt = now
         }
 
         return state

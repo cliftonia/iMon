@@ -81,6 +81,9 @@ final class AppPresenter {
             store: store,
             currentNight: { [weatherStore] in
                 weatherStore.snapshot.map { !$0.isDaylight }
+            },
+            weatherSettled: { [weatherStore] in
+                weatherStore.hasAttempted
             }
         )
         petPresenter = presenter

@@ -9,6 +9,10 @@ final class WeatherStore {
 
     private(set) var snapshot: WeatherSnapshot?
 
+    /// True once a fetch has completed (success or failure) — lets the day/night
+    /// logic tell "weather still loading" from "weather unavailable".
+    private(set) var hasAttempted = false
+
     private let provider: WeatherProvider
     private let fallback: WeatherSnapshot?
     private var lastFetch: Date?
@@ -70,7 +74,10 @@ final class WeatherStore {
 
     /// Fetches and stores a snapshot, leaving the existing value on failure.
     func refresh(now: Date = .now) async {
-        defer { fetchTask = nil }
+        defer {
+            fetchTask = nil
+            hasAttempted = true
+        }
         do {
             snapshot = try await provider.fetchCurrent()
             lastFetch = now
