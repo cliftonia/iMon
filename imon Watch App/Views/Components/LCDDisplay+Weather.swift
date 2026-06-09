@@ -15,8 +15,14 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
-            for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
+        // Inside (lit at night): the weather is confined to the window.
+        let indoor = dayPhase == .inside
+
+        func draw(_ cells: [(x: Int, y: Int)], _ color: Color, clipped: Bool) {
+            for cell in cells
+            where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20
+                && (!clipped
+                    || (Self.windowCols.contains(cell.x) && Self.windowRows.contains(cell.y))) {
                 let rect = CGRect(
                     x: Double(cell.x) * pixelWidth,
                     y: Double(cell.y) * pixelHeight,
@@ -25,6 +31,11 @@ extension LCDDisplay {
                 )
                 context.fill(Path(rect), with: .color(color))
             }
+        }
+        // Weather clips to the window indoors and reads dim (distant background);
+        // chrome (frame, lamp) is solid and never clips.
+        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
+            draw(cells, indoor ? basePixelColor.opacity(0.4) : color, clipped: indoor)
         }
 
         switch weatherCondition {
@@ -50,17 +61,25 @@ extension LCDDisplay {
             case .day:
                 // Daylight: the sun in the background.
                 fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
-            case .night:
-                // Dark (light off): moon, stars and meteors.
+            case .night, .inside:
+                // Moon, stars and meteors — full sky outdoors, or through the
+                // window when inside (clipped by `fill`).
                 fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
-            case .inside:
-                // Lit at night — by the bulb, not the sun.
-                fill(Self.bulbCells(phase: phase), basePixelColor.opacity(0.4))
             }
         case .cloudy:
             fill(Self.cloudCells(phase: phase), basePixelColor.opacity(0.55))
         case .none:
             break
+        }
+
+        // Inside: draw the wall's window frame and the ceiling light over the
+        // (clipped) weather. These are never clipped.
+        if indoor {
+            // Dim background dressing, then solid foreground frame and lamp.
+            draw(Self.furnitureCells(), basePixelColor.opacity(0.35), clipped: false)
+            draw(Self.windowFrameCells(), basePixelColor, clipped: false)
+            draw(Self.lampCells(phase: phase), basePixelColor, clipped: false)
+            draw(Self.lampGleamCells(phase: phase), basePixelColor.opacity(0.5), clipped: false)
         }
     }
 
@@ -73,7 +92,10 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        guard weatherCondition == .storm || stormFlash else { return }
+        // Indoors the storm shows as rain through the window, not a room-wide flash.
+        guard (weatherCondition == .storm && dayPhase != .inside) || stormFlash else {
+            return
+        }
 
         func fillCells(_ cells: [(x: Int, y: Int)], _ color: Color) {
             for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
@@ -247,31 +269,6 @@ extension LCDDisplay {
         if (phase / 3) % 4 == 0 {
             let sx = 4, sy = 3
             cells += [(sx, sy), (sx - 1, sy), (sx + 1, sy), (sx, sy - 1), (sx, sy + 1)]
-        }
-        return cells
-    }
-
-    /// A light bulb where the sun would be — shown when the room is lit at
-    /// night, with a soft pulsing glow so it reads as switched on.
-    private static func bulbCells(phase: Int) -> [(x: Int, y: Int)] {
-        let cx = 25, cy = 5
-        let glass = [
-            (-1, -2), (0, -2), (1, -2),
-            (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1),
-            (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0),
-            (-1, 1), (0, 1), (1, 1)
-        ]
-        let base = [
-            (-1, 2), (0, 2), (1, 2),
-            (-1, 3), (0, 3), (1, 3),
-            (0, 4)
-        ]
-        var cells = (glass + base).map { (x: cx + $0.0, y: cy + $0.1) }
-        // Pulsing glow sparkles around the glass.
-        if (phase / 3) % 2 == 0 {
-            for (dx, dy) in [(-4, -1), (4, -1), (-3, -3), (3, -3)] {
-                cells.append((x: cx + dx, y: cy + dy))
-            }
         }
         return cells
     }

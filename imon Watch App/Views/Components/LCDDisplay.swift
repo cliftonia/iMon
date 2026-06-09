@@ -54,6 +54,11 @@ struct LCDDisplay: View {
         weatherCondition != nil || stormFlash
     }
 
+    /// Lit at night — the weather plays in a window inside a room.
+    private var isIndoor: Bool {
+        dayPhase == .inside
+    }
+
     private static let weatherFrameInterval: TimeInterval = 0.18
 
     // MARK: - Colors
@@ -101,6 +106,17 @@ struct LCDDisplay: View {
                 pixelHeight: pixelHeight
             )
 
+            // Indoors the room (window, weather, furniture, lamp) sits behind
+            // the pet; outdoors the weather plays over everything.
+            if isIndoor {
+                drawWeather(
+                    phase: weatherPhase,
+                    in: context,
+                    pixelWidth: pixelWidth,
+                    pixelHeight: pixelHeight
+                )
+            }
+
             drawSprites(
                 in: context,
                 pixelWidth: pixelWidth,
@@ -113,20 +129,21 @@ struct LCDDisplay: View {
                 pixelHeight: pixelHeight
             )
 
-            drawWeather(
-                phase: weatherPhase,
-                in: context,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
-
-            drawLightning(
-                phase: weatherPhase,
-                in: context,
-                size: size,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
+            if !isIndoor {
+                drawWeather(
+                    phase: weatherPhase,
+                    in: context,
+                    pixelWidth: pixelWidth,
+                    pixelHeight: pixelHeight
+                )
+                drawLightning(
+                    phase: weatherPhase,
+                    in: context,
+                    size: size,
+                    pixelWidth: pixelWidth,
+                    pixelHeight: pixelHeight
+                )
+            }
         }
         .background(backgroundColor)
         .aspectRatio(32.0 / 20.0, contentMode: .fit)
