@@ -106,9 +106,6 @@ final class PetPresenter {
             state.lightsOn = true
         }
 
-        viewModel.dayPhase = DayPhase.resolve(
-            isNight: currentlyNight, lightsOn: state.lightsOn
-        )
         updateViewModel()
         updateAnimation()
     }
@@ -152,6 +149,9 @@ final class PetPresenter {
 
     func updateViewModel() {
         viewModel.status = PetStatus(from: state)
+        viewModel.dayPhase = DayPhase.resolve(
+            isNight: currentlyNight, lightsOn: state.lightsOn
+        )
     }
 
     func updateAnimation() {

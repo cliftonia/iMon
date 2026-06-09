@@ -1,57 +1,126 @@
-import Foundation
+import SwiftUI
 
 // MARK: - Inside (Room)
+//
+// Cozy-corner layout: a window on the back wall (top-right) showing the sky,
+// a small light hanging from the ceiling (centre), and a potted plant in the
+// bottom-left corner. The window and plant are dim (background); the hanging
+// light is solid (foreground). The pet stands in front of it all.
 
 extension LCDDisplay {
 
+    /// Ambient room lighting: a bright pool under the lamp fading to a dim room.
+    func drawRoomGlow(
+        in context: GraphicsContext,
+        size: CGSize,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        let center = CGPoint(x: 10.5 * pixelWidth, y: 2.5 * pixelHeight)
+        let bright = Color(red: 150 / 255, green: 184 / 255, blue: 118 / 255)
+        let dim = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
+        context.fill(
+            Path(CGRect(origin: .zero, size: size)),
+            with: .radialGradient(
+                Gradient(colors: [bright, dim]),
+                center: center,
+                startRadius: 0,
+                endRadius: size.width * 0.72
+            )
+        )
+    }
+
+    /// The dark night pane behind the window content.
+    func drawWindowPane(
+        in context: GraphicsContext,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        let pane = CGRect(
+            x: Double(Self.windowCols.lowerBound) * pixelWidth,
+            y: Double(Self.windowRows.lowerBound) * pixelHeight,
+            width: Double(Self.windowCols.count) * pixelWidth,
+            height: Double(Self.windowRows.count) * pixelHeight
+        )
+        context.fill(Path(pane), with: .color(Color(white: 0.07)))
+    }
+
+    /// The room dressing: dim plant and window frame (background) and the solid
+    /// hanging light with its gleam (foreground).
+    func drawRoomChrome(
+        phase: Int,
+        in context: GraphicsContext,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
+            for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
+                let rect = CGRect(
+                    x: Double(cell.x) * pixelWidth,
+                    y: Double(cell.y) * pixelHeight,
+                    width: pixelWidth + 0.5,
+                    height: pixelHeight + 0.5
+                )
+                context.fill(Path(rect), with: .color(color))
+            }
+        }
+        fill(Self.furnitureCells(), basePixelColor.opacity(0.35))
+        fill(Self.windowFrameCells(), basePixelColor.opacity(0.45))
+        fill(Self.lampCells(phase: phase), basePixelColor)
+        fill(Self.lampGleamCells(phase: phase), basePixelColor.opacity(0.5))
+    }
+
     /// The window opening (inside the frame) where the sky/weather shows.
     static let windowCols = 21...28
-    static let windowRows = 2...8
+    static let windowRows = 2...9
 
-    /// The square window frame on the back wall, with a cross mullion.
+    /// The window frame on the back wall — a clean border, no mullion bars.
     static func windowFrameCells() -> [(x: Int, y: Int)] {
-        let x0 = 20, x1 = 29, y0 = 1, y1 = 9
+        let x0 = 20, x1 = 29, y0 = 1, y1 = 10
         var cells: [(x: Int, y: Int)] = []
         for x in x0...x1 { cells.append((x: x, y: y0)); cells.append((x: x, y: y1)) }
         for y in y0...y1 { cells.append((x: x0, y: y)); cells.append((x: x1, y: y)) }
-        let mx = (x0 + x1) / 2, my = (y0 + y1) / 2
-        for y in (y0 + 1)..<y1 { cells.append((x: mx, y: y)) }
-        for x in (x0 + 1)..<x1 { cells.append((x: x, y: my)) }
         return cells
     }
 
-    /// A floor lamp on the left — shade, pole and base — with a gleam that
-    /// pulses out from the shade like sunlight.
+    /// A small light tucked up against the ceiling — tiny cord and bulb.
     static func lampCells(phase: Int) -> [(x: Int, y: Int)] {
-        let lx = 4
-        var cells: [(x: Int, y: Int)] = []
-        for x in (lx - 1)...(lx + 1) { cells.append((x: x, y: 4)) }   // shade top
-        for x in (lx - 2)...(lx + 2) { cells.append((x: x, y: 5)) }   // shade mid
-        for x in (lx - 1)...(lx + 1) { cells.append((x: x, y: 6)) }   // shade lip
-        for y in 7...16 { cells.append((x: lx, y: y)) }               // pole
-        for x in (lx - 1)...(lx + 1) { cells.append((x: x, y: 17)) }  // base
-        return cells
+        let cx = 10
+        return [
+            (x: cx, y: 0),                                      // ceiling mount
+            (x: cx - 1, y: 1), (x: cx, y: 1), (x: cx + 1, y: 1),// bulb
+            (x: cx - 1, y: 2), (x: cx, y: 2), (x: cx + 1, y: 2),
+            (x: cx, y: 3)                                       // tip
+        ]
     }
 
-    /// Pulsing gleam rays around the lamp shade — drawn dimmer, like a glow.
+    /// Pulsing gleam around the hanging bulb — drawn dimmer, like a glow.
     static func lampGleamCells(phase: Int) -> [(x: Int, y: Int)] {
         guard (phase / 3) % 2 == 0 else { return [] }
-        let lx = 4
-        return [
-            (x: lx - 4, y: 5), (x: lx + 4, y: 5),
-            (x: lx - 3, y: 3), (x: lx + 3, y: 3),
-            (x: lx - 3, y: 7), (x: lx + 3, y: 7)
-        ]
+        let cx = 10
+        return [(x: cx - 3, y: 2), (x: cx + 3, y: 2), (x: cx, y: 5)]
     }
 
-    /// A potted plant in the back corner — dim background dressing.
+    /// Dim background dressing: a potted plant on the floor (bottom-left) and a
+    /// wall shelf with books (top-left).
     static func furnitureCells() -> [(x: Int, y: Int)] {
-        // Leaves then pot, bottom-right.
-        return [
-            (x: 27, y: 14), (x: 28, y: 14), (x: 29, y: 14),
-            (x: 26, y: 15), (x: 28, y: 15), (x: 30, y: 15),
-            (x: 27, y: 16), (x: 28, y: 16), (x: 29, y: 16),
-            (x: 27, y: 17), (x: 28, y: 17), (x: 29, y: 17)
+        var cells: [(x: Int, y: Int)] = [
+            // Potted plant, sitting on the floor.
+            (x: 2, y: 13),                               // sprout
+            (x: 1, y: 14), (x: 2, y: 14), (x: 3, y: 14), // leaves
+            (x: 2, y: 15),                               // stem
+            (x: 1, y: 16), (x: 3, y: 16),                // pot rim
+            (x: 1, y: 17), (x: 2, y: 17), (x: 3, y: 17), // pot
+            (x: 1, y: 18), (x: 2, y: 18), (x: 3, y: 18)  // on the floor
         ]
+        // Wall shelf with a few books, top-left.
+        let shelfY = 6
+        for x in 1...6 { cells.append((x: x, y: shelfY)) }   // ledge
+        cells += [
+            (x: 2, y: shelfY - 1), (x: 2, y: shelfY - 2),    // tall book
+            (x: 3, y: shelfY - 1),                           // short book
+            (x: 5, y: shelfY - 1), (x: 5, y: shelfY - 2)     // tall book
+        ]
+        return cells
     }
 }

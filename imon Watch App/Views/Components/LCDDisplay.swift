@@ -89,66 +89,55 @@ struct LCDDisplay: View {
 
     private func styledCanvas(weatherPhase: Int) -> some View {
         Canvas { context, size in
-            let pixelWidth = size.width / 32
-            let pixelHeight = size.height / 20
-
-            drawGrid(
-                in: context,
-                size: size,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
-
-            drawGround(
-                in: context,
-                size: size,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
-
-            // Indoors the room (window, weather, furniture, lamp) sits behind
-            // the pet; outdoors the weather plays over everything.
-            if isIndoor {
-                drawWeather(
-                    phase: weatherPhase,
-                    in: context,
-                    pixelWidth: pixelWidth,
-                    pixelHeight: pixelHeight
-                )
-            }
-
-            drawSprites(
-                in: context,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
-
-            drawPoop(
-                in: context,
-                pixelWidth: pixelWidth,
-                pixelHeight: pixelHeight
-            )
-
-            if !isIndoor {
-                drawWeather(
-                    phase: weatherPhase,
-                    in: context,
-                    pixelWidth: pixelWidth,
-                    pixelHeight: pixelHeight
-                )
-                drawLightning(
-                    phase: weatherPhase,
-                    in: context,
-                    size: size,
-                    pixelWidth: pixelWidth,
-                    pixelHeight: pixelHeight
-                )
-            }
+            drawScene(weatherPhase: weatherPhase, in: context, size: size)
         }
         .background(backgroundColor)
         .aspectRatio(32.0 / 20.0, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .accessibilityHidden(true)
+    }
+
+    private func drawScene(
+        weatherPhase: Int,
+        in context: GraphicsContext,
+        size: CGSize
+    ) {
+        let pixelWidth = size.width / 32
+        let pixelHeight = size.height / 20
+
+        // Dim room with a bright pool under the lamp (indoors only).
+        if isIndoor {
+            drawRoomGlow(
+                in: context, size: size,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
+        }
+
+        drawGrid(in: context, size: size, pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+        drawGround(in: context, size: size, pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+
+        // Indoors the room (window, weather, furniture, lamp) sits behind the
+        // pet; outdoors the weather plays over everything.
+        if isIndoor {
+            drawWeather(
+                phase: weatherPhase, in: context,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
+        }
+
+        drawSprites(in: context, pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+        drawPoop(in: context, pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+
+        if !isIndoor {
+            drawWeather(
+                phase: weatherPhase, in: context,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
+            drawLightning(
+                phase: weatherPhase, in: context, size: size,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
+        }
     }
 
     // MARK: - Sprites

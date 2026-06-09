@@ -15,13 +15,14 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        // Inside (lit at night): the weather is confined to the window.
+        // Inside (lit at night): the weather is confined to the window and
+        // reads as the bright night sky on the dark pane.
         let indoor = dayPhase == .inside
-
-        func draw(_ cells: [(x: Int, y: Int)], _ color: Color, clipped: Bool) {
+        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
+            let paint = indoor ? Color.white.opacity(0.85) : color
             for cell in cells
             where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20
-                && (!clipped
+                && (!indoor
                     || (Self.windowCols.contains(cell.x) && Self.windowRows.contains(cell.y))) {
                 let rect = CGRect(
                     x: Double(cell.x) * pixelWidth,
@@ -29,15 +30,27 @@ extension LCDDisplay {
                     width: pixelWidth + 0.5,
                     height: pixelHeight + 0.5
                 )
-                context.fill(Path(rect), with: .color(color))
+                context.fill(Path(rect), with: .color(paint))
             }
         }
-        // Weather clips to the window indoors and reads dim (distant background);
-        // chrome (frame, lamp) is solid and never clips.
-        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
-            draw(cells, indoor ? basePixelColor.opacity(0.4) : color, clipped: indoor)
-        }
 
+        if indoor {
+            drawWindowPane(in: context, pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+        }
+        drawConditionLayers(phase: phase, fill: fill)
+        if indoor {
+            drawRoomChrome(
+                phase: phase, in: context,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
+        }
+    }
+
+    /// Draws the active weather condition's layers via the supplied fill.
+    private func drawConditionLayers(
+        phase: Int,
+        fill: ([(x: Int, y: Int)], Color) -> Void
+    ) {
         switch weatherCondition {
         case .rain, .storm:
             // Two-layer depth: dim distant drops, bright near streaks. Storm
@@ -45,41 +58,25 @@ extension LCDDisplay {
             fill(Self.rainBackCells(phase: phase), basePixelColor.opacity(0.4))
             fill(Self.rainFrontCells(phase: phase), basePixelColor)
         case .snow:
-            // Parallax depth: distant flakes dim and slow, near flakes bright and fast.
             fill(Self.snowBackCells(phase: phase), basePixelColor.opacity(0.4))
             fill(Self.snowFrontCells(phase: phase), basePixelColor)
         case .wind:
-            // Two-layer depth: dim distant streaks behind bright near gusts.
             fill(Self.windBackCells(phase: phase), basePixelColor.opacity(0.35))
             fill(Self.windFrontCells(phase: phase), basePixelColor.opacity(0.85))
         case .fog:
-            // Soft feathered wisps in two depth layers — dim far, denser near.
             fill(Self.fogBackCells(phase: phase), basePixelColor.opacity(0.25))
             fill(Self.fogFrontCells(phase: phase), basePixelColor.opacity(0.45))
         case .clear:
-            switch dayPhase {
-            case .day:
-                // Daylight: the sun in the background.
+            if dayPhase == .day {
                 fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
-            case .night, .inside:
-                // Moon, stars and meteors — full sky outdoors, or through the
-                // window when inside (clipped by `fill`).
+            } else {
+                // Moon/stars — full sky outdoors, or through the window inside.
                 fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
             }
         case .cloudy:
             fill(Self.cloudCells(phase: phase), basePixelColor.opacity(0.55))
         case .none:
             break
-        }
-
-        // Inside: draw the wall's window frame and the ceiling light over the
-        // (clipped) weather. These are never clipped.
-        if indoor {
-            // Dim background dressing, then solid foreground frame and lamp.
-            draw(Self.furnitureCells(), basePixelColor.opacity(0.35), clipped: false)
-            draw(Self.windowFrameCells(), basePixelColor, clipped: false)
-            draw(Self.lampCells(phase: phase), basePixelColor, clipped: false)
-            draw(Self.lampGleamCells(phase: phase), basePixelColor.opacity(0.5), clipped: false)
         }
     }
 
