@@ -20,24 +20,19 @@ struct SleepScheduleTests {
     // MARK: - Night Resolution
 
     @Test
-    func `weather daylight overrides the clock`() {
-        #expect(
-            SleepSchedule.isNight(weatherNight: true, at: date(hour: 15), for: .emberkin)
-        )
-        #expect(
-            !SleepSchedule.isNight(weatherNight: false, at: date(hour: 23), for: .emberkin)
-        )
+    func `weather daylight always wins over the clock`() {
+        // 3pm but weather says night → night.
+        #expect(SleepSchedule.isNight(weatherNight: true, at: date(hour: 15)))
+        // 11pm but weather says day → day.
+        #expect(!SleepSchedule.isNight(weatherNight: false, at: date(hour: 23)))
     }
 
     @Test
-    func `falls back to fixed hours without weather`() {
-        // Emberkin sleeps 21:00–07:00.
-        #expect(
-            SleepSchedule.isNight(weatherNight: nil, at: date(hour: 22), for: .emberkin)
-        )
-        #expect(
-            !SleepSchedule.isNight(weatherNight: nil, at: date(hour: 14), for: .emberkin)
-        )
+    func `falls back to a 6am-6pm window without weather`() {
+        #expect(SleepSchedule.isNight(weatherNight: nil, at: date(hour: 20)))   // 8pm → night
+        #expect(SleepSchedule.isNight(weatherNight: nil, at: date(hour: 3)))    // 3am → night
+        #expect(!SleepSchedule.isNight(weatherNight: nil, at: date(hour: 6)))   // 6am → day
+        #expect(!SleepSchedule.isNight(weatherNight: nil, at: date(hour: 14)))  // 2pm → day
     }
 
     // MARK: - Day

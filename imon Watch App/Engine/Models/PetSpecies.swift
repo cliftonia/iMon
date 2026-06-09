@@ -96,17 +96,4 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
         case .steelkin, .orbkin, .plushkin: 40
         }
     }
-
-    var bedtimeHour: Int {
-        switch self {
-        case .dotkin, .hopkin: 20
-        case .dreadkin, .steelkin: 22
-        case .sludgekin: 19
-        case .emberkin, .marshkin, .rexkin, .blazekin,
-             .pyrekin, .galekin, .tidekin,
-             .orbkin, .plushkin: 21
-        }
-    }
-
-    var wakeHour: Int { 7 }
 }

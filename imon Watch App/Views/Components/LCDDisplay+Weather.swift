@@ -46,15 +46,16 @@ extension LCDDisplay {
             fill(Self.fogBackCells(phase: phase), basePixelColor.opacity(0.25))
             fill(Self.fogFrontCells(phase: phase), basePixelColor.opacity(0.45))
         case .clear:
-            if !lightsOn {
-                // Dark (night, lights off): moon, stars and meteors.
-                fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
-            } else if isNight {
-                // Lit at night — by the bulb, not the sun.
-                fill(Self.bulbCells(phase: phase), basePixelColor.opacity(0.4))
-            } else {
+            switch dayPhase {
+            case .day:
                 // Daylight: the sun in the background.
                 fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
+            case .night:
+                // Dark (light off): moon, stars and meteors.
+                fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
+            case .inside:
+                // Lit at night — by the bulb, not the sun.
+                fill(Self.bulbCells(phase: phase), basePixelColor.opacity(0.4))
             }
         case .cloudy:
             fill(Self.cloudCells(phase: phase), basePixelColor.opacity(0.55))

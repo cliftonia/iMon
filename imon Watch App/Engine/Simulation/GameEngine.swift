@@ -24,9 +24,7 @@ nonisolated enum GameEngine {
         state.age = calendar.dateComponents([.day], from: state.timestamps.bornAt, to: now).day ?? state.age
 
         // Resolve day/night once (weather, or fixed hours as fallback).
-        let night = SleepSchedule.isNight(
-            weatherNight: isNight, at: now, for: state.species
-        )
+        let night = SleepSchedule.isNight(weatherNight: isNight, at: now)
 
         // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, night: night)

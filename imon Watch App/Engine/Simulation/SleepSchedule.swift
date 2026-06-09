@@ -8,16 +8,13 @@ import Foundation
 ///   (pet wakes). `wasNight` records the last state so we only act on a change.
 nonisolated enum SleepSchedule {
 
-    /// Resolve whether it is night: the weather's daylight flag when available,
-    /// otherwise the species' fixed bedtime/wake hours.
-    static func isNight(
-        weatherNight: Bool?,
-        at now: Date,
-        for species: PetSpecies
-    ) -> Bool {
+    /// Whether it is night. Always defer to the weather's daylight flag; only
+    /// when no reading is available fall back to a fixed window (6am–6pm is day,
+    /// the rest is night).
+    static func isNight(weatherNight: Bool?, at now: Date) -> Bool {
         if let weatherNight { return weatherNight }
         let hour = Calendar.current.component(.hour, from: now)
-        return isSleepTime(hour: hour, for: species)
+        return hour < TimeConstants.nightEndHour || hour >= TimeConstants.nightStartHour
     }
 
     /// Apply the resolved night signal to the light and sleep state. At night
@@ -59,10 +56,5 @@ nonisolated enum SleepSchedule {
         }
 
         return state
-    }
-
-    /// Whether a given hour falls within a species' fixed sleep window.
-    static func isSleepTime(hour: Int, for species: PetSpecies) -> Bool {
-        hour >= species.bedtimeHour || hour < species.wakeHour
     }
 }

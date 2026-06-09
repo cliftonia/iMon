@@ -45,6 +45,10 @@ nonisolated enum TimeConstants {
     /// How long after the light goes off at night before the pet falls asleep
     static let sleepDelay: TimeInterval = 10
 
+    /// Fallback dark window (24h clock) used only when weather is unavailable.
+    static let nightStartHour: Int = 18
+    static let nightEndHour: Int = 6
+
     // MARK: - Limits
 
     /// Maximum poop piles on screen before health penalty

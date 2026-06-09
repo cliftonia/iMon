@@ -14,8 +14,8 @@ final class PetViewModel {
 
     var screenMode: ScreenMode = .normal
 
-    /// Whether it is currently night (drives the day/bulb vs night sky overlay).
-    var isNight: Bool = false
+    /// Day / night / inside — drives the LCD scene (sun, night sky, or room).
+    var dayPhase: DayPhase = .day
 
     // MARK: - Pet Display
 
