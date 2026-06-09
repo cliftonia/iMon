@@ -4,7 +4,7 @@ import Observation
 @Observable
 final class BattleViewModel {
 
-    var phase: BattlePhase = .approach
+    var phase: BattlePhase = .introPet
     var petSpecies: PetSpecies = .emberkin
     var opponentSpecies: PetSpecies = .marshkin
     var petHP: Int = 3
@@ -16,7 +16,9 @@ final class BattleViewModel {
     var lightsOn: Bool = true
 
     enum BattlePhase: Sendable {
-        case approach
+        case introPet
+        case introVS
+        case introEnemy
         case choosing
         case attacking
         case projectile

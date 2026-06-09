@@ -11,7 +11,8 @@ extension PetScreen {
                 leftSprite: battle.activeFrame,
                 lightsOn: battle.viewModel.lightsOn,
                 leftSpriteOffsetX: battle.activeOffsetX,
-                leftSpriteOffsetY: battleSpriteOffsetY(battle)
+                leftSpriteOffsetY: battleSpriteOffsetY(battle),
+                stormFlash: battle.viewModel.phase == .introVS
             )
         }
     }
@@ -116,7 +117,9 @@ extension PetScreen {
         _ battle: BattlePresenter
     ) -> String {
         switch battle.viewModel.phase {
-        case .approach: "FIGHT!"
+        case .introPet: battle.viewModel.petSpecies.displayName
+        case .introVS: ""
+        case .introEnemy: battle.viewModel.opponentSpecies.displayName
         case .choosing: ""
         case .attacking, .projectile: "ATTACK!"
         case .opponentAttacking: "COUNTER!"

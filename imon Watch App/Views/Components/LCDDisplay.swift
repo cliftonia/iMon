@@ -13,6 +13,10 @@ struct LCDDisplay: View {
     let weatherCondition: WeatherIconCondition?
     let moonPhase: MoonPhase
 
+    /// Drives the storm lightning flash on its own (e.g. the battle "VS" beat),
+    /// independent of the weather condition.
+    let stormFlash: Bool
+
     init(
         leftSprite: SpriteFrame,
         rightSprite: SpriteFrame? = nil,
@@ -23,7 +27,8 @@ struct LCDDisplay: View {
         leftSpriteOffsetY: Int = 4,
         rightSpriteOffsetY: Int = 4,
         weatherCondition: WeatherIconCondition? = nil,
-        moonPhase: MoonPhase = .full
+        moonPhase: MoonPhase = .full,
+        stormFlash: Bool = false
     ) {
         self.leftSprite = leftSprite
         self.rightSprite = rightSprite
@@ -35,11 +40,12 @@ struct LCDDisplay: View {
         self.rightSpriteOffsetY = rightSpriteOffsetY
         self.weatherCondition = weatherCondition
         self.moonPhase = moonPhase
+        self.stormFlash = stormFlash
     }
 
-    /// Every known condition now has an animated overlay.
-    private var hasWeatherEffect: Bool {
-        weatherCondition != nil
+    /// Whether the LCD has an animated overlay (weather or the storm flash).
+    private var isAnimated: Bool {
+        weatherCondition != nil || stormFlash
     }
 
     private static let weatherFrameInterval: TimeInterval = 0.18
@@ -56,7 +62,7 @@ struct LCDDisplay: View {
     }
 
     var body: some View {
-        if hasWeatherEffect {
+        if isAnimated {
             TimelineView(.periodic(from: .now, by: Self.weatherFrameInterval)) { timeline in
                 // Wrap the tick count well within 32-bit Int range (watchOS is
                 // arm64_32) — the effects all cycle on `% n` so a slow wrap is fine.

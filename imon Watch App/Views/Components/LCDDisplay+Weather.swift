@@ -60,8 +60,8 @@ extension LCDDisplay {
         }
     }
 
-    /// Full-screen lightning: a bright flash plus jagged diagonal bolts spread
-    /// across the whole sky. Drawn over everything during storms.
+    /// Full-screen lightning: a bright flash plus jagged diagonal bolts.
+    /// Drawn for weather storms and — with a bold "VS" — the battle intro.
     func drawLightning(
         phase: Int,
         in context: GraphicsContext,
@@ -69,7 +69,31 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        guard weatherCondition == .storm, Self.isLightningFlash(phase) else { return }
+        guard weatherCondition == .storm || stormFlash else { return }
+
+        func fillCells(_ cells: [(x: Int, y: Int)], _ color: Color) {
+            for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
+                let rect = CGRect(
+                    x: Double(cell.x) * pixelWidth,
+                    y: Double(cell.y) * pixelHeight,
+                    width: pixelWidth + 0.5,
+                    height: pixelHeight + 0.5
+                )
+                context.fill(Path(rect), with: .color(color))
+            }
+        }
+
+        // The "VS" sits under the flash, so each lightning pop washes over it.
+        if stormFlash {
+            fillCells(Self.vsShadowCells(), basePixelColor.opacity(0.3))
+            fillCells(Self.vsTextCells(), basePixelColor)
+        }
+
+        let flashing = stormFlash
+            ? Self.isVSFlash(phase)
+            : Self.isLightningFlash(phase)
+        guard flashing else { return }
+
         // Flash in the active palette: bright green when lit, dim grey at night.
         let flashColor = lightsOn ? Self.lightningFlashColor : Color(white: 0.35)
         context.fill(
@@ -77,16 +101,7 @@ extension LCDDisplay {
             with: .color(flashColor.opacity(0.9))
         )
         // Bolts in the LCD pixel colour, dark against the lit screen.
-        for cell in Self.lightningBoltCells()
-        where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
-            let rect = CGRect(
-                x: Double(cell.x) * pixelWidth,
-                y: Double(cell.y) * pixelHeight,
-                width: pixelWidth + 0.5,
-                height: pixelHeight + 0.5
-            )
-            context.fill(Path(rect), with: .color(basePixelColor))
-        }
+        fillCells(Self.lightningBoltCells(), basePixelColor)
     }
 
     // MARK: - Precipitation

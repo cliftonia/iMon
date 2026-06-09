@@ -42,7 +42,8 @@ final class BattlePresenter {
         viewModel.opponentHP = oppHP
         viewModel.opponentMaxHP = oppHP
         viewModel.lightsOn = petState.lightsOn
-        viewModel.phase = .approach
+        viewModel.phase = .introPet
+        petAnimator.play(.idle, for: petState.species)
 
         battleTask = Task { [weak self] in
             await self?.runBattle()
@@ -58,18 +59,32 @@ final class BattlePresenter {
     // MARK: - Battle Loop
 
     private func runBattle() async {
-        await runApproachPhase()
+        await runIntro()
         guard !Task.isCancelled else { return }
 
         await runRoundLoop()
     }
 
-    private func runApproachPhase() async {
-        viewModel.phase = .approach
-        petAnimator.play(.walk, for: petState.species)
+    /// Opening beats: our monster, a "VS" flash, then the opponent.
+    private func runIntro() async {
+        // Scene 1: our monster (already shown by `startBattle`).
+        try? await Task.sleep(for: .seconds(Self.introSceneDuration))
+        guard !Task.isCancelled, let opp = opponent else { return }
+
+        // Scene 2: a flashing "VS" with a lightning strobe (LCD draws it).
+        viewModel.phase = .introVS
         WKInterfaceDevice.battleHaptic()
-        try? await Task.sleep(for: .seconds(2))
+        try? await Task.sleep(for: .seconds(Self.introVSDuration))
+        guard !Task.isCancelled else { return }
+
+        // Scene 3: the opponent.
+        viewModel.phase = .introEnemy
+        opponentAnimator.play(.idle, for: opp.species)
+        try? await Task.sleep(for: .seconds(Self.introSceneDuration))
     }
+
+    private static let introSceneDuration = 1.3
+    private static let introVSDuration = 1.3
 
     private func runRoundLoop() async {
         for _ in 0..<20 {
