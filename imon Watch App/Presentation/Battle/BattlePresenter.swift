@@ -42,7 +42,7 @@ final class BattlePresenter {
         viewModel.opponentHP = oppHP
         viewModel.opponentMaxHP = oppHP
         viewModel.lightsOn = petState.lightsOn
-        viewModel.phase = .intro
+        viewModel.phase = .approach
 
         battleTask = Task { [weak self] in
             await self?.runBattle()
@@ -58,17 +58,10 @@ final class BattlePresenter {
     // MARK: - Battle Loop
 
     private func runBattle() async {
-        await runIntroPhase()
-        guard !Task.isCancelled else { return }
-
         await runApproachPhase()
         guard !Task.isCancelled else { return }
 
         await runRoundLoop()
-    }
-
-    private func runIntroPhase() async {
-        try? await Task.sleep(for: .seconds(2))
     }
 
     private func runApproachPhase() async {

@@ -26,7 +26,7 @@ extension BattlePresenter {
     /// enemy on the right, projectiles cross through the centre.
     var activeOffsetX: Int {
         switch viewModel.phase {
-        case .intro, .choosing, .projectile, .opponentProjectile:
+        case .choosing, .projectile, .opponentProjectile:
             return 8
         case .approach, .attacking:
             return Self.petOffsetX
@@ -47,8 +47,6 @@ extension BattlePresenter {
     /// Single active sprite — only one thing on screen at a time.
     var activeFrame: SpriteFrame {
         switch viewModel.phase {
-        case .intro:
-            return .empty
         case .approach, .choosing, .attacking:
             // Pet faces the enemy on the right.
             return petFrame

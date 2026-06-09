@@ -7,65 +7,12 @@ extension PetScreen {
     @ViewBuilder
     var battleLCD: some View {
         if let battle = presenter.battlePresenter {
-            switch battle.viewModel.phase {
-            case .intro:
-                LCDDisplay(
-                    leftSprite: .empty,
-                    lightsOn: battle.viewModel.lightsOn
-                )
-                .overlay {
-                    HStack(spacing: 0) {
-                        Text(
-                            battle.viewModel.petSpecies
-                                .displayName
-                        )
-                        .font(.system(
-                            size: 9,
-                            design: .monospaced
-                        ))
-                        .minimumScaleFactor(0.7)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity)
-
-                        Text("VS")
-                            .font(.system(
-                                size: 10,
-                                weight: .bold,
-                                design: .monospaced
-                            ))
-                            .fixedSize()
-
-                        Text(
-                            battle.viewModel.opponentSpecies
-                                .displayName
-                        )
-                        .font(.system(
-                            size: 9,
-                            design: .monospaced
-                        ))
-                        .minimumScaleFactor(0.7)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.horizontal, 4)
-                }
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(
-                    "\(battle.viewModel.petSpecies.displayName)"
-                        + " versus "
-                        + "\(battle.viewModel.opponentSpecies.displayName)"
-                )
-
-            default:
-                LCDDisplay(
-                    leftSprite: battle.activeFrame,
-                    lightsOn: battle.viewModel.lightsOn,
-                    leftSpriteOffsetX: battle.activeOffsetX,
-                    leftSpriteOffsetY: battleSpriteOffsetY(
-                        battle
-                    )
-                )
-            }
+            LCDDisplay(
+                leftSprite: battle.activeFrame,
+                lightsOn: battle.viewModel.lightsOn,
+                leftSpriteOffsetX: battle.activeOffsetX,
+                leftSpriteOffsetY: battleSpriteOffsetY(battle)
+            )
         }
     }
 
@@ -169,7 +116,6 @@ extension PetScreen {
         _ battle: BattlePresenter
     ) -> String {
         switch battle.viewModel.phase {
-        case .intro: ""
         case .approach: "FIGHT!"
         case .choosing: ""
         case .attacking, .projectile: "ATTACK!"
