@@ -4,10 +4,10 @@ included:
 
 excluded:
   - imon Watch AppUITests
-  - imon Watch App/Sprites/SpriteCatalog.swift
-  - imon Watch App/Sprites/SharedSprites.swift
-  # Per-species sprite data + 14-way dispatch — bitmap data, not logic.
-  - "imon Watch App/Sprites/SpriteCatalog+*.swift"
+  # Sprite bitmap data + 14-way dispatch — data, not logic.
+  - imon Watch App/Sprites/Pets
+  - imon Watch App/Sprites/Catalog
+  - imon Watch App/Sprites/Shared/SharedSprites.swift
 
 line_length:
   warning: 160
