@@ -28,7 +28,7 @@ final class WeatherStore {
             )
         }
         #endif
-        return snapshot
+        return snapshot ?? fallback
     }
 
     #if DEBUG
@@ -76,7 +76,8 @@ final class WeatherStore {
             lastFetch = now
         } catch {
             Log.weather.error("Weather fetch failed: \(error, privacy: .public)")
-            if snapshot == nil { snapshot = fallback }
+            // Leave `snapshot` nil so day/night uses the time window, not the
+            // DEBUG sample. The overlay still shows the sample via displaySnapshot.
         }
     }
 
