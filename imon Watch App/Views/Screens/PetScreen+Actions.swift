@@ -63,7 +63,7 @@ extension PetScreen {
 
     func handleButtonB() {
         if presenter.viewModel.isBusy {
-            presenter.cancelFeeding()
+            presenter.cancelActivity()
         } else {
             executeMenuAction()
         }

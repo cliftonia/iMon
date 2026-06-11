@@ -123,10 +123,7 @@ extension PetPresenter {
 
     func startTrainingMode() {
         guard TrainAction.canTrain(state) else {
-            refuseTask?.cancel()
-            refuseTask = Task { [weak self] in
-                await self?.runRefuseSequence()
-            }
+            refuse()
             return
         }
         stopWandering()
@@ -153,10 +150,7 @@ extension PetPresenter {
 
     func startBattleMode() {
         guard BattleEngine.canBattle(state) else {
-            refuseTask?.cancel()
-            refuseTask = Task { [weak self] in
-                await self?.runRefuseSequence()
-            }
+            refuse()
             return
         }
         stopWandering()

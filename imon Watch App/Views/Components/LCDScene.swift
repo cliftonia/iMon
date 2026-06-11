@@ -13,22 +13,21 @@ nonisolated enum SceneResolver {
 
     /// The home (pet) screen.
     ///
-    /// The scene always **matches where the pet is** — same light and day phase,
-    /// so outside stays outside, inside stays the room, and daytime stays lit.
-    /// During an **action ceremony** (feeding, cleaning, healing) only the
-    /// weather overlay is dropped so the animation reads cleanly; a **refusal**
-    /// is not an action scene, so it keeps the weather too.
+    /// - An **action ceremony** (feeding, cleaning, healing) plays in its own
+    ///   clean scene — no room, no weather — but the **lighting matches where
+    ///   the pet is**: lit inside or by day, dark outside at night.
+    /// - Otherwise (idle, or a **refusal**) it's the full environment: real
+    ///   light, day phase and weather.
     static func home(
         dayPhase: DayPhase,
         lightsOn: Bool,
         weather: WeatherIconCondition?,
         isInActionScene: Bool
     ) -> LCDScene {
-        LCDScene(
-            lightsOn: lightsOn,
-            dayPhase: dayPhase,
-            weather: isInActionScene ? nil : weather
-        )
+        if isInActionScene {
+            return LCDScene(lightsOn: lightsOn, dayPhase: .day, weather: nil)
+        }
+        return LCDScene(lightsOn: lightsOn, dayPhase: dayPhase, weather: weather)
     }
 
     /// The battle / training arena — always outdoors: lit by day, dark at night,

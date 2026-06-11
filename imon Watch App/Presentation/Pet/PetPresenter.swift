@@ -18,10 +18,8 @@ final class PetPresenter {
 
     private var gameTimer: Timer?
     var wanderTimer: Timer?
-    var feedingTask: Task<Void, Never>?
-    var cleaningTask: Task<Void, Never>?
-    var healingTask: Task<Void, Never>?
-    var refuseTask: Task<Void, Never>?
+    /// The single in-flight activity ceremony (feed / clean / heal / refuse).
+    var activityTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
 
     /// Index into the current debug evolution journey (see `+Evolution`).
@@ -68,15 +66,35 @@ final class PetPresenter {
         gameTimer?.invalidate()
         gameTimer = nil
         stopWandering()
-        cancelFeeding()
-        cancelCleaning()
-        cancelHealing()
-        refuseTask?.cancel()
-        refuseTask = nil
+        cancelActivity()
         sleepToggleTask?.cancel()
         sleepToggleTask = nil
         dismissTraining()
         dismissBattle()
+    }
+
+    /// Cancels the in-flight ceremony (feed / clean / heal / refuse) and returns
+    /// the pet to idle. The single entry point for stopping any activity.
+    func cancelActivity() {
+        activityTask?.cancel()
+        endActivity()
+    }
+
+    /// Returns to idle at the natural end of a ceremony (the running task is
+    /// finishing on its own, so it isn't cancelled here).
+    func endActivity() {
+        activityTask = nil
+        viewModel.activity = .idle
+        feedingAnimator.stop()
+        updateAnimation()
+    }
+
+    /// Starts the head-shake refusal ceremony (e.g. can't feed / clean / heal).
+    func refuse() {
+        activityTask?.cancel()
+        activityTask = Task { [weak self] in
+            await self?.runRefuseSequence()
+        }
     }
 
     private func tick() {
@@ -157,15 +175,15 @@ final class PetPresenter {
 
     func updateAnimation() {
         guard viewModel.screenMode == .normal else { return }
-        guard !viewModel.isCleaningAnimation else { return }
-        guard !viewModel.isHealingAnimation else { return }
-        guard !viewModel.isRefusing else { return }
-        switch viewModel.feedingPhase {
-        case .inactive, .selecting:
+        // Only idle and the food-selection menu drive the resting animation;
+        // every other activity plays its own ceremony animation.
+        switch viewModel.activity {
+        case .idle, .feeding(.selecting):
             let kind: SpriteCatalog.AnimationKind =
                 state.isSleeping ? .sleep : .idle
             spriteAnimator.play(kind, for: state.species)
-        case .serving, .bite, .satisfied:
+        case .feeding(.serving), .feeding(.bite), .feeding(.satisfied),
+             .cleaning, .healing, .refusing:
             break
         }
     }

@@ -2,9 +2,9 @@ import Testing
 @testable import imon_Watch_App
 
 // The rules, codified:
-// - Home always matches where the pet is (light + day phase): outside stays
-//   outside, inside stays the room, daytime stays lit.
-// - An action ceremony only drops the weather overlay; a refusal keeps it.
+// - Home idle/refusing → full environment (real light, day phase, weather).
+// - An action ceremony → its own clean scene (no room, no weather), but the
+//   lighting matches where the pet is: lit inside/by day, dark outside at night.
 // - Arena (battle/training) → outdoors: lit by day, dark at night, no room/weather.
 struct SceneResolverTests {
 
@@ -40,29 +40,30 @@ struct SceneResolverTests {
         #expect(scene.weather == .storm)
     }
 
-    // MARK: - Home: an action matches where the pet is, minus the weather
+    // MARK: - Home: an action is its own clean scene, lit to match the pet
 
-    @Test func `action outside at night stays dark, just without weather`() {
+    // Own scene → no room (.day) and no weather, but the light follows reality.
+    @Test func `action outside at night is a dark clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .night, lightsOn: false,
             weather: .rain, isInActionScene: true
         )
-        #expect(scene.lightsOn == false)        // outside stays outside (dark)
-        #expect(scene.dayPhase == .night)
-        #expect(scene.weather == nil)           // only the weather is dropped
+        #expect(scene.lightsOn == false)        // dark outside at night
+        #expect(scene.dayPhase == .day)         // own scene — no room
+        #expect(scene.weather == nil)           // own scene — no weather
     }
 
-    @Test func `action inside at night stays in the room`() {
+    @Test func `action inside is a lit clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .inside, lightsOn: true,
             weather: .cloudy, isInActionScene: true
         )
-        #expect(scene.lightsOn)                 // inside stays inside (the room)
-        #expect(scene.dayPhase == .inside)
+        #expect(scene.lightsOn)                 // lit because the light is on
+        #expect(scene.dayPhase == .day)         // own scene — no room
         #expect(scene.weather == nil)
     }
 
-    @Test func `action by day stays lit`() {
+    @Test func `action by day is a lit clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .day, lightsOn: true,
             weather: .snow, isInActionScene: true

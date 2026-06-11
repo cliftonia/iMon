@@ -8,30 +8,17 @@ extension PetPresenter {
     func healAction() {
         guard !viewModel.isBusy else { return }
         guard HealAction.canHeal(state) else {
-            refuseTask?.cancel()
-            refuseTask = Task { [weak self] in
-                await self?.runRefuseSequence()
-            }
+            refuse()
             return
         }
-        healingTask?.cancel()
-        healingTask = Task { [weak self] in
+        activityTask?.cancel()
+        activityTask = Task { [weak self] in
             await self?.runHealingSequence()
         }
     }
 
-    func cancelHealing() {
-        healingTask?.cancel()
-        healingTask = nil
-        refuseTask?.cancel()
-        refuseTask = nil
-        viewModel.isHealingAnimation = false
-        feedingAnimator.stop()
-        updateAnimation()
-    }
-
     func runRefuseSequence() async {
-        viewModel.isRefusing = true
+        viewModel.activity = .refusing
 
         // Head shake only
         spriteAnimator.play(
@@ -44,12 +31,11 @@ extension PetPresenter {
         try? await Task.sleep(for: .milliseconds(800))
         guard !Task.isCancelled else { return }
 
-        viewModel.isRefusing = false
-        updateAnimation()
+        endActivity()
     }
 
     func runHealingSequence() async {
-        viewModel.isHealingAnimation = true
+        viewModel.activity = .healing
 
         // Phase 1: Needle injection (1200ms)
         feedingAnimator.play(SharedSprites.needleInjection)
@@ -76,9 +62,6 @@ extension PetPresenter {
         try? await Task.sleep(for: .milliseconds(1000))
         guard !Task.isCancelled else { return }
 
-        // Phase 4: Clean up
-        viewModel.isHealingAnimation = false
-        feedingAnimator.stop()
-        updateAnimation()
+        endActivity()
     }
 }

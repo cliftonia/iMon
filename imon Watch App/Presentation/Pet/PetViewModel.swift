@@ -38,44 +38,49 @@ final class PetViewModel {
 
     var menuSelection: MenuAction = .stats
 
-    // MARK: - Feeding
+    // MARK: - Activity
 
+    /// The steps of the feeding ceremony.
     enum FeedingPhase: Equatable {
-        case inactive
         case selecting
         case serving
         case bite(Int)
         case satisfied
     }
 
-    var feedingPhase: FeedingPhase = .inactive
+    /// What the pet is actively doing — the single source of truth for input
+    /// blocking, the LCD scene and the animation. A refusal is its own case
+    /// because it plays in the normal scene rather than a clean action booth.
+    enum Activity: Equatable {
+        case idle
+        case feeding(FeedingPhase)
+        case cleaning
+        case healing
+        case refusing
+    }
+
+    var activity: Activity = .idle
     var selectedFood: FeedAction.FoodKind = .meat
 
-    var isInFeedingMode: Bool {
-        feedingPhase != .inactive
+    /// The feeding sub-phase, when feeding — for the buttons and animation.
+    var feedingPhase: FeedingPhase? {
+        if case .feeding(let phase) = activity { return phase }
+        return nil
     }
 
-    // MARK: - Cleaning
+    var isInFeedingMode: Bool { feedingPhase != nil }
 
-    var isCleaningAnimation: Bool = false
-
-    // MARK: - Healing
-
-    var isHealingAnimation: Bool = false
-
-    // MARK: - Refusal
-
-    /// A head-shake "no" — plays in the normal scene, not a clean action scene.
-    var isRefusing: Bool = false
-
-    /// The action ceremonies that play in their own clean scene.
+    /// The ceremonies that play in their own clean scene (a refusal does not).
     var isInActionScene: Bool {
-        isInFeedingMode || isCleaningAnimation || isHealingAnimation
+        switch activity {
+        case .feeding, .cleaning, .healing: return true
+        case .idle, .refusing: return false
+        }
     }
 
-    /// True when any ceremony, refusal or mode is active (blocks input).
+    /// True when any activity or mode is active (blocks input).
     var isBusy: Bool {
-        isInActionScene || isRefusing
+        activity != .idle
             || screenMode == .training || screenMode == .battle
     }
 
