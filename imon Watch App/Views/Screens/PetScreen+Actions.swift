@@ -4,6 +4,24 @@ import SwiftUI
 
 extension PetScreen {
 
+    // MARK: - Scene
+
+    /// The home screen's scene: a clean booth during an action ceremony, else
+    /// the full environment. Resolved by `SceneResolver` (the rules' home).
+    var homeScene: LCDScene {
+        SceneResolver.home(
+            dayPhase: presenter.viewModel.dayPhase,
+            lightsOn: presenter.viewModel.status?.lightsOn ?? true,
+            weather: appPresenter.weatherStore.displaySnapshot?.condition,
+            isInActionScene: presenter.viewModel.isInActionScene
+        )
+    }
+
+    /// The battle / training arena: outdoors, lit by day and dark at night.
+    var arenaScene: LCDScene {
+        SceneResolver.arena(dayPhase: presenter.viewModel.dayPhase)
+    }
+
     // MARK: - Button Labels
 
     var buttonALabel: String {

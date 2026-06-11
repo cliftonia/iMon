@@ -19,8 +19,7 @@ extension PetScreen {
                     : resultOnly ? .empty : training.petFrame,
                 rightSprite: showTarget
                     ? training.targetFrame : nil,
-                // Outdoors: lit by day, dark at night — never the room.
-                lightsOn: presenter.viewModel.dayPhase == .day,
+                lightsOn: arenaScene.lightsOn,
                 leftSpriteOffsetY: isMiss ? 2 : 4,
                 rightSpriteOffsetY: 0
             )
