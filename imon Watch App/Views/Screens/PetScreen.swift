@@ -4,7 +4,8 @@ import WatchKit
 struct PetScreen: View {
 
     let presenter: PetPresenter
-    @Environment(AppPresenter.self) private var appPresenter
+    // Not private — the `+Actions` extension reads it for menu navigation.
+    @Environment(AppPresenter.self) var appPresenter
     @Environment(\.scenePhase) private var scenePhase
     @State private var crownValue: Double = 0
 
@@ -145,10 +146,15 @@ struct PetScreen: View {
                         .lightsOn ?? true,
                     leftSpriteOffsetX: presenter.viewModel
                         .petOffsetX,
-                    weatherCondition: appPresenter
-                        .weatherStore.displaySnapshot?.condition,
+                    // While busy (feeding/cleaning/healing) the LCD becomes a
+                    // clean scene — just the pet and the action, like battle.
+                    weatherCondition: presenter.viewModel.isBusy
+                        ? nil
+                        : appPresenter.weatherStore.displaySnapshot?.condition,
                     moonPhase: MoonPhase.current(date: .now),
-                    dayPhase: presenter.viewModel.dayPhase
+                    dayPhase: presenter.viewModel.isBusy
+                        ? .day
+                        : presenter.viewModel.dayPhase
                 )
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -187,111 +193,4 @@ struct PetScreen: View {
         }
     }
 
-    // MARK: - Button Labels
-
-    private var buttonALabel: String {
-        presenter.viewModel.feedingPhase == .selecting
-            ? "MEAT" : "A"
-    }
-
-    private var buttonBLabel: String {
-        presenter.viewModel.feedingPhase == .selecting
-            ? "BACK" : "B"
-    }
-
-    private var buttonCLabel: String {
-        presenter.viewModel.feedingPhase == .selecting
-            ? "VITA" : "C"
-    }
-
-    // MARK: - Effect Display
-
-    private var effectRightSprite: SpriteFrame? {
-        if presenter.feedingAnimator.isPlaying {
-            return presenter.feedingAnimator.currentFrame
-        }
-        if presenter.viewModel.status?.isInjured == true {
-            return SharedSprites.skull
-        }
-        return nil
-    }
-
-    // MARK: - Button Handlers
-
-    private func handleButtonA() {
-        guard !presenter.viewModel.isBusy
-            || presenter.viewModel.feedingPhase == .selecting
-        else { return }
-        if presenter.viewModel.feedingPhase == .selecting {
-            presenter.selectAndFeed(.meat)
-        } else {
-            presenter.selectPreviousMenu()
-        }
-    }
-
-    private func handleButtonB() {
-        if presenter.viewModel.isBusy {
-            presenter.cancelFeeding()
-        } else {
-            executeMenuAction()
-        }
-    }
-
-    private func handleButtonC() {
-        guard !presenter.viewModel.isBusy
-            || presenter.viewModel.feedingPhase == .selecting
-        else { return }
-        if presenter.viewModel.feedingPhase == .selecting {
-            presenter.selectAndFeed(.vitamin)
-        } else {
-            presenter.selectNextMenu()
-        }
-    }
-
-    // MARK: - Evolution Sheet
-
-    private var evolutionSheet: some View {
-        VStack(spacing: 12) {
-            Text("Evolving!")
-                .font(.system(
-                    size: 14,
-                    weight: .bold,
-                    design: .monospaced
-                ))
-
-            if let target = presenter.viewModel.evolutionTarget {
-                Text(target.displayName)
-                    .font(.system(size: 12, design: .monospaced))
-            }
-
-            Button("OK") {
-                presenter.applyEvolution()
-            }
-            .accessibilityLabel("Confirm evolution")
-        }
-    }
-
-    // MARK: - Menu Action
-
-    private func executeMenuAction() {
-        switch presenter.viewModel.menuSelection {
-        case .stats:
-            appPresenter.navigateToStats()
-        case .feed:
-            presenter.startFeeding()
-        case .train:
-            presenter.startTrainingMode()
-        case .battle:
-            presenter.startBattleMode()
-        case .clean:
-            presenter.cleanAction()
-        case .lights:
-            presenter.lightsAction()
-        case .heal:
-            presenter.healAction()
-        case .call:
-            presenter.debugEvolve()
-            appPresenter.checkDeath()
-        }
-    }
 }
