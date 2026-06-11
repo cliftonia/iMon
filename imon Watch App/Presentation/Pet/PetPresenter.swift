@@ -159,6 +159,7 @@ final class PetPresenter {
         guard viewModel.screenMode == .normal else { return }
         guard !viewModel.isCleaningAnimation else { return }
         guard !viewModel.isHealingAnimation else { return }
+        guard !viewModel.isRefusing else { return }
         switch viewModel.feedingPhase {
         case .inactive, .selecting:
             let kind: SpriteCatalog.AnimationKind =

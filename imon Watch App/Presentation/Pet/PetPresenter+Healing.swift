@@ -31,7 +31,7 @@ extension PetPresenter {
     }
 
     func runRefuseSequence() async {
-        viewModel.isHealingAnimation = true
+        viewModel.isRefusing = true
 
         // Head shake only
         spriteAnimator.play(
@@ -44,7 +44,7 @@ extension PetPresenter {
         try? await Task.sleep(for: .milliseconds(800))
         guard !Task.isCancelled else { return }
 
-        viewModel.isHealingAnimation = false
+        viewModel.isRefusing = false
         updateAnimation()
     }
 

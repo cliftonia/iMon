@@ -63,10 +63,19 @@ final class PetViewModel {
 
     var isHealingAnimation: Bool = false
 
-    /// True when any LCD ceremony or inline mode is active.
+    // MARK: - Refusal
+
+    /// A head-shake "no" — plays in the normal scene, not a clean action scene.
+    var isRefusing: Bool = false
+
+    /// The action ceremonies that play in their own clean scene.
+    var isInActionScene: Bool {
+        isInFeedingMode || isCleaningAnimation || isHealingAnimation
+    }
+
+    /// True when any ceremony, refusal or mode is active (blocks input).
     var isBusy: Bool {
-        isInFeedingMode || isCleaningAnimation
-            || isHealingAnimation
+        isInActionScene || isRefusing
             || screenMode == .training || screenMode == .battle
     }
 

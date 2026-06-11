@@ -136,7 +136,7 @@ struct PetScreen: View {
                     leftSprite: presenter
                         .spriteAnimator.currentFrame,
                     rightSprite: effectRightSprite,
-                    poopCount: presenter.viewModel.isBusy
+                    poopCount: presenter.viewModel.isInActionScene
                         ? 0
                         : presenter.viewModel.status?.poopCount
                             ?? 0,
@@ -145,16 +145,16 @@ struct PetScreen: View {
                     // Feeding, cleaning and healing each play in their own
                     // clean, lit scene — no weather, no room — just the pet and
                     // the action. (Battle/training use the day/night arena.)
-                    lightsOn: presenter.viewModel.isBusy
+                    lightsOn: presenter.viewModel.isInActionScene
                         ? true
                         : (presenter.viewModel.status?.lightsOn ?? true),
                     leftSpriteOffsetX: presenter.viewModel
                         .petOffsetX,
-                    weatherCondition: presenter.viewModel.isBusy
+                    weatherCondition: presenter.viewModel.isInActionScene
                         ? nil
                         : appPresenter.weatherStore.displaySnapshot?.condition,
                     moonPhase: MoonPhase.current(date: .now),
-                    dayPhase: presenter.viewModel.isBusy
+                    dayPhase: presenter.viewModel.isInActionScene
                         ? .day
                         : presenter.viewModel.dayPhase
                 )
