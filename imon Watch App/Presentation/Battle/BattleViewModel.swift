@@ -13,7 +13,6 @@ final class BattleViewModel {
     var opponentMaxHP: Int = 3
     var result: BattleResult?
     var lastRoundOutcome: RoundOutcome?
-    var lightsOn: Bool = true
 
     enum BattlePhase: Sendable {
         case introPet

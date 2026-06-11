@@ -142,19 +142,15 @@ struct PetScreen: View {
                             ?? 0,
                     stinkPhase: presenter
                         .spriteAnimator.currentFrameIndex,
-                    lightsOn: presenter.viewModel.status?
-                        .lightsOn ?? true,
+                    lightsOn: presenter.viewModel.status?.lightsOn ?? true,
                     leftSpriteOffsetX: presenter.viewModel
                         .petOffsetX,
-                    // While busy (feeding/cleaning/healing) the LCD becomes a
-                    // clean scene — just the pet and the action, like battle.
-                    weatherCondition: presenter.viewModel.isBusy
-                        ? nil
-                        : appPresenter.weatherStore.displaySnapshot?.condition,
+                    // Feeding, cleaning and healing happen in place (full
+                    // environment); only battle and training go to the arena.
+                    weatherCondition: appPresenter
+                        .weatherStore.displaySnapshot?.condition,
                     moonPhase: MoonPhase.current(date: .now),
-                    dayPhase: presenter.viewModel.isBusy
-                        ? .day
-                        : presenter.viewModel.dayPhase
+                    dayPhase: presenter.viewModel.dayPhase
                 )
             }
             .fixedSize(horizontal: false, vertical: true)

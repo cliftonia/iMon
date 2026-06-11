@@ -9,7 +9,8 @@ extension PetScreen {
         if let battle = presenter.battlePresenter {
             LCDDisplay(
                 leftSprite: battle.activeFrame,
-                lightsOn: battle.viewModel.lightsOn,
+                // Outdoors: lit by day, dark at night — never the room.
+                lightsOn: presenter.viewModel.dayPhase == .day,
                 leftSpriteOffsetX: battle.activeOffsetX,
                 leftSpriteOffsetY: battleSpriteOffsetY(battle),
                 stormFlash: battle.viewModel.phase == .introVS

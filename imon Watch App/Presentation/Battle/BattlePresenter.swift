@@ -41,7 +41,6 @@ final class BattlePresenter {
         let oppHP = opp.species.stage.battleHP
         viewModel.opponentHP = oppHP
         viewModel.opponentMaxHP = oppHP
-        viewModel.lightsOn = petState.lightsOn
         viewModel.phase = .introPet
         petAnimator.play(.idle, for: petState.species)
 

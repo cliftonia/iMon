@@ -101,9 +101,10 @@ final class PetPresenter {
         let wasSleeping = state.isSleeping
         state = GameEngine.advance(state, to: .now, isNight: currentNight())
 
+        // Stay awake during an activity, but don't flip the persistent light —
+        // otherwise training/battling at night leaves the pet "inside".
         if !wasSleeping, state.isSleeping, viewModel.isBusy {
             state.isSleeping = false
-            state.lightsOn = true
         }
 
         updateViewModel()
