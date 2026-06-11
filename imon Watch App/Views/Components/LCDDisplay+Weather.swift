@@ -18,8 +18,8 @@ extension LCDDisplay {
         // Inside (lit at night): the weather is confined to the window and
         // reads as the bright night sky on the dark pane.
         let indoor = dayPhase == .inside
-        func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
-            let paint = indoor ? Color.white.opacity(0.85) : color
+        func fill(_ cells: [(x: Int, y: Int)], _ opacity: Double) {
+            let paint = (indoor ? Color.white : basePixelColor).opacity(opacity)
             for cell in cells
             where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20
                 && (!indoor
@@ -46,35 +46,39 @@ extension LCDDisplay {
         }
     }
 
-    /// Draws the active weather condition's layers via the supplied fill.
+    /// Draws the active weather condition's layers via the supplied fill,
+    /// which paints the given cells at the given opacity.
     private func drawConditionLayers(
         phase: Int,
-        fill: ([(x: Int, y: Int)], Color) -> Void
+        fill: ([(x: Int, y: Int)], Double) -> Void
     ) {
         switch weatherCondition {
         case .rain, .storm:
             // Two-layer depth: dim distant drops, bright near streaks. Storm
             // adds the lightning flash (drawn over the scene afterwards).
-            fill(Self.rainBackCells(phase: phase), basePixelColor.opacity(0.4))
-            fill(Self.rainFrontCells(phase: phase), basePixelColor)
+            fill(Self.rainBackCells(phase: phase), 0.4)
+            fill(Self.rainFrontCells(phase: phase), 1)
         case .snow:
-            fill(Self.snowBackCells(phase: phase), basePixelColor.opacity(0.4))
-            fill(Self.snowFrontCells(phase: phase), basePixelColor)
+            fill(Self.snowBackCells(phase: phase), 0.4)
+            fill(Self.snowFrontCells(phase: phase), 1)
         case .wind:
-            fill(Self.windBackCells(phase: phase), basePixelColor.opacity(0.35))
-            fill(Self.windFrontCells(phase: phase), basePixelColor.opacity(0.85))
+            fill(Self.windBackCells(phase: phase), 0.35)
+            fill(Self.windFrontCells(phase: phase), 0.85)
         case .fog:
-            fill(Self.fogBackCells(phase: phase), basePixelColor.opacity(0.25))
-            fill(Self.fogFrontCells(phase: phase), basePixelColor.opacity(0.45))
+            fill(Self.fogBackCells(phase: phase), 0.25)
+            fill(Self.fogFrontCells(phase: phase), 0.45)
         case .clear:
             if dayPhase == .day {
-                fill(Self.sunCells(phase: phase), basePixelColor.opacity(0.4))
+                fill(Self.sunCells(phase: phase), 0.4)
             } else {
-                // Moon/stars — full sky outdoors, or through the window inside.
-                fill(Self.nightSkyCells(phase: phase, moon: moonPhase), basePixelColor)
+                // Full moon disc dim, with the lit fraction bright on top.
+                fill(Self.moonDiscCells(), 0.3)
+                fill(Self.moonLitCells(moonPhase), 1)
+                fill(Self.starCells(phase: phase), 1)
+                fill(Self.shootingStarCells(phase: phase), 1)
             }
         case .cloudy:
-            fill(Self.cloudCells(phase: phase), basePixelColor.opacity(0.55))
+            fill(Self.cloudCells(phase: phase), 0.55)
         case .none:
             break
         }
@@ -270,13 +274,6 @@ extension LCDDisplay {
         return cells
     }
 
-    /// Clear-night sky: phase-accurate moon, twinkling stars, occasional meteor.
-    private static func nightSkyCells(
-        phase: Int, moon: MoonPhase
-    ) -> [(x: Int, y: Int)] {
-        starCells(phase: phase) + moonCells(moon) + shootingStarCells(phase: phase)
-    }
-
     /// Scattered stars that twinkle, brightening to a cross at their peak.
     /// (Stars steer clear of the top-right where the moon sits.)
     private static func starCells(phase: Int) -> [(x: Int, y: Int)] {
@@ -295,28 +292,25 @@ extension LCDDisplay {
         return cells
     }
 
-    /// The moon in the top-right corner, drawn for the given lunar phase.
-    private static func moonCells(_ moonPhase: MoonPhase) -> [(x: Int, y: Int)] {
-        let cx = 26, cy = 4
-        // New moon: a faint outline ring so it's still visible.
-        if moonPhase == .new {
-            let ring = [
-                (-1, -3), (0, -3), (1, -3), (2, -2), (3, -1), (3, 0), (3, 1),
-                (2, 2), (1, 3), (0, 3), (-1, 3), (-2, 2), (-3, 1), (-3, 0),
-                (-3, -1), (-2, -2)
-            ]
-            return ring.map { (x: cx + $0.0, y: cy + $0.1) }
-        }
-        let disc = [
-            (-1, -3), (0, -3), (1, -3),
-            (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
-            (-3, -1), (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1), (3, -1),
-            (-3, 0), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (3, 0),
-            (-3, 1), (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1),
-            (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2),
-            (-1, 3), (0, 3), (1, 3)
-        ]
-        // Lit columns by phase (waxing lit on the right; terminator vertical).
+    private static let moonCenter = (x: 26, y: 4)
+    private static let moonDisc: [(Int, Int)] = [
+        (-1, -3), (0, -3), (1, -3),
+        (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
+        (-3, -1), (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1), (3, -1),
+        (-3, 0), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (3, 0),
+        (-3, 1), (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1),
+        (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2),
+        (-1, 3), (0, 3), (1, 3)
+    ]
+
+    /// The full moon disc — always drawn (dim), so the shadowed side still shows.
+    private static func moonDiscCells() -> [(x: Int, y: Int)] {
+        moonDisc.map { (x: moonCenter.x + $0.0, y: moonCenter.y + $0.1) }
+    }
+
+    /// The lit fraction of the moon for the given phase (waxing lit on the
+    /// right; terminator vertical) — drawn bright over the dim disc.
+    private static func moonLitCells(_ moonPhase: MoonPhase) -> [(x: Int, y: Int)] {
         func isLit(_ dx: Int) -> Bool {
             switch moonPhase {
             case .new: return false
@@ -329,7 +323,8 @@ extension LCDDisplay {
             case .waningGibbous: return dx <= 1
             }
         }
-        return disc.filter { isLit($0.0) }.map { (x: cx + $0.0, y: cy + $0.1) }
+        return moonDisc.filter { isLit($0.0) }
+            .map { (x: moonCenter.x + $0.0, y: moonCenter.y + $0.1) }
     }
 
     /// A meteor streaking down-right with a short trail, every ~44 frames.
