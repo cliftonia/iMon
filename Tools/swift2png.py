@@ -2,15 +2,15 @@
 """Export SpriteFrame [UInt16] sprites from Swift source into editable PNGs.
 
 The reverse of sprite2swift.py — completes the round-trip so you can open an
-existing sprite in a pixel editor (Aseprite/Piskel), trace a clean 1-bit
+existing sprite in a pixel editor (Aseprite/Piskel), refine a clean 1-bit
 version over it, then convert back with sprite2swift.py.
 
 Export one named constant:
-    python3 Tools/swift2png.py "imon Watch App/Sprites/SpriteCatalog+Hopkin.swift" \\
+    python3 Tools/swift2png.py "imon Watch App/Sprites/Pets/SpriteCatalog+Hopkin.swift" \\
         --const sideWalk1 --out /tmp/sprites
 
 Export every SpriteFrame constant in a file (e.g. all projectiles):
-    python3 Tools/swift2png.py "imon Watch App/Sprites/SpriteCatalog+Projectiles.swift" \\
+    python3 Tools/swift2png.py "imon Watch App/Sprites/Catalog/SpriteCatalog+Projectiles.swift" \\
         --all --out /tmp/sprites
 
 Rendered black-on-white and scaled up (--scale, default 16) for easy editing.

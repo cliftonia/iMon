@@ -5,10 +5,10 @@ Each sprite is a 16x16 1-bit bitmap stored as 16 UInt16 rows where the
 most-significant bit is the leftmost pixel (matching SpriteFrame.swift).
 
 Single sprite:
-    python3 Tools/sprite2swift.py emberkin_side.png --name sideWalk1
+    python3 Tools/sprite2swift.py sprite_side.png --name sideWalk1
 
 Sprite sheet (a grid of 16x16 cells, e.g. an animation strip):
-    python3 Tools/sprite2swift.py emberkin_walk.png --cell 16 --name walk
+    python3 Tools/sprite2swift.py walk_strip.png --cell 16 --name walk
 
 Options:
     --cell N       Cell size in px (default 16). Sheet is sliced into NxN cells.
@@ -16,11 +16,6 @@ Options:
     --invert       Treat light pixels as "on" instead of dark.
     --name NAME    Base name for the emitted Swift constant(s).
     --ascii        Append an ASCII-art comment to each row (default on).
-
-Authentic 16x16 virtual pet reference sprites:
-  https://reference.net/Category:virtual pet_Sprites
-  https://example.net/threads/virtual pet-lcd-sprites.8803/
-  https://www.example.com/lcd_handhelds/examplever20th/
 """
 import argparse
 import sys

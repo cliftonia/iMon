@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Timing & Gameplay Constants (virtual pet V1, 1997)
+// MARK: - Timing & Gameplay Constants
 
 nonisolated enum TimeConstants {
 

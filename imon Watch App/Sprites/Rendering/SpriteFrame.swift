@@ -1,7 +1,6 @@
 import Foundation
 
-/// A 16x16 1-bit bitmap. Each UInt16 represents one row where MSB = leftmost pixel.
-/// Recreates the original 1997  virtual pet's monochrome LCD sprite format.
+/// A 16x16 1-bit monochrome bitmap. Each UInt16 is one row, MSB = leftmost pixel.
 nonisolated struct SpriteFrame: Sendable, Hashable {
 
     let rows: [UInt16]

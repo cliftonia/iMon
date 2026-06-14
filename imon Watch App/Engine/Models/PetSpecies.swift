@@ -1,22 +1,21 @@
 import Foundation
 
 nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiable {
-    // rawValues are the original persisted tokens — kept stable so
-    // existing saved pets still decode. Never user-visible.
-    case dotkin = "dotkin"
-    case hopkin = "hopkin"
-    case emberkin = "emberkin"
-    case marshkin = "marshkin"
-    case rexkin = "rexkin"
-    case blazekin = "blazekin"
-    case dreadkin = "dreadkin"
-    case pyrekin = "pyrekin"
-    case galekin = "galekin"
-    case tidekin = "tidekin"
-    case sludgekin = "sludgekin"
-    case steelkin = "steelkin"
-    case orbkin = "orbkin"
-    case plushkin = "plushkin"
+    // rawValues are the persisted tokens (also the case names). Never user-visible.
+    case dotkin
+    case hopkin
+    case emberkin
+    case marshkin
+    case rexkin
+    case blazekin
+    case dreadkin
+    case pyrekin
+    case galekin
+    case tidekin
+    case sludgekin
+    case steelkin
+    case orbkin
+    case plushkin
 
     var id: String { rawValue }
 
