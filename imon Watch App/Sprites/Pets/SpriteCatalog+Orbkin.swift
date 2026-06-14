@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Orbkin (Ultimate) - round body, big glove hand
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func orbkinFrames(
         _ kind: AnimationKind

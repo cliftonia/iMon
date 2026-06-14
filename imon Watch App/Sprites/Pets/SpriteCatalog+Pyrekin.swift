@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Pyrekin (Champion) - humanoid fire creature
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func pyrekinFrames(
         _ kind: AnimationKind

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Plushkin (Ultimate) - teddy bear, heart on belly
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func plushkinFrames(
         _ kind: AnimationKind

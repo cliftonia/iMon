@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Emberkin (Rookie) - small upright dinosaur
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // Emberkin: upright bipedal dinosaur with short arms, tail, claws
     //

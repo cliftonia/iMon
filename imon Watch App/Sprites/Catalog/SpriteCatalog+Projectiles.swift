@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Species Projectiles
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     /// Species-specific projectile traveling left-to-right (pet, on the left).
     static func projectile(
@@ -113,7 +113,7 @@ extension SpriteCatalog {
 
 // MARK: - Projectile Sprites
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     /// Dotkin — small hollow bubble.
     private static let bubbleSmall = SpriteFrame(rows: [

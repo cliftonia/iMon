@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Marshkin (Rookie) - amphibian/lizard, low to the ground
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // Marshkin: wide frog-like body, fin on back, low stance
 

@@ -61,7 +61,7 @@ nonisolated enum SpriteCatalog {
 
 // MARK: - Frame Dispatch
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func frames(
         for species: PetSpecies,
@@ -110,7 +110,7 @@ extension SpriteCatalog {
 
 // MARK: - Default Animation Helpers
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     /// Generates 4-frame animations from idle frames for species
     /// without dedicated animation data, using sprite transformations.

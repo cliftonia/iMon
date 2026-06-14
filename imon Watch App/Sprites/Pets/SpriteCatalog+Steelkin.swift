@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Steelkin (Ultimate) - cyborg dinosaur, massive
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func steelkinFrames(
         _ kind: AnimationKind

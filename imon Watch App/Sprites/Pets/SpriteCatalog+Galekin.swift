@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Galekin (Champion) - serpentine dragon, wings
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // swiftlint:disable:next function_body_length
     static func galekinFrames(

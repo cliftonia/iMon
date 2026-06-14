@@ -9,7 +9,10 @@ nonisolated enum JSONPetStateStore {
     static func live(
         defaults: UserDefaults = .standard
     ) -> PetStateStore {
-        PetStateStore(
+        // `UserDefaults` is documented thread-safe but not `Sendable`; capturing
+        // it in the witness's `@Sendable` closures is safe.
+        nonisolated(unsafe) let defaults = defaults
+        return PetStateStore(
             save: { state in
                 let data = try JSONEncoder().encode(PetStateDTO(from: state))
                 defaults.set(data, forKey: key)

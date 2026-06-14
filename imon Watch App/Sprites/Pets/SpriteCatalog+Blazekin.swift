@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Blazekin (Champion) - red dinosaur, bulky
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func blazekinFrames(
         _ kind: AnimationKind

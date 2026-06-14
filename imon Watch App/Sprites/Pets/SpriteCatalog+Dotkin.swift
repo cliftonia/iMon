@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Dotkin (Fresh / Baby I) - tiny black blob with eyes
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // Dotkin: a small round blob, centered low in the 16x16 grid.
     //

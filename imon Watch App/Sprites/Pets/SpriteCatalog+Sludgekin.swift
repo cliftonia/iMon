@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Sludgekin (Champion) - slug/blob, simple shape
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func sludgekinFrames(
         _ kind: AnimationKind

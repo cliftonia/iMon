@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Tidekin (Champion) - sea serpent, long neck
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func tidekinFrames(
         _ kind: AnimationKind

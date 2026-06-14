@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Dreadkin (Champion) - winged demon, tall and thin
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     static func dreadkinFrames(
         _ kind: AnimationKind

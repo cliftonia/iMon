@@ -1,6 +1,6 @@
 import Foundation
 
-extension SharedSprites {
+nonisolated extension SharedSprites {
 
     // MARK: - Training
 

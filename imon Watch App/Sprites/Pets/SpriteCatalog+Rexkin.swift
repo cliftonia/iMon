@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Rexkin (Champion) - large horned dinosaur
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // Rexkin: big T-rex shape, helmet/horn, powerful build
 

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Side-Profile Animations (Battle & Training)
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     /// Side-profile standing stance, facing the opponent/target.
     static func sideStance(

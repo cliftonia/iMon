@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Hopkin (In-Training / Baby II) - round with floppy ears
 
-extension SpriteCatalog {
+nonisolated extension SpriteCatalog {
 
     // Hopkin: ball shape with two pointy ear/horn flaps on top, wide mouth
     //
