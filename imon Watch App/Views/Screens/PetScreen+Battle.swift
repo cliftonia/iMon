@@ -64,7 +64,8 @@ extension PetScreen {
                     }
                 }
 
-            default:
+            case .introPet, .introVS, .introEnemy, .attacking, .projectile,
+                 .opponentAttacking, .opponentProjectile, .impact:
                 EmptyView()
             }
         }

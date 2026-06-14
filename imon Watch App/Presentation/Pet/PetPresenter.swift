@@ -16,6 +16,9 @@ final class PetPresenter {
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
 
+    /// Called when the pet dies during play, so the app can show the grave.
+    private let onDeath: () -> Void
+
     private var gameTimer: Timer?
     var wanderTimer: Timer?
     /// The single in-flight activity ceremony (feed / clean / heal / refuse).
@@ -39,17 +42,22 @@ final class PetPresenter {
     init(
         state: PetState,
         store: PetStateStore,
-        currentNight: @escaping () -> Bool? = { nil }
+        currentNight: @escaping () -> Bool? = { nil },
+        onDeath: @escaping () -> Void = {}
     ) {
         self.state = state
         self.store = store
         self.currentNight = currentNight
+        self.onDeath = onDeath
         updateViewModel()
     }
 
     // MARK: - Game Loop
 
     func startGameLoop() {
+        // Idempotent — `.task` can re-fire (Stats navigation, foregrounding);
+        // a second timer would double-tick and double-save.
+        guard gameTimer == nil else { return }
         advanceState()
         gameTimer = Timer.scheduledTimer(
             withTimeInterval: TimeConstants.gameTickInterval,
@@ -117,6 +125,7 @@ final class PetPresenter {
 
     private func advanceState() {
         let wasSleeping = state.isSleeping
+        let wasDead = state.isDead
         state = GameEngine.advance(state, to: .now, isNight: currentNight())
 
         // Stay awake during an activity, but don't flip the persistent light —
@@ -127,6 +136,11 @@ final class PetPresenter {
 
         updateViewModel()
         updateAnimation()
+
+        // Surface a natural death right away (not just on next launch).
+        if !wasDead, state.isDead {
+            onDeath()
+        }
     }
 
     // MARK: - Training & Battle Results

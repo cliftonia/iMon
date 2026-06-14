@@ -55,6 +55,16 @@ final class BattlePresenter {
         pickContinuation = nil
     }
 
+    /// Tears down an abandoned battle: cancels the loop and resumes any pending
+    /// pick continuation (a `CheckedContinuation` must be resumed exactly once,
+    /// or it leaks the suspended task forever).
+    func cancelBattle() {
+        battleTask?.cancel()
+        battleTask = nil
+        pickContinuation?.resume(returning: .medium)
+        pickContinuation = nil
+    }
+
     // MARK: - Battle Loop
 
     private func runBattle() async {

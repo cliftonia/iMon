@@ -165,6 +165,7 @@ extension PetPresenter {
     }
 
     func dismissBattle() {
+        battlePresenter?.cancelBattle()
         battlePresenter?.petAnimator.stop()
         battlePresenter?.opponentAnimator.stop()
         battlePresenter = nil

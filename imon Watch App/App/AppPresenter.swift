@@ -81,7 +81,8 @@ final class AppPresenter {
             store: store,
             currentNight: { [weatherStore] in
                 weatherStore.snapshot.map { !$0.isDaylight }
-            }
+            },
+            onDeath: { [weak self] in self?.checkDeath() }
         )
         petPresenter = presenter
         statsPresenter = StatsPresenter()
