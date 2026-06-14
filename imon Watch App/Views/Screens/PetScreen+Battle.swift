@@ -7,13 +7,13 @@ extension PetScreen {
     @ViewBuilder
     var battleLCD: some View {
         if let battle = presenter.battlePresenter {
-            LCDDisplay(
+            LCDDisplay(configuration: LCDDisplayConfiguration(
                 leftSprite: battle.activeFrame,
                 lightsOn: arenaScene.lightsOn,
                 leftSpriteOffsetX: battle.activeOffsetX,
                 leftSpriteOffsetY: battleSpriteOffsetY(battle),
                 stormFlash: battle.viewModel.phase == .introVS
-            )
+            ))
         }
     }
 

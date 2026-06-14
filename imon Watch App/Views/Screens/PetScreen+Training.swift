@@ -13,7 +13,7 @@ extension PetScreen {
             let showTarget = (resultOnly || phase == .victory)
                 && !isMiss
 
-            LCDDisplay(
+            LCDDisplay(configuration: LCDDisplayConfiguration(
                 leftSprite: isMiss
                     ? training.targetFrame
                     : resultOnly ? .empty : training.petFrame,
@@ -22,7 +22,7 @@ extension PetScreen {
                 lightsOn: arenaScene.lightsOn,
                 leftSpriteOffsetY: isMiss ? 2 : 4,
                 rightSpriteOffsetY: 0
-            )
+            ))
         }
     }
 

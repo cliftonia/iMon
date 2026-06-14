@@ -132,23 +132,19 @@ struct PetScreen: View {
             weatherHeader
 
             LCDBezel {
-                LCDDisplay(
-                    leftSprite: presenter
-                        .spriteAnimator.currentFrame,
+                LCDDisplay(configuration: LCDDisplayConfiguration(
+                    leftSprite: presenter.spriteAnimator.currentFrame,
                     rightSprite: effectRightSprite,
                     poopCount: presenter.viewModel.isInActionScene
                         ? 0
-                        : presenter.viewModel.status?.poopCount
-                            ?? 0,
-                    stinkPhase: presenter
-                        .spriteAnimator.currentFrameIndex,
+                        : presenter.viewModel.status?.poopCount ?? 0,
+                    stinkPhase: presenter.spriteAnimator.currentFrameIndex,
                     lightsOn: homeScene.lightsOn,
-                    leftSpriteOffsetX: presenter.viewModel
-                        .petOffsetX,
+                    leftSpriteOffsetX: presenter.viewModel.petOffsetX,
                     weatherCondition: homeScene.weather,
                     moonPhase: MoonPhase.current(date: .now),
                     dayPhase: homeScene.dayPhase
-                )
+                ))
             }
             .fixedSize(horizontal: false, vertical: true)
 

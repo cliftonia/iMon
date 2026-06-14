@@ -2,52 +2,22 @@ import SwiftUI
 
 struct LCDDisplay: View {
 
-    let leftSprite: SpriteFrame
-    let rightSprite: SpriteFrame?
-    let poopCount: Int
-    let stinkPhase: Int
-    let lightsOn: Bool
-    let leftSpriteOffsetX: Int
-    let leftSpriteOffsetY: Int
-    let rightSpriteOffsetY: Int
-    let weatherCondition: WeatherIconCondition?
-    let moonPhase: MoonPhase
+    let configuration: LCDDisplayConfiguration
 
-    /// Day / night / inside — clear weather shows the sun, the night sky, or
-    /// the lit room respectively.
-    let dayPhase: DayPhase
-
-    /// Drives the storm lightning flash on its own (e.g. the battle "VS" beat),
-    /// independent of the weather condition.
-    let stormFlash: Bool
-
-    init(
-        leftSprite: SpriteFrame,
-        rightSprite: SpriteFrame? = nil,
-        poopCount: Int = 0,
-        stinkPhase: Int = 0,
-        lightsOn: Bool = true,
-        leftSpriteOffsetX: Int = 8,
-        leftSpriteOffsetY: Int = 4,
-        rightSpriteOffsetY: Int = 4,
-        weatherCondition: WeatherIconCondition? = nil,
-        moonPhase: MoonPhase = .full,
-        dayPhase: DayPhase = .day,
-        stormFlash: Bool = false
-    ) {
-        self.leftSprite = leftSprite
-        self.rightSprite = rightSprite
-        self.poopCount = poopCount
-        self.stinkPhase = stinkPhase
-        self.lightsOn = lightsOn
-        self.leftSpriteOffsetX = leftSpriteOffsetX
-        self.leftSpriteOffsetY = leftSpriteOffsetY
-        self.rightSpriteOffsetY = rightSpriteOffsetY
-        self.weatherCondition = weatherCondition
-        self.moonPhase = moonPhase
-        self.dayPhase = dayPhase
-        self.stormFlash = stormFlash
-    }
+    // Field accessors so the drawing code (and the +Weather/+Inside extensions)
+    // read directly off the configuration.
+    var leftSprite: SpriteFrame { configuration.leftSprite }
+    var rightSprite: SpriteFrame? { configuration.rightSprite }
+    var poopCount: Int { configuration.poopCount }
+    var stinkPhase: Int { configuration.stinkPhase }
+    var lightsOn: Bool { configuration.lightsOn }
+    var leftSpriteOffsetX: Int { configuration.leftSpriteOffsetX }
+    var leftSpriteOffsetY: Int { configuration.leftSpriteOffsetY }
+    var rightSpriteOffsetY: Int { configuration.rightSpriteOffsetY }
+    var weatherCondition: WeatherIconCondition? { configuration.weatherCondition }
+    var moonPhase: MoonPhase { configuration.moonPhase }
+    var dayPhase: DayPhase { configuration.dayPhase }
+    var stormFlash: Bool { configuration.stormFlash }
 
     /// Whether the LCD has an animated overlay (weather or the storm flash).
     private var isAnimated: Bool {
