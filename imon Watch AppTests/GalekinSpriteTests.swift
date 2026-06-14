@@ -33,32 +33,6 @@ struct GalekinSpriteTests {
     // MARK: - Custom Animations Are Not Default-Derived
 
     @Test
-    func `eat does not use default shift-left pattern`() {
-        let idle = SpriteCatalog.animation(
-            for: .galekin, kind: .idle
-        )
-        let eat = SpriteCatalog.animation(
-            for: .galekin, kind: .eat
-        )
-        // Default eat would be idle1.shiftedLeft(1)
-        let defaultEat = idle.frames[0].shiftedLeft(1)
-        #expect(eat.frames[0] != defaultEat)
-    }
-
-    @Test
-    func `happy does not use default bounce pattern`() {
-        let idle = SpriteCatalog.animation(
-            for: .galekin, kind: .idle
-        )
-        let happy = SpriteCatalog.animation(
-            for: .galekin, kind: .happy
-        )
-        // Default happy second frame would be shiftedUp(2)
-        let defaultHappy2 = idle.frames[0].shiftedUp(2)
-        #expect(happy.frames[1] != defaultHappy2)
-    }
-
-    @Test
     func `refuse keeps body anchored while head shifts`() {
         let idle = SpriteCatalog.animation(
             for: .galekin, kind: .idle

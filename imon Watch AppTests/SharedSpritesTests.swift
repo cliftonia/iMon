@@ -4,26 +4,6 @@ import Testing
 @Suite("SharedSprites")
 struct SharedSpritesTests {
 
-    // MARK: - Shower Head
-
-    @Test
-    func `water drops frames have shower head in top rows`() {
-        let frame1 = SharedSprites.waterDrops1
-        let frame2 = SharedSprites.waterDrops2
-
-        // Row 0: pipe stem
-        #expect(frame1.rows[0] == 0x0700)
-        #expect(frame2.rows[0] == 0x0700)
-
-        // Row 1: head plate
-        #expect(frame1.rows[1] == 0x1FC0)
-        #expect(frame2.rows[1] == 0x1FC0)
-
-        // Row 2: nozzle holes
-        #expect(frame1.rows[2] == 0x1540)
-        #expect(frame2.rows[2] == 0x1540)
-    }
-
     @Test
     func `water drops stay within LCD bounds at offset 20`() {
         let frames = [

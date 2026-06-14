@@ -1,0 +1,97 @@
+import Testing
+import Foundation
+@testable import imon_Watch_App
+
+@Suite("CareMistakeTracker")
+struct CareMistakeTrackerTests {
+
+    // MARK: - Hunger / strength neglect
+
+    @Test
+    func `neglect starts the countdown without an immediate mistake`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 0, at: now)
+        state.timestamps.pendingCareMistakeAt = nil
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        #expect(state.careMistakes == 0)
+        #expect(state.timestamps.pendingCareMistakeAt == now)
+    }
+
+    @Test
+    func `neglect past the window counts a mistake`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 0, at: now)
+        state.timestamps.pendingCareMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        #expect(state.careMistakes == 1)
+    }
+
+    @Test
+    func `recovery clears the pending countdown`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 4, strength: 4, at: now)
+        state.timestamps.pendingCareMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        #expect(state.careMistakes == 0)
+        #expect(state.timestamps.pendingCareMistakeAt == nil)
+    }
+
+    @Test
+    func `does not accrue neglect while sleeping`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 0, at: now)
+        state.isSleeping = true
+        state.timestamps.pendingCareMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow * 2)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        #expect(state.careMistakes == 0)
+    }
+
+    // MARK: - Lights-at-night penalty (independent accumulator)
+
+    @Test
+    func `light on past the window at night counts a mistake`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 4, strength: 4, at: now)
+        state.lightsOn = true
+        state.timestamps.pendingLightsMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        #expect(state.careMistakes == 1)
+    }
+
+    @Test
+    func `light off at night clears the lights countdown`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 4, strength: 4, at: now)
+        state.lightsOn = false
+        state.timestamps.pendingLightsMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        #expect(state.careMistakes == 0)
+        #expect(state.timestamps.pendingLightsMistakeAt == nil)
+    }
+
+    // Both penalties can fire in a single tick (asleep blocks only neglect).
+    @Test
+    func `neglect and lights penalties both count in one tick`() {
+        let now = Date.now
+        var state = makeTestState(hunger: 0, strength: 4, at: now)
+        state.lightsOn = true
+        state.timestamps.pendingCareMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+        state.timestamps.pendingLightsMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        #expect(state.careMistakes == 2)
+    }
+}
