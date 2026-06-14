@@ -4,7 +4,7 @@ import UserNotifications
 nonisolated enum PetNotificationScheduler {
     static func scheduleHungerReminder(at date: Date) {
         let content = UNMutableNotificationContent()
-        content.title = "imon"
+        content.title = "Skykin"
         content.body = "Your Creature is hungry!"
         content.sound = .default
 
@@ -24,7 +24,7 @@ nonisolated enum PetNotificationScheduler {
 
     static func schedulePoopReminder(at date: Date) {
         let content = UNMutableNotificationContent()
-        content.title = "imon"
+        content.title = "Skykin"
         content.body = "Your Creature made a mess!"
         content.sound = .default
 
@@ -44,7 +44,7 @@ nonisolated enum PetNotificationScheduler {
 
     static func scheduleInjuryReminder() {
         let content = UNMutableNotificationContent()
-        content.title = "imon"
+        content.title = "Skykin"
         content.body = "Your Creature is injured! Heal it soon!"
         content.sound = .default
 

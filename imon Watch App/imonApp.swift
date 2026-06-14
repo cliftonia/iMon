@@ -17,7 +17,7 @@ struct imon_Watch_AppApp: App {
 final class AppDelegate: NSObject, WKApplicationDelegate {
 
     func applicationDidFinishLaunching() {
-        Log.presentation.info("imon launched")
+        Log.presentation.info("Skykin launched")
     }
 
     func applicationDidBecomeActive() {

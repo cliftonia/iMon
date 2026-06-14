@@ -458,7 +458,7 @@
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = imon;
+				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Used to show local weather next to your creature.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -493,7 +493,7 @@
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = imon;
+				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Used to show local weather next to your creature.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -524,7 +524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
-				INFOPLIST_KEY_CFBundleDisplayName = imon;
+				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cliftonia.imon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -541,7 +541,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
-				INFOPLIST_KEY_CFBundleDisplayName = imon;
+				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cliftonia.imon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
