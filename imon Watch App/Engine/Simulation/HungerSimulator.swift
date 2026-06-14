@@ -8,8 +8,11 @@ nonisolated enum HungerSimulator {
         var state = state
         guard !state.isDead, !state.isEgg, !state.isSleeping else { return state }
 
-        let elapsed = now.timeIntervalSince(state.timestamps.lastHungerDecayAt)
-        let ticks = Int(elapsed / TimeConstants.hungerDepletionInterval)
+        let ticks = TickMath.ticks(
+            from: state.timestamps.lastHungerDecayAt,
+            to: now,
+            interval: TimeConstants.hungerDepletionInterval
+        )
         guard ticks > 0 else { return state }
 
         for _ in 0..<ticks {

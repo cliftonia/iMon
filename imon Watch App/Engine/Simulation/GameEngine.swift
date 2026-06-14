@@ -19,9 +19,13 @@ nonisolated enum GameEngine {
             return state
         }
 
-        // Update age (whole days since birth)
+        // Update age (whole days since birth) — clamped so a backward clock
+        // can't produce a negative age.
         let calendar = Calendar.current
-        state.age = calendar.dateComponents([.day], from: state.timestamps.bornAt, to: now).day ?? state.age
+        let days = calendar.dateComponents(
+            [.day], from: state.timestamps.bornAt, to: now
+        ).day ?? state.age
+        state.age = max(0, days)
 
         // Resolve day/night once (weather, or fixed hours as fallback).
         let night = SleepSchedule.isNight(weatherNight: isNight, at: now)

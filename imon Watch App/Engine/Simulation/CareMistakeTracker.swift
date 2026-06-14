@@ -19,8 +19,10 @@ nonisolated enum CareMistakeTracker {
 
         if needsAttention {
             if let pendingAt = state.timestamps.pendingCareMistakeAt {
-                let elapsed = now.timeIntervalSince(pendingAt)
-                let mistakes = Int(elapsed / TimeConstants.careMistakeWindow)
+                let mistakes = TickMath.ticks(
+                    from: pendingAt, to: now,
+                    interval: TimeConstants.careMistakeWindow
+                )
                 if mistakes > 0 {
                     state.careMistakes += mistakes
                     state.timestamps.pendingCareMistakeAt = pendingAt.addingTimeInterval(
@@ -49,8 +51,10 @@ nonisolated enum CareMistakeTracker {
 
         if keptAwakeAtNight {
             if let pendingAt = state.timestamps.pendingLightsMistakeAt {
-                let elapsed = now.timeIntervalSince(pendingAt)
-                let mistakes = Int(elapsed / TimeConstants.careMistakeWindow)
+                let mistakes = TickMath.ticks(
+                    from: pendingAt, to: now,
+                    interval: TimeConstants.careMistakeWindow
+                )
                 if mistakes > 0 {
                     state.careMistakes += mistakes
                     state.timestamps.pendingLightsMistakeAt = pendingAt.addingTimeInterval(
