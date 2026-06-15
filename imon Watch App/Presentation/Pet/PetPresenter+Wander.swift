@@ -155,7 +155,8 @@ extension PetPresenter {
         }
         stopWandering()
         let presenter = BattlePresenter(
-            petState: state
+            petState: state,
+            steps: currentSteps()
         ) { [weak self] result in
             self?.applyBattleResult(result)
         }

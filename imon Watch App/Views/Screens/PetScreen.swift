@@ -38,10 +38,12 @@ struct PetScreen: View {
             .task {
                 presenter.startGameLoop()
                 appPresenter.weatherStore.refreshIfStale()
+                appPresenter.stepActivityStore.refreshIfStale()
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
                     appPresenter.weatherStore.refreshIfStale()
+                    appPresenter.stepActivityStore.refreshIfStale()
                 }
             }
             .onChange(of: appPresenter.weatherStore.snapshot) { _, _ in

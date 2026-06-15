@@ -44,6 +44,10 @@ struct StatsScreen: View {
                 label: "WEIGHT",
                 value: "\(presenter.viewModel.weightGrams)G"
             )
+            statRow(
+                label: "STEPS",
+                value: presenter.viewModel.activityLabel
+            )
         }
     }
 

@@ -22,6 +22,7 @@ final class AppPresenter {
 
     let router = AppRouter()
     let weatherStore: WeatherStore
+    let stepActivityStore: StepActivityStore
 
     private let store: PetStateStore
 
@@ -29,10 +30,12 @@ final class AppPresenter {
 
     init(
         store: PetStateStore = JSONPetStateStore.live(),
-        weatherStore: WeatherStore = .makeDefault()
+        weatherStore: WeatherStore = .makeDefault(),
+        stepActivityStore: StepActivityStore = .makeDefault()
     ) {
         self.store = store
         self.weatherStore = weatherStore
+        self.stepActivityStore = stepActivityStore
     }
 
     // MARK: - Lifecycle
@@ -82,6 +85,7 @@ final class AppPresenter {
             currentNight: { [weatherStore] in
                 weatherStore.snapshot.map { !$0.isDaylight }
             },
+            currentSteps: { [stepActivityStore] in stepActivityStore.todaySteps },
             onDeath: { [weak self] in self?.checkDeath() }
         )
         petPresenter = presenter
@@ -114,7 +118,10 @@ final class AppPresenter {
     func navigateToStats() {
         guard let petPresenter else { return }
         let presenter = StatsPresenter()
-        presenter.update(from: petPresenter.getCurrentState())
+        presenter.update(
+            from: petPresenter.getCurrentState(),
+            steps: stepActivityStore.todaySteps
+        )
         statsPresenter = presenter
         router.navigate(to: .stats)
     }

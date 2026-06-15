@@ -6,7 +6,7 @@ final class StatsPresenter {
 
     // MARK: - Update
 
-    func update(from state: PetState) {
+    func update(from state: PetState, steps: Int? = nil) {
         let status = PetStatus(from: state)
         viewModel.speciesName = status.species.displayName
         viewModel.stageName = status.stage.displayName
@@ -14,7 +14,13 @@ final class StatsPresenter {
         viewModel.weightGrams = status.weightGrams
         viewModel.hungerHearts = status.hungerHearts.value
         viewModel.strengthHearts = status.strengthHearts.value
-        viewModel.battleHP = BattleHP.calculate(for: state)
+        viewModel.battleHP = BattleHP.calculate(for: state, steps: steps)
+        if let steps {
+            let active = !ActivityModel.isSedentary(steps: steps)
+            viewModel.activityLabel = "\(steps) \u{00b7} \(active ? "Active" : "Resting")"
+        } else {
+            viewModel.activityLabel = "—"
+        }
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses
 

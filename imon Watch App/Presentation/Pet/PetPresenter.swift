@@ -16,6 +16,10 @@ final class PetPresenter {
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
 
+    /// Today's step count, or nil when unavailable — drives activity-based rates.
+    /// Not private: the `+Wander` extension reads it when starting a battle.
+    let currentSteps: () -> Int?
+
     /// Called when the pet dies during play, so the app can show the grave.
     private let onDeath: () -> Void
 
@@ -43,11 +47,13 @@ final class PetPresenter {
         state: PetState,
         store: PetStateStore,
         currentNight: @escaping () -> Bool? = { nil },
+        currentSteps: @escaping () -> Int? = { nil },
         onDeath: @escaping () -> Void = {}
     ) {
         self.state = state
         self.store = store
         self.currentNight = currentNight
+        self.currentSteps = currentSteps
         self.onDeath = onDeath
         updateViewModel()
     }
@@ -126,7 +132,9 @@ final class PetPresenter {
     private func advanceState() {
         let wasSleeping = state.isSleeping
         let wasDead = state.isDead
-        state = GameEngine.advance(state, to: .now, isNight: currentNight())
+        state = GameEngine.advance(
+            state, to: .now, isNight: currentNight(), steps: currentSteps()
+        )
 
         // Stay awake during an activity, but don't flip the persistent light —
         // otherwise training/battling at night leaves the pet "inside".
@@ -155,7 +163,7 @@ final class PetPresenter {
     }
 
     func applyBattleResult(_ result: BattleResult) {
-        state = BattleEngine.applyResult(result, to: state)
+        state = BattleEngine.applyResult(result, to: state, at: .now)
         updateViewModel()
         save()
     }

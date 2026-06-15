@@ -13,4 +13,5 @@ final class StatsViewModel {
     var battleWins: Int = 0
     var battleLosses: Int = 0
     var winRate: String = "0%"
+    var activityLabel: String = "—"
 }

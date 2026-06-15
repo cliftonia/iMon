@@ -96,4 +96,7 @@ nonisolated enum TimeConstants {
 
     /// Cache window before re-fetching current weather (30 minutes)
     static let weatherCacheInterval: TimeInterval = 1_800
+
+    /// Cache window before re-fetching today's step count (10 minutes)
+    static let stepCacheInterval: TimeInterval = 600
 }

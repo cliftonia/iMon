@@ -10,7 +10,8 @@ nonisolated enum GameEngine {
     static func advance(
         _ state: PetState,
         to now: Date,
-        isNight: Bool? = nil
+        isNight: Bool? = nil,
+        steps: Int? = nil
     ) -> PetState {
         var state = state
 
@@ -32,10 +33,10 @@ nonisolated enum GameEngine {
 
         // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, night: night)
-        state = HungerSimulator.apply(to: state, at: now)
-        state = StrengthSimulator.apply(to: state, at: now)
+        state = HungerSimulator.apply(to: state, at: now, steps: steps)
+        state = StrengthSimulator.apply(to: state, at: now, steps: steps)
         state = PoopSimulator.apply(to: state, at: now)
-        state = InjurySimulator.apply(to: state, at: now)
+        state = InjurySimulator.apply(to: state, at: now, steps: steps)
         state = CareMistakeTracker.apply(to: state, at: now, night: night)
 
         // Evaluate death

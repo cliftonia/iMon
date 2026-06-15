@@ -73,16 +73,28 @@ nonisolated enum BattleEngine {
         return basePower
     }
 
-    /// Apply battle result to state, incrementing win/loss counters.
+    /// Apply battle result to state, incrementing win/loss counters. Losing
+    /// while already weak (low strength or hunger) leaves the pet injured —
+    /// a beaten, run-down creature needs medication.
     static func applyResult(
         _ result: BattleResult,
-        to state: PetState
+        to state: PetState,
+        at now: Date = .now
     ) -> PetState {
         var state = state
         switch result {
-        case .win: state.battleWins += 1
-        case .lose: state.battleLosses += 1
-        case .draw: break
+        case .win:
+            state.battleWins += 1
+        case .lose:
+            state.battleLosses += 1
+            let weak = state.strengthHearts.value <= 1 || state.hungerHearts.value <= 1
+            if weak, !state.isInjured {
+                state.isInjured = true
+                state.timestamps.injuredAt = now
+                state.injuryCount += 1
+            }
+        case .draw:
+            break
         }
         return state
     }

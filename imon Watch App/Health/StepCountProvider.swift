@@ -36,4 +36,15 @@ extension StepCountProvider {
     static func mock(steps: Int = 0) -> StepCountProvider {
         StepCountProvider(fetchTodaySteps: { steps })
     }
+
+    /// Requests read access to step count. Safe to call at every launch;
+    /// HealthKit only prompts once. No-op if HealthKit is unavailable.
+    static func requestAuthorization() async {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+        let store = HKHealthStore()
+        try? await store.requestAuthorization(
+            toShare: [],
+            read: [HKQuantityType(.stepCount)]
+        )
+    }
 }

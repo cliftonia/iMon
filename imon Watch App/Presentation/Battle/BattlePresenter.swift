@@ -9,6 +9,7 @@ final class BattlePresenter {
 
     // Read by the `+Frames` and `+Rounds` extensions.
     let petState: PetState
+    let steps: Int?
     let onComplete: (BattleResult) -> Void
     var opponent: BattleOpponent?
     var pickContinuation: CheckedContinuation<AttackHeight, Never>?
@@ -19,9 +20,11 @@ final class BattlePresenter {
 
     init(
         petState: PetState,
+        steps: Int? = nil,
         onComplete: @escaping (BattleResult) -> Void
     ) {
         self.petState = petState
+        self.steps = steps
         self.onComplete = onComplete
     }
 
@@ -34,7 +37,7 @@ final class BattlePresenter {
         viewModel.petSpecies = petState.species
         viewModel.opponentSpecies = opp.species
 
-        let petHP = BattleHP.calculate(for: petState)
+        let petHP = BattleHP.calculate(for: petState, steps: steps)
         viewModel.petHP = petHP
         viewModel.petMaxHP = petHP
 
