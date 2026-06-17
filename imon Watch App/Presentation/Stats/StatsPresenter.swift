@@ -26,32 +26,33 @@ final class StatsPresenter {
         viewModel.maxHunger = status.species.maxHunger
         viewModel.strengthHearts = status.strengthHearts.value
         viewModel.maxStrength = status.species.maxStrength
-        viewModel.battleHP = BattleHP.calculate(for: state, steps: steps)
+        let hp = BattleHP.calculate(for: state, steps: steps)
+        viewModel.hpDisplay = state.trainedHP > 0 ? "\(hp) (+\(state.trainedHP))" : "\(hp)"
+        viewModel.powerBonus = "+\(state.trainedPower)"
         if let steps {
             let active = !ActivityModel.isSedentary(steps: steps)
             viewModel.activityLabel = "\(steps) \u{00b7} \(active ? "Active" : "Resting")"
         } else {
             viewModel.activityLabel = "—"
         }
-        viewModel.totalSteps = Self.grouped(state.lifetimeActiveSteps)
+        let total = Self.grouped(state.lifetimeActiveSteps)
         let stage = status.species.stage
         if stage == .ultimate {
-            viewModel.evolveProgress = "MAX"
+            viewModel.evolveProgress = "MAX \u{00b7} " + total
         } else {
-            let target = Self.grouped(stage.stepsToEvolve)
-            viewModel.evolveProgress = viewModel.totalSteps + " / " + target
+            viewModel.evolveProgress = total + " / " + Self.grouped(stage.stepsToEvolve)
         }
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses
 
-        let total = status.battleWins + status.battleLosses
-        if total > 0 {
+        let battles = status.battleWins + status.battleLosses
+        if battles > 0 {
             let rate = Int(
-                Double(status.battleWins) / Double(total) * 100
+                Double(status.battleWins) / Double(battles) * 100
             )
             viewModel.winRate = "\(rate)%"
         } else {
-            viewModel.winRate = "N/A"
+            viewModel.winRate = "—"
         }
     }
 }

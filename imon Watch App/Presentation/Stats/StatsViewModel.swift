@@ -11,11 +11,11 @@ final class StatsViewModel {
     var maxHunger: Int = 4
     var strengthHearts: Int = 0
     var maxStrength: Int = 4
-    var battleHP: Int = 0
+    var hpDisplay: String = "0"
+    var powerBonus: String = "+0"
     var battleWins: Int = 0
     var battleLosses: Int = 0
-    var winRate: String = "0%"
+    var winRate: String = "—"
     var activityLabel: String = "—"
-    var totalSteps: String = "0"
     var evolveProgress: String = "—"
 }

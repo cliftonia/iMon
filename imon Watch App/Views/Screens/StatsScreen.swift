@@ -49,10 +49,6 @@ struct StatsScreen: View {
                 value: presenter.viewModel.activityLabel
             )
             statRow(
-                label: "TOTAL",
-                value: presenter.viewModel.totalSteps
-            )
-            statRow(
                 label: "EVOLVE",
                 value: presenter.viewModel.evolveProgress
             )
@@ -78,7 +74,11 @@ struct StatsScreen: View {
         VStack(alignment: .leading, spacing: 4) {
             statRow(
                 label: "HP",
-                value: "\(presenter.viewModel.battleHP)"
+                value: presenter.viewModel.hpDisplay
+            )
+            statRow(
+                label: "POW",
+                value: presenter.viewModel.powerBonus
             )
             statRow(
                 label: "WIN",
