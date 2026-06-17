@@ -79,16 +79,14 @@ struct PetScreen: View {
 
     // MARK: - Debug Menu
 
-    /// Debug-only row by the pet's name: tap the weather icon to cycle the
-    /// weather animation, tap the name to trigger an evolution.
+    /// Debug-only label by the pet's name: the current weather icon and species.
+    /// The actions live on long-presses — hold A to cycle weather, B to evolve.
     @ViewBuilder
     private var debugNameOverlay: some View {
         #if DEBUG
-        HStack(spacing: 6) {
-            if let snapshot = appPresenter.weatherStore.displaySnapshot {
-                Button {
-                    appPresenter.weatherStore.cycleDebugCondition()
-                } label: {
+        if let species = presenter.viewModel.status?.species {
+            HStack(spacing: 4) {
+                if let snapshot = appPresenter.weatherStore.displaySnapshot {
                     WeatherIconView(
                         frame: WeatherIconMapper.frame(
                             for: snapshot.condition,
@@ -96,27 +94,34 @@ struct PetScreen: View {
                         ),
                         pixelSize: 0.75
                     )
+                    Text("|")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.yellow.opacity(0.4))
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Cycle weather")
+                Text(species.displayName)
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.yellow)
             }
-
-            if let species = presenter.viewModel.status?.species {
-                Button {
-                    presenter.debugEvolve()
-                } label: {
-                    Text(species.displayName)
-                        .font(.system(
-                            size: 9,
-                            weight: .bold,
-                            design: .monospaced
-                        ))
-                        .foregroundStyle(.yellow)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Evolve")
-            }
+            .accessibilityHidden(true)
         }
+        #endif
+    }
+
+    // MARK: - Debug Long-Press Actions
+
+    private var debugWeatherCycle: (() -> Void)? {
+        #if DEBUG
+        { appPresenter.weatherStore.cycleDebugCondition() }
+        #else
+        nil
+        #endif
+    }
+
+    private var debugEvolveAction: (() -> Void)? {
+        #if DEBUG
+        { presenter.debugEvolve() }
+        #else
+        nil
         #endif
     }
 
@@ -191,10 +196,10 @@ struct PetScreen: View {
 
     private var normalButtons: some View {
         HStack(spacing: 4) {
-            ActionButton(label: buttonALabel) {
+            ActionButton(label: buttonALabel, longPressAction: debugWeatherCycle) {
                 handleButtonA()
             }
-            ActionButton(label: buttonBLabel) {
+            ActionButton(label: buttonBLabel, longPressAction: debugEvolveAction) {
                 handleButtonB()
             }
             ActionButton(label: buttonCLabel) {
