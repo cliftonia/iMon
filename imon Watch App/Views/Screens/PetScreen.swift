@@ -89,14 +89,20 @@ struct PetScreen: View {
     private var debugNameOverlay: some View {
         #if DEBUG
         if let species = presenter.viewModel.status?.species {
-            Text(species.displayName)
-                .font(.system(
-                    size: 9,
-                    weight: .bold,
-                    design: .monospaced
-                ))
-                .foregroundStyle(.yellow)
-                .accessibilityHidden(true)
+            // Tap the name to trigger an evolution (debug/manual).
+            Button {
+                presenter.debugEvolve()
+            } label: {
+                Text(species.displayName)
+                    .font(.system(
+                        size: 9,
+                        weight: .bold,
+                        design: .monospaced
+                    ))
+                    .foregroundStyle(.yellow)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Evolve")
         }
         #endif
     }

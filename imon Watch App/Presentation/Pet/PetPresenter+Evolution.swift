@@ -5,19 +5,6 @@ import WatchKit
 
 extension PetPresenter {
 
-    func checkEvolution() {
-        // Only evolve from the idle main view — never mid-battle, -training,
-        // -feeding, -cleaning or -healing.
-        guard !viewModel.isBusy else { return }
-        guard let target = EvolutionEngine.checkEvolution(
-            for: state, at: .now
-        ) else {
-            return
-        }
-        viewModel.showEvolution = true
-        viewModel.evolutionTarget = target
-    }
-
     func applyEvolution() {
         guard let target = viewModel.evolutionTarget else {
             return

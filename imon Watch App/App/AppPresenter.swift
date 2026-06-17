@@ -134,4 +134,11 @@ final class AppPresenter {
             startDeath(state: state)
         }
     }
+
+    /// Reset the current pet back to a fresh egg (the ⚠️ menu button).
+    func restartPet() {
+        petPresenter?.stopGameLoop()
+        petPresenter = nil
+        onRestart()
+    }
 }

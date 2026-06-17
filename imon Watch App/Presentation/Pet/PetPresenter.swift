@@ -113,8 +113,8 @@ final class PetPresenter {
 
     private func tick() {
         advanceState()
-        checkEvolution()
         save()
+        // Evolution is manual-only for now (tap the name) — no auto-evolve.
     }
 
     /// Re-applies environment-driven state (e.g. weather day/night) right away,

@@ -118,8 +118,7 @@ extension PetScreen {
         case .heal:
             presenter.healAction()
         case .call:
-            presenter.debugEvolve()
-            appPresenter.checkDeath()
+            appPresenter.restartPet()
         }
     }
 }
