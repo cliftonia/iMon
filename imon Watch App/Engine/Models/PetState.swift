@@ -29,6 +29,15 @@ nonisolated struct PetState: Sendable {
     var battleLosses: Int = 0
     var trainingCount: Int = 0
 
+    // MARK: - Fitness (step-driven growth)
+
+    /// Lifetime active steps credited toward evolution; decays on lazy days.
+    var lifetimeActiveSteps: Int = 0
+    /// Today's steps already folded into `lifetimeActiveSteps`.
+    var stepsCreditedToday: Int = 0
+    /// The calendar day `stepsCreditedToday` belongs to; `nil` until first credit.
+    var stepTrackedDay: Date?
+
     // MARK: - Lifecycle
 
     var isDead: Bool = false

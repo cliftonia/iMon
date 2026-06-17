@@ -135,6 +135,7 @@ final class PetPresenter {
         state = GameEngine.advance(
             state, to: .now, isNight: currentNight(), steps: currentSteps()
         )
+        creditSteps()
 
         // Stay awake during an activity, but don't flip the persistent light —
         // otherwise training/battling at night leaves the pet "inside".
@@ -149,6 +150,24 @@ final class PetPresenter {
         if !wasDead, state.isDead {
             onDeath()
         }
+    }
+
+    /// Folds today's live step count into the lifetime evolution accumulator,
+    /// applying the lazy-day decay on a calendar rollover.
+    private func creditSteps() {
+        guard let steps = currentSteps() else { return }
+        let progress = StepProgress.advance(
+            StepProgress.Progress(
+                lifetime: state.lifetimeActiveSteps,
+                creditedToday: state.stepsCreditedToday,
+                trackedDay: state.stepTrackedDay
+            ),
+            todaySteps: steps,
+            now: .now
+        )
+        state.lifetimeActiveSteps = progress.lifetime
+        state.stepsCreditedToday = progress.creditedToday
+        state.stepTrackedDay = progress.trackedDay
     }
 
     // MARK: - Training & Battle Results

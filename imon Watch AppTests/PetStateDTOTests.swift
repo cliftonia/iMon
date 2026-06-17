@@ -50,6 +50,9 @@ struct PetStateDTOTests {
         state.battleWins = 11
         state.battleLosses = 4
         state.trainingCount = 22
+        state.lifetimeActiveSteps = 123_456
+        state.stepsCreditedToday = 4_321
+        state.stepTrackedDay = Self.base.addingTimeInterval(12)
         state.isDead = true
         state.wasNight = true
         state.timestamps.lastFedAt = Self.base.addingTimeInterval(1)
@@ -93,6 +96,28 @@ struct PetStateDTOTests {
         #expect(r.isDead == state.isDead)
         #expect(r.isEgg == state.isEgg)
         #expect(r.wasNight == state.wasNight)
+        #expect(r.lifetimeActiveSteps == state.lifetimeActiveSteps)
+        #expect(r.stepsCreditedToday == state.stepsCreditedToday)
+        #expect(r.stepTrackedDay == state.stepTrackedDay)
+    }
+
+    @Test
+    func `save without fitness fields decodes to zeroed accumulator`() throws {
+        let dto = PetStateDTO(from: .hatched(at: Self.base))
+        let data = try JSONEncoder().encode(dto)
+        var json = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        json.removeValue(forKey: "lifetimeActiveSteps")
+        json.removeValue(forKey: "stepsCreditedToday")
+        json.removeValue(forKey: "stepTrackedDay")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+
+        let decoded = PetState(from: try JSONDecoder().decode(PetStateDTO.self, from: stripped))
+
+        #expect(decoded.lifetimeActiveSteps == 0)
+        #expect(decoded.stepsCreditedToday == 0)
+        #expect(decoded.stepTrackedDay == nil)
     }
 
     @Test

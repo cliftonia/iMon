@@ -31,6 +31,10 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var battleLosses: Int
     var trainingCount: Int
 
+    var lifetimeActiveSteps: Int?
+    var stepsCreditedToday: Int?
+    var stepTrackedDay: Date?
+
     var isDead: Bool
     var isEgg: Bool
     var wasNight: Bool?
@@ -71,6 +75,9 @@ nonisolated extension PetStateDTO {
         battleWins = state.battleWins
         battleLosses = state.battleLosses
         trainingCount = state.trainingCount
+        lifetimeActiveSteps = state.lifetimeActiveSteps
+        stepsCreditedToday = state.stepsCreditedToday
+        stepTrackedDay = state.stepTrackedDay
         isDead = state.isDead
         isEgg = state.isEgg
         wasNight = state.wasNight
@@ -108,6 +115,9 @@ nonisolated extension PetState {
             battleWins: dto.battleWins,
             battleLosses: dto.battleLosses,
             trainingCount: dto.trainingCount,
+            lifetimeActiveSteps: dto.lifetimeActiveSteps ?? 0,
+            stepsCreditedToday: dto.stepsCreditedToday ?? 0,
+            stepTrackedDay: dto.stepTrackedDay,
             isDead: dto.isDead,
             isEgg: dto.isEgg,
             wasNight: dto.wasNight ?? false,
