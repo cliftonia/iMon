@@ -4,6 +4,16 @@ final class StatsPresenter {
 
     private(set) var viewModel = StatsViewModel()
 
+    private static let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+
+    private static func grouped(_ value: Int) -> String {
+        numberFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
+    }
+
     // MARK: - Update
 
     func update(from state: PetState, steps: Int? = nil) {
@@ -22,6 +32,14 @@ final class StatsPresenter {
             viewModel.activityLabel = "\(steps) \u{00b7} \(active ? "Active" : "Resting")"
         } else {
             viewModel.activityLabel = "—"
+        }
+        viewModel.totalSteps = Self.grouped(state.lifetimeActiveSteps)
+        let stage = status.species.stage
+        if stage == .ultimate {
+            viewModel.evolveProgress = "MAX"
+        } else {
+            let target = Self.grouped(stage.stepsToEvolve)
+            viewModel.evolveProgress = viewModel.totalSteps + " / " + target
         }
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses

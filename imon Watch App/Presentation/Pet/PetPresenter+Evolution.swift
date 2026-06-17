@@ -5,6 +5,15 @@ import WatchKit
 
 extension PetPresenter {
 
+    /// Offers a step-gated evolution when the lifetime accumulator has crossed
+    /// the stage threshold and the pet is idle. Care state picks the branch.
+    func checkEvolution() {
+        guard !viewModel.isBusy, !viewModel.showEvolution else { return }
+        guard let target = EvolutionEngine.checkEvolution(for: state) else { return }
+        viewModel.showEvolution = true
+        viewModel.evolutionTarget = target
+    }
+
     func applyEvolution() {
         guard let target = viewModel.evolutionTarget else {
             return

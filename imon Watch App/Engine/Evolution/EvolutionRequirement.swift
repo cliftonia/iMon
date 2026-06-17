@@ -4,7 +4,6 @@ nonisolated struct EvolutionRequirement: Sendable {
 
     let from: PetSpecies
     let to: PetSpecies
-    let minAwakeTime: TimeInterval
     let maxCareMistakes: Int?
     let minCareMistakes: Int?
     let minBattleWins: Int?
@@ -17,7 +16,6 @@ nonisolated struct EvolutionRequirement: Sendable {
     init(
         from: PetSpecies,
         to: PetSpecies,
-        minAwakeTime: TimeInterval,
         maxCareMistakes: Int? = nil,
         minCareMistakes: Int? = nil,
         minBattleWins: Int? = nil,
@@ -29,7 +27,6 @@ nonisolated struct EvolutionRequirement: Sendable {
     ) {
         self.from = from
         self.to = to
-        self.minAwakeTime = minAwakeTime
         self.maxCareMistakes = maxCareMistakes
         self.minCareMistakes = minCareMistakes
         self.minBattleWins = minBattleWins
@@ -42,9 +39,12 @@ nonisolated struct EvolutionRequirement: Sendable {
 
     // MARK: - Evaluation
 
-    func isSatisfied(by state: PetState, at now: Date) -> Bool {
-        let awakeTime = now.timeIntervalSince(state.timestamps.evolvedAt)
-        guard awakeTime >= minAwakeTime else { return false }
+    /// Steps gate *when* (the lifetime accumulator must reach the stage
+    /// threshold); the care fields below decide *which* branch.
+    func isSatisfied(by state: PetState) -> Bool {
+        guard state.lifetimeActiveSteps >= from.stage.stepsToEvolve else {
+            return false
+        }
 
         if let max = maxCareMistakes, state.careMistakes > max { return false }
         if let min = minCareMistakes, state.careMistakes < min { return false }

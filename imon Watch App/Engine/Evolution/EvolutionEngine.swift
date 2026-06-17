@@ -5,17 +5,14 @@ nonisolated enum EvolutionEngine {
 
     /// Check if the pet is ready to evolve and return the target species.
     /// Returns `nil` if no evolution is available.
-    static func checkEvolution(
-        for state: PetState,
-        at now: Date
-    ) -> PetSpecies? {
+    static func checkEvolution(for state: PetState) -> PetSpecies? {
         guard state.species.stage != .ultimate else { return nil }
 
         let candidates = EvolutionChart.evolutions(for: state.species)
 
         // Try non-default requirements first (specific paths)
         let specific = candidates.filter {
-            !$0.isDefault && $0.isSatisfied(by: state, at: now)
+            !$0.isDefault && $0.isSatisfied(by: state)
         }
         if let best = specific.first {
             return best.to
@@ -23,7 +20,7 @@ nonisolated enum EvolutionEngine {
 
         // Fall back to default path
         let defaults = candidates.filter {
-            $0.isDefault && $0.isSatisfied(by: state, at: now)
+            $0.isDefault && $0.isSatisfied(by: state)
         }
         return defaults.first?.to
     }

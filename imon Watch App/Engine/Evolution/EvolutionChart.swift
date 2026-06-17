@@ -2,7 +2,7 @@ import Foundation
 
 nonisolated enum EvolutionChart {
 
-    // MARK: - Complete V1 Evolution Tree
+    // MARK: - Complete Evolution Tree
 
     static let requirements: [EvolutionRequirement] = buildRequirements()
 
@@ -18,23 +18,19 @@ nonisolated enum EvolutionChart {
     private static func buildRequirements() -> [EvolutionRequirement] {
         var chart: [EvolutionRequirement] = []
 
-        // Fresh -> In-Training (always after 1 hour)
+        // Fresh -> In-Training (always, once the step gate is met)
         chart.append(
-            EvolutionRequirement(
-                from: .dotkin, to: .hopkin,
-                minAwakeTime: TimeConstants.babyEvolutionTime,
-                isDefault: true
-            )
+            EvolutionRequirement(from: .dotkin, to: .hopkin, isDefault: true)
         )
 
-        // In-Training -> Rookie (after 6 hours)
+        // In-Training -> Rookie
         chart.append(contentsOf: hopkinPaths())
 
-        // Rookie -> Champion (after 24 hours)
+        // Rookie -> Champion
         chart.append(contentsOf: emberkinPaths())
         chart.append(contentsOf: marshkinPaths())
 
-        // Champion -> Ultimate (after 36 hours)
+        // Champion -> Ultimate
         chart.append(contentsOf: championPaths())
 
         return chart
@@ -43,18 +39,15 @@ nonisolated enum EvolutionChart {
     // MARK: - In-Training Paths
 
     private static func hopkinPaths() -> [EvolutionRequirement] {
-        let time = TimeConstants.rookieEvolutionTime
-        return [
+        [
             // 0-1 care mistakes -> Emberkin
             EvolutionRequirement(
-                from: .hopkin, to: .emberkin,
-                minAwakeTime: time, maxCareMistakes: 1
+                from: .hopkin, to: .emberkin, maxCareMistakes: 1
             ),
             // 2+ care mistakes -> Marshkin (default)
             EvolutionRequirement(
                 from: .hopkin, to: .marshkin,
-                minAwakeTime: time, minCareMistakes: 2,
-                isDefault: true
+                minCareMistakes: 2, isDefault: true
             ),
         ]
     }
@@ -62,35 +55,29 @@ nonisolated enum EvolutionChart {
     // MARK: - Emberkin Paths
 
     private static func emberkinPaths() -> [EvolutionRequirement] {
-        let time = TimeConstants.championEvolutionTime
-        return [
+        [
             // 0-2 CM, 5+ wins -> Rexkin
             EvolutionRequirement(
                 from: .emberkin, to: .rexkin,
-                minAwakeTime: time,
                 maxCareMistakes: 2, minBattleWins: 5
             ),
             // 4+ CM, overfeed (weight 40+) -> Blazekin
             EvolutionRequirement(
                 from: .emberkin, to: .blazekin,
-                minAwakeTime: time,
                 minCareMistakes: 4, minWeight: 40
             ),
             // 0-3 CM, low training -> Dreadkin
             EvolutionRequirement(
-                from: .emberkin, to: .dreadkin,
-                minAwakeTime: time, maxCareMistakes: 3
+                from: .emberkin, to: .dreadkin, maxCareMistakes: 3
             ),
             // 4+ CM, train 16+ -> Pyrekin
             EvolutionRequirement(
                 from: .emberkin, to: .pyrekin,
-                minAwakeTime: time,
                 minCareMistakes: 4, minTrainingCount: 16
             ),
             // Default -> Sludgekin
             EvolutionRequirement(
-                from: .emberkin, to: .sludgekin,
-                minAwakeTime: time, isDefault: true
+                from: .emberkin, to: .sludgekin, isDefault: true
             ),
         ]
     }
@@ -98,29 +85,24 @@ nonisolated enum EvolutionChart {
     // MARK: - Marshkin Paths
 
     private static func marshkinPaths() -> [EvolutionRequirement] {
-        let time = TimeConstants.championEvolutionTime
-        return [
+        [
             // 0-3 CM, train 48+ -> Dreadkin
             EvolutionRequirement(
                 from: .marshkin, to: .dreadkin,
-                minAwakeTime: time,
                 maxCareMistakes: 3, minTrainingCount: 48
             ),
             // 4+ CM -> Galekin
             EvolutionRequirement(
-                from: .marshkin, to: .galekin,
-                minAwakeTime: time, minCareMistakes: 4
+                from: .marshkin, to: .galekin, minCareMistakes: 4
             ),
             // 4+ CM, weight 35+ -> Tidekin
             EvolutionRequirement(
                 from: .marshkin, to: .tidekin,
-                minAwakeTime: time,
                 minCareMistakes: 4, minWeight: 35
             ),
             // Default -> Sludgekin
             EvolutionRequirement(
-                from: .marshkin, to: .sludgekin,
-                minAwakeTime: time, isDefault: true
+                from: .marshkin, to: .sludgekin, isDefault: true
             ),
         ]
     }
@@ -128,37 +110,28 @@ nonisolated enum EvolutionChart {
     // MARK: - Champion Paths
 
     private static func championPaths() -> [EvolutionRequirement] {
-        let time = TimeConstants.ultimateEvolutionTime
-        return [
+        [
             EvolutionRequirement(
                 from: .rexkin, to: .steelkin,
-                minAwakeTime: time,
-                minBattleWins: 15, minWinRate: 0.8,
-                isDefault: true
+                minBattleWins: 15, minWinRate: 0.8, isDefault: true
             ),
             EvolutionRequirement(
-                from: .blazekin, to: .orbkin,
-                minAwakeTime: time, isDefault: true
+                from: .blazekin, to: .orbkin, isDefault: true
             ),
             EvolutionRequirement(
-                from: .dreadkin, to: .steelkin,
-                minAwakeTime: time, isDefault: true
+                from: .dreadkin, to: .steelkin, isDefault: true
             ),
             EvolutionRequirement(
-                from: .pyrekin, to: .orbkin,
-                minAwakeTime: time, isDefault: true
+                from: .pyrekin, to: .orbkin, isDefault: true
             ),
             EvolutionRequirement(
-                from: .galekin, to: .steelkin,
-                minAwakeTime: time, isDefault: true
+                from: .galekin, to: .steelkin, isDefault: true
             ),
             EvolutionRequirement(
-                from: .tidekin, to: .orbkin,
-                minAwakeTime: time, isDefault: true
+                from: .tidekin, to: .orbkin, isDefault: true
             ),
             EvolutionRequirement(
-                from: .sludgekin, to: .plushkin,
-                minAwakeTime: time, isDefault: true
+                from: .sludgekin, to: .plushkin, isDefault: true
             ),
         ]
     }

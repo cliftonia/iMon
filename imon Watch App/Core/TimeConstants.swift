@@ -23,20 +23,6 @@ nonisolated enum TimeConstants {
     /// Hour of the day the Creature wakes up (7 AM)
     static let sleepWakeHour: Int = 7
 
-    // MARK: - Evolution Timers
-
-    /// Baby stage evolves after 2 minutes
-    static let babyEvolutionTime: TimeInterval = 120
-
-    /// In-Training evolves to Rookie after 10 minutes
-    static let rookieEvolutionTime: TimeInterval = 600
-
-    /// Rookie evolves to Champion after 1 hour
-    static let championEvolutionTime: TimeInterval = 3_600
-
-    /// Champion evolves to Ultimate after 2 hours
-    static let ultimateEvolutionTime: TimeInterval = 7_200
-
     // MARK: - Game Loop
 
     /// Main simulation tick fires every 30 seconds
@@ -53,9 +39,6 @@ nonisolated enum TimeConstants {
 
     /// Maximum poop piles on screen before health penalty
     static let maxPoopPiles: Int = 4
-
-    /// Maximum hunger/strength hearts
-    static let maxHearts: Int = 4
 
     // MARK: - Death Thresholds
 

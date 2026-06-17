@@ -16,4 +16,6 @@ final class StatsViewModel {
     var battleLosses: Int = 0
     var winRate: String = "0%"
     var activityLabel: String = "—"
+    var totalSteps: String = "0"
+    var evolveProgress: String = "—"
 }

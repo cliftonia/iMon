@@ -48,6 +48,14 @@ struct StatsScreen: View {
                 label: "STEPS",
                 value: presenter.viewModel.activityLabel
             )
+            statRow(
+                label: "TOTAL",
+                value: presenter.viewModel.totalSteps
+            )
+            statRow(
+                label: "EVOLVE",
+                value: presenter.viewModel.evolveProgress
+            )
         }
     }
 

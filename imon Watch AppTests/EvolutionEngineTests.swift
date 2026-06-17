@@ -6,64 +6,48 @@ import Foundation
 struct EvolutionEngineTests {
 
     @Test
-    func `dotkin evolves to hopkin after 1 hour`() {
-        let start = Date.now
-        var state = makeTestState(
-            species: .dotkin, at: start
-        )
-        state.timestamps.evolvedAt = start
+    func `dotkin evolves to hopkin once the step gate is met`() {
+        var state = makeTestState(species: .dotkin)
+        state.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve
+        #expect(EvolutionEngine.checkEvolution(for: state) == .hopkin)
+    }
 
-        let later = start.addingTimeInterval(
-            TimeConstants.babyEvolutionTime + 1
-        )
-        let target = EvolutionEngine.checkEvolution(
-            for: state, at: later
-        )
-        #expect(target == .hopkin)
+    @Test
+    func `dotkin does not evolve below the step gate`() {
+        var state = makeTestState(species: .dotkin)
+        state.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve - 1
+        #expect(EvolutionEngine.checkEvolution(for: state) == nil)
     }
 
     @Test
     func `hopkin evolves to emberkin with 0-1 care mistakes`() {
-        let start = Date.now
-        var state = makeTestState(
-            species: .hopkin, at: start
-        )
-        state.timestamps.evolvedAt = start
+        var state = makeTestState(species: .hopkin)
+        state.lifetimeActiveSteps = EvolutionStage.inTraining.stepsToEvolve
         state.careMistakes = 0
-
-        let later = start.addingTimeInterval(
-            TimeConstants.rookieEvolutionTime + 1
-        )
-        let target = EvolutionEngine.checkEvolution(
-            for: state, at: later
-        )
-        #expect(target == .emberkin)
+        #expect(EvolutionEngine.checkEvolution(for: state) == .emberkin)
     }
 
     @Test
     func `hopkin evolves to marshkin with 2+ care mistakes`() {
-        let start = Date.now
-        var state = makeTestState(
-            species: .hopkin, at: start
-        )
-        state.timestamps.evolvedAt = start
+        var state = makeTestState(species: .hopkin)
+        state.lifetimeActiveSteps = EvolutionStage.inTraining.stepsToEvolve
         state.careMistakes = 3
+        #expect(EvolutionEngine.checkEvolution(for: state) == .marshkin)
+    }
 
-        let later = start.addingTimeInterval(
-            TimeConstants.rookieEvolutionTime + 1
-        )
-        let target = EvolutionEngine.checkEvolution(
-            for: state, at: later
-        )
-        #expect(target == .marshkin)
+    @Test
+    func `the same care state still picks the branch independent of steps`() {
+        var lazyEnough = makeTestState(species: .hopkin)
+        lazyEnough.lifetimeActiveSteps = EvolutionStage.inTraining.stepsToEvolve * 4
+        lazyEnough.careMistakes = 0
+        // Far past the gate, but care (not steps) still decides Emberkin.
+        #expect(EvolutionEngine.checkEvolution(for: lazyEnough) == .emberkin)
     }
 
     @Test
     func `ultimate stage cannot evolve further`() {
-        let state = makeTestState(species: .steelkin)
-        let target = EvolutionEngine.checkEvolution(
-            for: state, at: .now
-        )
-        #expect(target == nil)
+        var state = makeTestState(species: .steelkin)
+        state.lifetimeActiveSteps = 5_000_000
+        #expect(EvolutionEngine.checkEvolution(for: state) == nil)
     }
 }

@@ -21,6 +21,19 @@ nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable, Comparabl
         }
     }
 
+    /// Lifetime active steps needed to leave this stage (a single growing
+    /// counter). The final stage never evolves, so its bar is effectively
+    /// unreachable.
+    var stepsToEvolve: Int {
+        switch self {
+        case .fresh: 10_000
+        case .inTraining: 50_000
+        case .rookie: 300_000
+        case .champion: 1_000_000
+        case .ultimate: .max
+        }
+    }
+
     var displayName: String {
         switch self {
         case .fresh: "Fresh"

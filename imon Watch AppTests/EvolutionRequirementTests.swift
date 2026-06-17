@@ -5,74 +5,75 @@ import Foundation
 @Suite("EvolutionRequirement")
 struct EvolutionRequirementTests {
 
-    private func makeReady(at base: Date) -> PetState {
-        var state = makeTestState(at: base)
-        // Plenty of awake time so only the field under test gates the result.
-        state.timestamps.evolvedAt = base.addingTimeInterval(-100_000)
+    private func makeReady() -> PetState {
+        var state = makeTestState(species: .emberkin)
+        // Plenty of lifetime steps so only the field under test gates the result.
+        state.lifetimeActiveSteps = 1_000_000
         return state
     }
 
     @Test
-    func `min awake time gates evolution`() {
-        let now = Date.now
-        var state = makeTestState(at: now)
-        state.timestamps.evolvedAt = now   // no time elapsed yet
-        let req = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 3_600
-        )
-        #expect(req.isSatisfied(by: state, at: now) == false)
+    func `step gate blocks evolution below the stage threshold`() {
+        var state = makeTestState(species: .emberkin)
+        state.lifetimeActiveSteps = EvolutionStage.rookie.stepsToEvolve - 1
+        let req = EvolutionRequirement(from: .emberkin, to: .galekin)
+        #expect(req.isSatisfied(by: state) == false)
+    }
+
+    @Test
+    func `step gate allows evolution at the stage threshold`() {
+        var state = makeTestState(species: .emberkin)
+        state.lifetimeActiveSteps = EvolutionStage.rookie.stepsToEvolve
+        let req = EvolutionRequirement(from: .emberkin, to: .galekin)
+        #expect(req.isSatisfied(by: state))
     }
 
     // The zero-battle edge: a win-rate gate must fail when no battles happened.
     @Test
     func `win rate is unmet with no battles`() {
-        let now = Date.now
-        var state = makeReady(at: now)
+        var state = makeReady()
         state.battleWins = 0
         state.battleLosses = 0
         let req = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 0, minWinRate: 0.8
+            from: .emberkin, to: .galekin, minWinRate: 0.8
         )
-        #expect(req.isSatisfied(by: state, at: now) == false)
+        #expect(req.isSatisfied(by: state) == false)
     }
 
     @Test
     func `win rate is met when high enough`() {
-        let now = Date.now
-        var state = makeReady(at: now)
+        var state = makeReady()
         state.battleWins = 9
         state.battleLosses = 1
         let req = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 0, minWinRate: 0.8
+            from: .emberkin, to: .galekin, minWinRate: 0.8
         )
-        #expect(req.isSatisfied(by: state, at: now))
+        #expect(req.isSatisfied(by: state))
     }
 
     @Test
     func `win rate is unmet when too low`() {
-        let now = Date.now
-        var state = makeReady(at: now)
+        var state = makeReady()
         state.battleWins = 5
         state.battleLosses = 5
         let req = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 0, minWinRate: 0.8
+            from: .emberkin, to: .galekin, minWinRate: 0.8
         )
-        #expect(req.isSatisfied(by: state, at: now) == false)
+        #expect(req.isSatisfied(by: state) == false)
     }
 
     @Test
     func `weight and care-mistake bounds gate evolution`() {
-        let now = Date.now
-        var state = makeReady(at: now)
+        var state = makeReady()
         state.weight = Weight(50)
         state.careMistakes = 3
         let needsLight = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 0, maxCareMistakes: 1
+            from: .emberkin, to: .galekin, maxCareMistakes: 1
         )
         let needsHeavy = EvolutionRequirement(
-            from: .emberkin, to: .galekin, minAwakeTime: 0, minWeight: 40
+            from: .emberkin, to: .galekin, minWeight: 40
         )
-        #expect(needsLight.isSatisfied(by: state, at: now) == false)  // 3 > 1
-        #expect(needsHeavy.isSatisfied(by: state, at: now))           // 50 >= 40
+        #expect(needsLight.isSatisfied(by: state) == false)  // 3 > 1
+        #expect(needsHeavy.isSatisfied(by: state))           // 50 >= 40
     }
 }
