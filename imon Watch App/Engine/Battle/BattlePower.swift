@@ -3,11 +3,12 @@ import Foundation
 nonisolated enum BattlePower {
 
     /// Calculate effective battle power.
-    /// Base power + strength bonus. If overweight (99G), power is halved.
+    /// Base power + strength bonus + trained POW. If overweight (99G), halved.
     static func calculate(for state: PetState) -> Double {
         let base = Double(state.species.basePower)
         let strengthBonus = Double(state.strengthHearts.value) * 5.0
-        let raw = base + strengthBonus
+        let trainedBonus = Double(state.trainedPower) * TimeConstants.trainedPowerWeight
+        let raw = base + strengthBonus + trainedBonus
 
         if state.weight.isOverweight {
             return raw * 0.5

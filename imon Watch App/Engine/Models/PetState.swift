@@ -29,6 +29,13 @@ nonisolated struct PetState: Sendable {
     var battleLosses: Int = 0
     var trainingCount: Int = 0
 
+    // MARK: - Conditioning (trained combat bonuses, earned and lost through play)
+
+    /// Bonus battle HP earned by training; decays toward zero when idle.
+    var trainedHP: Int = 0
+    /// Bonus battle power earned by winning; decays toward zero when idle.
+    var trainedPower: Int = 0
+
     // MARK: - Fitness (step-driven growth)
 
     /// Lifetime active steps credited toward evolution; decays on lazy days.
@@ -66,6 +73,7 @@ extension PetState {
         var lastStrengthDecayAt: Date
         var evolvedAt: Date
         var lastAdvancedAt: Date
+        var lastBattledAt: Date
         var injuredAt: Date?
         var pendingCareMistakeAt: Date?
         var pendingLightsMistakeAt: Date?
@@ -83,6 +91,7 @@ extension PetState {
             lastStrengthDecayAt = date
             evolvedAt = date
             lastAdvancedAt = date
+            lastBattledAt = date
             injuredAt = nil
             pendingCareMistakeAt = nil
             pendingLightsMistakeAt = nil
@@ -99,6 +108,7 @@ extension PetState {
             lastStrengthDecayAt: Date,
             evolvedAt: Date,
             lastAdvancedAt: Date,
+            lastBattledAt: Date,
             injuredAt: Date?,
             pendingCareMistakeAt: Date?,
             pendingLightsMistakeAt: Date?,
@@ -112,6 +122,7 @@ extension PetState {
             self.lastStrengthDecayAt = lastStrengthDecayAt
             self.evolvedAt = evolvedAt
             self.lastAdvancedAt = lastAdvancedAt
+            self.lastBattledAt = lastBattledAt
             self.injuredAt = injuredAt
             self.pendingCareMistakeAt = pendingCareMistakeAt
             self.pendingLightsMistakeAt = pendingLightsMistakeAt
@@ -145,4 +156,11 @@ extension PetState {
             timestamps: Timestamps(creating: date)
         )
     }
+}
+
+// MARK: - Conditioning
+
+nonisolated extension PetState {
+    /// Whether the pet can build trained HP/POW. The Fresh runt (Dotkin) cannot.
+    var canCondition: Bool { species != .dotkin }
 }

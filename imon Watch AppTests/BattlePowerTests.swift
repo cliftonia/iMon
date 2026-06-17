@@ -22,6 +22,16 @@ struct BattlePowerTests {
         #expect(BattlePower.calculate(for: strong) > BattlePower.calculate(for: weak))
     }
 
+    @Test
+    func `trained POW adds to power`() {
+        var state = makeTestState(strength: 3)
+        state.weight = Weight(20)
+        let baseline = BattlePower.calculate(for: state)
+        state.trainedPower = 2
+        let expected = baseline + 2.0 * TimeConstants.trainedPowerWeight
+        #expect(BattlePower.calculate(for: state) == expected)
+    }
+
     // Overweight halves the effective power.
     @Test
     func `overweight halves power`() {

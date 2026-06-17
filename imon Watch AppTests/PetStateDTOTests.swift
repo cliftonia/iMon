@@ -50,9 +50,12 @@ struct PetStateDTOTests {
         state.battleWins = 11
         state.battleLosses = 4
         state.trainingCount = 22
+        state.trainedHP = 2
+        state.trainedPower = 3
         state.lifetimeActiveSteps = 123_456
         state.stepsCreditedToday = 4_321
         state.stepTrackedDay = Self.base.addingTimeInterval(12)
+        state.timestamps.lastBattledAt = Self.base.addingTimeInterval(13)
         state.isDead = true
         state.wasNight = true
         state.timestamps.lastFedAt = Self.base.addingTimeInterval(1)
@@ -93,6 +96,8 @@ struct PetStateDTOTests {
         #expect(r.battleWins == state.battleWins)
         #expect(r.battleLosses == state.battleLosses)
         #expect(r.trainingCount == state.trainingCount)
+        #expect(r.trainedHP == state.trainedHP)
+        #expect(r.trainedPower == state.trainedPower)
         #expect(r.isDead == state.isDead)
         #expect(r.isEgg == state.isEgg)
         #expect(r.wasNight == state.wasNight)
@@ -121,6 +126,25 @@ struct PetStateDTOTests {
     }
 
     @Test
+    func `save without conditioning fields decodes to zeroed bonuses`() throws {
+        let dto = PetStateDTO(from: .hatched(at: Self.base))
+        let data = try JSONEncoder().encode(dto)
+        var json = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        json.removeValue(forKey: "trainedHP")
+        json.removeValue(forKey: "trainedPower")
+        json.removeValue(forKey: "lastBattledAt")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+
+        let decoded = PetState(from: try JSONDecoder().decode(PetStateDTO.self, from: stripped))
+
+        #expect(decoded.trainedHP == 0)
+        #expect(decoded.trainedPower == 0)
+        #expect(decoded.timestamps.lastBattledAt == Self.base)
+    }
+
+    @Test
     func `round-trips every timestamp`() throws {
         let state = populatedState()
         let t = try roundTrip(state).timestamps
@@ -133,6 +157,7 @@ struct PetStateDTOTests {
         #expect(t.lastStrengthDecayAt == s.lastStrengthDecayAt)
         #expect(t.evolvedAt == s.evolvedAt)
         #expect(t.lastAdvancedAt == s.lastAdvancedAt)
+        #expect(t.lastBattledAt == s.lastBattledAt)
         #expect(t.injuredAt == s.injuredAt)
         #expect(t.pendingCareMistakeAt == s.pendingCareMistakeAt)
         #expect(t.pendingLightsMistakeAt == s.pendingLightsMistakeAt)

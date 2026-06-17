@@ -44,8 +44,8 @@ nonisolated enum TrainAction {
     // MARK: - Apply
 
     /// Apply the training session result to state.
-    /// A winning session (>= 3/5 rounds won) grants +1 strength and -2G weight.
-    /// Training count increments regardless of outcome.
+    /// A winning session (>= 3/5 rounds won) grants +1 strength, -2G weight, and
+    /// +1 trained HP (except for Dotkin). Training count increments regardless.
     static func applyResult(
         to state: PetState,
         won: Bool,
@@ -58,6 +58,11 @@ nonisolated enum TrainAction {
         if won {
             state.strengthHearts.increment(upTo: state.species.maxStrength)
             state.weight.subtract(TimeConstants.trainWeightLoss)
+            if state.canCondition {
+                state.trainedHP = min(
+                    TimeConstants.maxConditioning, state.trainedHP + 1
+                )
+            }
         }
 
         state.trainingCount += 1

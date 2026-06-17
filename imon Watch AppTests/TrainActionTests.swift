@@ -47,4 +47,31 @@ struct TrainActionTests {
         #expect(state.weight.grams == 28)
         #expect(state.trainingCount == 1)
     }
+
+    @Test
+    func `winning training builds trained HP up to the cap`() {
+        var state = makeTestState(species: .emberkin)
+        state = TrainAction.applyResult(to: state, won: true)
+        #expect(state.trainedHP == 1)
+        for _ in 0..<10 {
+            state = TrainAction.applyResult(to: state, won: true)
+        }
+        #expect(state.trainedHP == TimeConstants.maxConditioning)
+    }
+
+    @Test
+    func `Dotkin never builds trained HP`() {
+        var state = makeTestState(species: .dotkin)
+        for _ in 0..<5 {
+            state = TrainAction.applyResult(to: state, won: true)
+        }
+        #expect(state.trainedHP == 0)
+    }
+
+    @Test
+    func `a lost session grants no trained HP`() {
+        var state = makeTestState(species: .emberkin)
+        state = TrainAction.applyResult(to: state, won: false)
+        #expect(state.trainedHP == 0)
+    }
 }

@@ -75,6 +75,17 @@ nonisolated enum TimeConstants {
     /// RNG variance applied to battle power calculations
     static let battleRNGVariance: Double = 0.20
 
+    // MARK: - Conditioning (trained HP / POW)
+
+    /// Maximum trained bonus for HP and POW.
+    static let maxConditioning: Int = 3
+
+    /// Neglect this long (no training / no battling) drops one trained point.
+    static let conditioningDecayInterval: TimeInterval = 43_200
+
+    /// Battle-power added per point of trained POW.
+    static let trainedPowerWeight: Double = 8.0
+
     // MARK: - Weather
 
     /// Cache window before re-fetching current weather (30 minutes)

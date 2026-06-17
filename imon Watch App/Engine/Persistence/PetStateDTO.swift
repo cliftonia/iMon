@@ -31,6 +31,9 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var battleLosses: Int
     var trainingCount: Int
 
+    var trainedHP: Int?
+    var trainedPower: Int?
+
     var lifetimeActiveSteps: Int?
     var stepsCreditedToday: Int?
     var stepTrackedDay: Date?
@@ -51,6 +54,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var pendingLightsMistakeAt: Date?
     var lightsOffAt: Date?
     var lastAdvancedAt: Date
+    var lastBattledAt: Date?
 }
 
 // MARK: - Mapping
@@ -75,6 +79,8 @@ nonisolated extension PetStateDTO {
         battleWins = state.battleWins
         battleLosses = state.battleLosses
         trainingCount = state.trainingCount
+        trainedHP = state.trainedHP
+        trainedPower = state.trainedPower
         lifetimeActiveSteps = state.lifetimeActiveSteps
         stepsCreditedToday = state.stepsCreditedToday
         stepTrackedDay = state.stepTrackedDay
@@ -93,6 +99,7 @@ nonisolated extension PetStateDTO {
         pendingLightsMistakeAt = times.pendingLightsMistakeAt
         lightsOffAt = times.lightsOffAt
         lastAdvancedAt = times.lastAdvancedAt
+        lastBattledAt = times.lastBattledAt
     }
 }
 
@@ -115,6 +122,8 @@ nonisolated extension PetState {
             battleWins: dto.battleWins,
             battleLosses: dto.battleLosses,
             trainingCount: dto.trainingCount,
+            trainedHP: dto.trainedHP ?? 0,
+            trainedPower: dto.trainedPower ?? 0,
             lifetimeActiveSteps: dto.lifetimeActiveSteps ?? 0,
             stepsCreditedToday: dto.stepsCreditedToday ?? 0,
             stepTrackedDay: dto.stepTrackedDay,
@@ -130,6 +139,7 @@ nonisolated extension PetState {
                 lastStrengthDecayAt: dto.lastStrengthDecayAt,
                 evolvedAt: dto.evolvedAt,
                 lastAdvancedAt: dto.lastAdvancedAt,
+                lastBattledAt: dto.lastBattledAt ?? dto.bornAt,
                 injuredAt: dto.injuredAt,
                 pendingCareMistakeAt: dto.pendingCareMistakeAt,
                 pendingLightsMistakeAt: dto.pendingLightsMistakeAt,

@@ -88,7 +88,8 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
 
     var baseWeight: Int {
         switch self {
-        case .dotkin, .hopkin: 10
+        case .dotkin: 5
+        case .hopkin: 10
         case .emberkin, .marshkin: 20
         case .rexkin, .blazekin, .dreadkin,
              .pyrekin, .galekin, .tidekin, .sludgekin: 30

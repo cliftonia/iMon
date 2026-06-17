@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import imon_Watch_App
 
 @Suite("BattleEngine")
@@ -34,6 +35,45 @@ struct BattleEngineTests {
         state.battleLosses = 0
         state = BattleEngine.applyResult(.lose, to: state)
         #expect(state.battleLosses == 1)
+    }
+
+    // MARK: - Conditioning (trained POW)
+
+    @Test
+    func `winning a battle builds trained POW up to the cap`() {
+        var state = makeTestState(species: .emberkin)
+        state = BattleEngine.applyResult(.win, to: state)
+        #expect(state.trainedPower == 1)
+        for _ in 0..<10 {
+            state = BattleEngine.applyResult(.win, to: state)
+        }
+        #expect(state.trainedPower == TimeConstants.maxConditioning)
+    }
+
+    @Test
+    func `Dotkin never builds trained POW`() {
+        var state = makeTestState(species: .dotkin)
+        for _ in 0..<5 {
+            state = BattleEngine.applyResult(.win, to: state)
+        }
+        #expect(state.trainedPower == 0)
+    }
+
+    @Test
+    func `every battle stamps last-battled but a loss grants no POW`() {
+        let now = Date(timeIntervalSince1970: 5_000)
+        var state = makeTestState(species: .emberkin)
+        state = BattleEngine.applyResult(.lose, to: state, at: now)
+        #expect(state.trainedPower == 0)
+        #expect(state.timestamps.lastBattledAt == now)
+    }
+
+    @Test
+    func `trained HP raises battle HP`() {
+        var state = makeTestState(species: .emberkin)
+        let base = BattleHP.calculate(for: state)
+        state.trainedHP = 2
+        #expect(BattleHP.calculate(for: state) == base + 2)
     }
 
     // MARK: - canBattle
