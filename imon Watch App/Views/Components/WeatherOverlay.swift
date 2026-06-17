@@ -1,20 +1,13 @@
 import SwiftUI
 
-/// Weather condition icon + current temperature, shown above the LCD.
+/// Current temperature, humidity and condition, shown above the LCD. (The
+/// weather *icon* lives in the debug row by the pet's name.)
 struct WeatherOverlay: View {
 
     let snapshot: WeatherSnapshot
 
     var body: some View {
         HStack(spacing: 3) {
-            WeatherIconView(
-                frame: WeatherIconMapper.frame(
-                    for: snapshot.condition,
-                    isDaylight: snapshot.isDaylight
-                ),
-                pixelSize: 0.85
-            )
-            separator
             Text(WeatherTemperatureFormatter.string(for: snapshot.temperature))
                 .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .foregroundStyle(.white)
@@ -49,7 +42,7 @@ struct WeatherOverlay: View {
 }
 
 /// Draws a single 16x16 SpriteFrame at a small pixel size.
-private struct WeatherIconView: View {
+struct WeatherIconView: View {
 
     let frame: SpriteFrame
     let pixelSize: CGFloat

@@ -75,34 +75,47 @@ struct PetScreen: View {
         // Reserve the top-right for the system clock (which can't be hidden).
         .padding(.trailing, 58)
         .frame(height: 18)
-        .contentShape(Rectangle())
-        #if DEBUG
-        .onTapGesture {
-            appPresenter.weatherStore.cycleDebugCondition()
-        }
-        #endif
     }
 
-    // MARK: - Debug Overlay
+    // MARK: - Debug Menu
 
+    /// Debug-only row by the pet's name: tap the weather icon to cycle the
+    /// weather animation, tap the name to trigger an evolution.
     @ViewBuilder
     private var debugNameOverlay: some View {
         #if DEBUG
-        if let species = presenter.viewModel.status?.species {
-            // Tap the name to trigger an evolution (debug/manual).
-            Button {
-                presenter.debugEvolve()
-            } label: {
-                Text(species.displayName)
-                    .font(.system(
-                        size: 9,
-                        weight: .bold,
-                        design: .monospaced
-                    ))
-                    .foregroundStyle(.yellow)
+        HStack(spacing: 6) {
+            if let snapshot = appPresenter.weatherStore.displaySnapshot {
+                Button {
+                    appPresenter.weatherStore.cycleDebugCondition()
+                } label: {
+                    WeatherIconView(
+                        frame: WeatherIconMapper.frame(
+                            for: snapshot.condition,
+                            isDaylight: snapshot.isDaylight
+                        ),
+                        pixelSize: 0.75
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Cycle weather")
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Evolve")
+
+            if let species = presenter.viewModel.status?.species {
+                Button {
+                    presenter.debugEvolve()
+                } label: {
+                    Text(species.displayName)
+                        .font(.system(
+                            size: 9,
+                            weight: .bold,
+                            design: .monospaced
+                        ))
+                        .foregroundStyle(.yellow)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Evolve")
+            }
         }
         #endif
     }
