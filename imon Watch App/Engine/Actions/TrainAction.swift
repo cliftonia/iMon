@@ -56,7 +56,7 @@ nonisolated enum TrainAction {
         var state = state
 
         if won {
-            state.strengthHearts.increment()
+            state.strengthHearts.increment(upTo: state.species.maxStrength)
             state.weight.subtract(TimeConstants.trainWeightLoss)
         }
 

@@ -22,10 +22,10 @@ nonisolated enum FeedAction {
 
         switch food {
         case .meat:
-            state.hungerHearts.increment()
+            state.hungerHearts.increment(upTo: state.species.maxHunger)
             state.weight.add(TimeConstants.meatWeightGain)
         case .vitamin:
-            state.strengthHearts.increment()
+            state.strengthHearts.increment(upTo: state.species.maxStrength)
             state.weight.add(TimeConstants.vitaminWeightGain)
         }
 

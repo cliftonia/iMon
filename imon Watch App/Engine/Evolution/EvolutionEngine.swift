@@ -38,8 +38,8 @@ nonisolated enum EvolutionEngine {
         state.species = species
         state.weight = Weight(species.baseWeight)
         state.timestamps.evolvedAt = now
-        state.hungerHearts = .full
-        state.strengthHearts = .full
+        state.hungerHearts = StatHearts(species.maxHunger)
+        state.strengthHearts = StatHearts(species.maxStrength)
         state.careMistakes = 0
         state.battleWins = 0
         state.battleLosses = 0

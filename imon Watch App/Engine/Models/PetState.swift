@@ -9,8 +9,8 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Vital Stats
 
-    var hungerHearts: StatHearts = .full
-    var strengthHearts: StatHearts = .full
+    var hungerHearts: StatHearts = .empty
+    var strengthHearts: StatHearts = .empty
     var weight: Weight = Weight(10)
     var age: Int = 0
     var poopCount: Int = 0
@@ -126,9 +126,13 @@ extension PetState {
     }
 
     static func hatched(at date: Date = .now) -> PetState {
-        PetState(
+        let species = PetSpecies.dotkin
+        return PetState(
             id: Tagged(rawValue: UUID()),
-            species: .dotkin,
+            species: species,
+            hungerHearts: StatHearts(species.maxHunger),
+            strengthHearts: StatHearts(species.maxStrength),
+            weight: Weight(species.baseWeight),
             timestamps: Timestamps(creating: date)
         )
     }

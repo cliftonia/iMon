@@ -95,4 +95,45 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
         case .steelkin, .orbkin, .plushkin: 40
         }
     }
+
+    // MARK: - Capacity (grows per evolution; strength ↔ HP trade off per branch)
+
+    /// Maximum hunger hearts (heart-meter capacity).
+    var maxHunger: Int {
+        switch self {
+        case .dotkin: 2
+        case .hopkin: 3
+        case .emberkin, .marshkin, .sludgekin: 4
+        case .rexkin, .blazekin, .dreadkin, .pyrekin, .galekin, .tidekin: 5
+        case .steelkin, .orbkin, .plushkin: 6
+        }
+    }
+
+    /// Maximum strength hearts (heart-meter capacity).
+    var maxStrength: Int {
+        switch self {
+        case .dotkin: 2
+        case .hopkin: 3
+        case .marshkin, .sludgekin: 3
+        case .emberkin, .pyrekin, .tidekin: 4
+        case .blazekin, .dreadkin, .galekin, .plushkin: 5
+        case .rexkin, .steelkin, .orbkin: 6
+        }
+    }
+
+    /// Base battle HP (combat stamina); higher where strength is lower.
+    var baseHP: Int {
+        switch self {
+        case .dotkin: 2
+        case .hopkin: 3
+        case .emberkin: 4
+        case .marshkin: 5
+        case .rexkin: 4
+        case .blazekin, .dreadkin, .galekin: 5
+        case .pyrekin, .tidekin, .sludgekin: 6
+        case .steelkin: 5
+        case .orbkin: 6
+        case .plushkin: 7
+        }
+    }
 }

@@ -119,58 +119,19 @@ struct BattleEngineTests {
     // MARK: - BattleHP
 
     @Test
-    func `fresh pet with empty stats has 1 HP`() {
-        let state = makeTestState(
-            species: .dotkin, hunger: 0, strength: 0
-        )
-        #expect(BattleHP.calculate(for: state) == 1)
+    func `HP is the species base HP`() {
+        // Dotkin baseHP 2, Emberkin 4, Steelkin 5 — independent of hunger/strength.
+        #expect(BattleHP.calculate(for: makeTestState(species: .dotkin)) == 2)
+        #expect(BattleHP.calculate(for: makeTestState(species: .emberkin)) == 4)
+        #expect(BattleHP.calculate(for: makeTestState(species: .steelkin)) == 5)
+        #expect(BattleHP.calculate(for: makeTestState(species: .plushkin)) == 7)
     }
 
     @Test
-    func `rookie pet with full stats has 5 HP`() {
-        let state = makeTestState(
-            species: .emberkin, hunger: 4, strength: 4
-        )
-        #expect(BattleHP.calculate(for: state) == 5)
-    }
-
-    @Test
-    func `ultimate pet with full stats has 7 HP`() {
-        let state = makeTestState(
-            species: .steelkin, hunger: 4, strength: 4
-        )
-        #expect(BattleHP.calculate(for: state) == 7)
-    }
-
-    @Test
-    func `opponent gets base HP only from stage`() {
+    func `opponent gets base HP from stage`() {
         #expect(EvolutionStage.ultimate.battleHP == 5)
         #expect(EvolutionStage.rookie.battleHP == 3)
         #expect(EvolutionStage.fresh.battleHP == 1)
-    }
-
-    @Test
-    func `hunger bonus requires at least 3 hearts`() {
-        let below = makeTestState(
-            species: .emberkin, hunger: 2, strength: 0
-        )
-        let atThreshold = makeTestState(
-            species: .emberkin, hunger: 3, strength: 0
-        )
-        #expect(BattleHP.calculate(for: below) == 3)
-        #expect(BattleHP.calculate(for: atThreshold) == 4)
-    }
-
-    @Test
-    func `strength bonus requires at least 3 hearts`() {
-        let below = makeTestState(
-            species: .emberkin, hunger: 0, strength: 2
-        )
-        let atThreshold = makeTestState(
-            species: .emberkin, hunger: 0, strength: 3
-        )
-        #expect(BattleHP.calculate(for: below) == 3)
-        #expect(BattleHP.calculate(for: atThreshold) == 4)
     }
 
     // MARK: - applyResult edge cases
@@ -188,23 +149,17 @@ struct BattleEngineTests {
     // MARK: - BattleHP stages
 
     @Test(arguments: [
-        (PetSpecies.dotkin, 0, 0, 1),
-        (PetSpecies.hopkin, 0, 0, 2),
-        (PetSpecies.emberkin, 0, 0, 3),
-        (PetSpecies.rexkin, 0, 0, 4),
-        (PetSpecies.steelkin, 0, 0, 5)
+        (PetSpecies.dotkin, 2),
+        (PetSpecies.hopkin, 3),
+        (PetSpecies.emberkin, 4),
+        (PetSpecies.rexkin, 4),
+        (PetSpecies.steelkin, 5)
     ])
-    func `BattleHP base matches stage`(
+    func `BattleHP matches species base HP`(
         species: PetSpecies,
-        hunger: Int,
-        strength: Int,
         expectedHP: Int
     ) {
-        let state = makeTestState(
-            species: species,
-            hunger: hunger,
-            strength: strength
-        )
+        let state = makeTestState(species: species)
         #expect(BattleHP.calculate(for: state) == expectedHP)
     }
 

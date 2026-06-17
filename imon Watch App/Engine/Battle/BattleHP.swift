@@ -3,12 +3,10 @@ import Foundation
 nonisolated enum BattleHP {
 
     static func calculate(for state: PetState, steps: Int? = nil) -> Int {
-        let base = state.species.stage.battleHP
-        let hungerBonus = state.hungerHearts.value >= 3 ? 1 : 0
-        let strengthBonus = state.strengthHearts.value >= 3 ? 1 : 0
-        // A well-exercised wearer makes a fitter fighter: +1 stamina when active.
+        // Per-species base stamina; a well-exercised wearer adds +1 when active.
+        let base = state.species.baseHP
         let activeBonus = (steps.map { ActivityModel.factor(steps: $0) >= 0.5 } ?? false) ? 1 : 0
-        return base + hungerBonus + strengthBonus + activeBonus
+        return base + activeBonus
     }
 
     static func heartsString(hp: Int, maxHP: Int) -> String {

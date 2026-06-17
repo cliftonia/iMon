@@ -55,11 +55,13 @@ struct StatsScreen: View {
         VStack(alignment: .leading, spacing: 4) {
             HeartMeter(
                 label: "HUNGER",
-                filledCount: presenter.viewModel.hungerHearts
+                filledCount: presenter.viewModel.hungerHearts,
+                maxCount: presenter.viewModel.maxHunger
             )
             HeartMeter(
                 label: "STR",
-                filledCount: presenter.viewModel.strengthHearts
+                filledCount: presenter.viewModel.strengthHearts,
+                maxCount: presenter.viewModel.maxStrength
             )
         }
     }

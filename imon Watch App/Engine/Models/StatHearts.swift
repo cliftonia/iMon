@@ -4,14 +4,14 @@ nonisolated struct StatHearts: Codable, Sendable, Hashable {
     private(set) var value: Int
 
     init(_ value: Int) {
-        self.value = max(0, min(4, value))
+        self.value = max(0, value)
     }
 
     var isEmpty: Bool { value == 0 }
-    var isFull: Bool { value == 4 }
 
-    mutating func increment() {
-        value = min(4, value + 1)
+    /// Raise by one, not exceeding the supplied per-species capacity.
+    mutating func increment(upTo max: Int) {
+        value = min(max, value + 1)
     }
 
     mutating func decrement() {
@@ -19,5 +19,4 @@ nonisolated struct StatHearts: Codable, Sendable, Hashable {
     }
 
     static let empty = StatHearts(0)
-    static let full = StatHearts(4)
 }

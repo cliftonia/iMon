@@ -13,7 +13,9 @@ final class StatsPresenter {
         viewModel.ageDays = status.ageDays
         viewModel.weightGrams = status.weightGrams
         viewModel.hungerHearts = status.hungerHearts.value
+        viewModel.maxHunger = status.species.maxHunger
         viewModel.strengthHearts = status.strengthHearts.value
+        viewModel.maxStrength = status.species.maxStrength
         viewModel.battleHP = BattleHP.calculate(for: state, steps: steps)
         if let steps {
             let active = !ActivityModel.isSedentary(steps: steps)
