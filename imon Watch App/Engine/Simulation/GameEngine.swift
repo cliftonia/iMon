@@ -35,6 +35,7 @@ nonisolated enum GameEngine {
         state = SleepSchedule.apply(to: state, at: now, night: night)
         state = HungerSimulator.apply(to: state, at: now, steps: steps)
         state = StrengthSimulator.apply(to: state, at: now, steps: steps)
+        state = ConditioningSimulator.apply(to: state, at: now)
         state = PoopSimulator.apply(to: state, at: now)
         state = InjurySimulator.apply(to: state, at: now, steps: steps)
         state = CareMistakeTracker.apply(to: state, at: now, night: night)
