@@ -51,6 +51,11 @@ nonisolated enum TimeConstants {
     /// An untreated injury leads to death after 6 hours
     static let untreatedInjuryDeathTime: TimeInterval = 21_600
 
+    // MARK: - Notifications
+
+    /// How far ahead to schedule the "go for a walk" nudge for a sedentary wearer.
+    static let walkNudgeLead: TimeInterval = 10_800
+
     // MARK: - Feeding
 
     /// Weight gained from one serving of meat (grams)
