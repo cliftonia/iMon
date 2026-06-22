@@ -6,8 +6,11 @@ nonisolated enum JSONPetStateStore {
 
     // MARK: - Live
 
+    // Pet state stays in `.standard` so persistence never depends on the App
+    // Group being provisioned. Only the complication hand-off needs the shared
+    // suite (`ComplicationStore`), and it degrades gracefully if it's missing.
     static func live(
-        defaults: UserDefaults = .skykinShared
+        defaults: UserDefaults = .standard
     ) -> PetStateStore {
         // `UserDefaults` is documented thread-safe but not `Sendable`; capturing
         // it in the witness's `@Sendable` closures is safe.
