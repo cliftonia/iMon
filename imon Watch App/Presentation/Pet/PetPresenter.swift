@@ -138,7 +138,9 @@ final class PetPresenter {
             for: state, now: now, steps: currentSteps()
         )
         notificationScheduler.schedule(plan)
-        // The pet just changed hands to the background — refresh the complication.
+        // The pet just changed hands to the background — bake a fresh timeline
+        // for the complication and ask WidgetKit to reload it.
+        ComplicationStore.save(ComplicationTimeline.entries(for: state, from: now))
         complicationReloader.reload()
     }
 

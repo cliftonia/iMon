@@ -56,13 +56,19 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
     private func handleRefresh(_ task: WKApplicationRefreshBackgroundTask) {
         Task { @MainActor in
             let steps = try? await StepCountProvider.live().fetchTodaySteps()
+            let store = JSONPetStateStore.live()
             BackgroundTick.perform(
-                store: JSONPetStateStore.live(),
+                store: store,
                 notifications: .live(),
                 refresh: .live(),
                 steps: steps,
                 now: Date()
             )
+            if let state = try? store.load() {
+                ComplicationStore.save(
+                    ComplicationTimeline.entries(for: state, from: Date())
+                )
+            }
             ComplicationReloader.live.reload()
             task.setTaskCompletedWithSnapshot(false)
         }

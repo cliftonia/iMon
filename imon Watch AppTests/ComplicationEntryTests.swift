@@ -11,11 +11,12 @@ struct ComplicationEntryTests {
     func `a healthy pet reads as happy and calm`() {
         let state = makeTestState(species: .emberkin, hunger: 4, strength: 4)
         let entry = ComplicationEntry(date: date, state: state)
-        #expect(entry.species == .emberkin)
+        #expect(entry.speciesName == "Emberkin")
         #expect(entry.hungerValue == 4)
         #expect(entry.hungerMax == PetSpecies.emberkin.maxHunger)
         #expect(entry.needsAttention == false)
         #expect(entry.statusText == "happy")
+        #expect(entry.spriteRows.count == 16)
     }
 
     @Test
