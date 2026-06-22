@@ -73,6 +73,7 @@
 		1CAA70302FE9429000377A61 /* SkykinComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SkykinComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAA70322FE9429000377A61 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		1CAA70342FE9429000377A61 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		1CAA70502FE9468C00377A61 /* SkykinComplicationExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SkykinComplicationExtension.entitlements; sourceTree = "<group>"; };
 		1CACAD2A2F4889AD00C99F7E /* imon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CACAD302F4889AD00C99F7E /* imon Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "imon Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CACAD3F2F4889AE00C99F7E /* imon Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "imon Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,6 +162,7 @@
 		1CACAD232F4889AD00C99F7E = {
 			isa = PBXGroup;
 			children = (
+				1CAA70502FE9468C00377A61 /* SkykinComplicationExtension.entitlements */,
 				1CACAD342F4889AD00C99F7E /* imon Watch App */,
 				1CACAD422F4889AE00C99F7E /* imon Watch AppTests */,
 				1CACAD4C2F4889AE00C99F7E /* imon Watch AppUITests */,
@@ -446,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SkykinComplicationExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
@@ -479,6 +482,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SkykinComplicationExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
