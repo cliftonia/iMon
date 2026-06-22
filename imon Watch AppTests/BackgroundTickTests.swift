@@ -1,0 +1,137 @@
+import Testing
+import Foundation
+@testable import imon_Watch_App
+
+@Suite("BackgroundTick")
+struct BackgroundTickTests {
+
+    // MARK: - Capture helpers
+
+    private final class StoreBox: @unchecked Sendable {
+        var state: PetState?
+        var saveCount = 0
+    }
+
+    private final class NoteCapture: @unchecked Sendable {
+        var plan: [CareNotification]?
+    }
+
+    private final class RefreshCapture: @unchecked Sendable {
+        var date: Date?
+    }
+
+    private func makeStore(_ box: StoreBox) -> PetStateStore {
+        PetStateStore(
+            save: { box.state = $0; box.saveCount += 1 },
+            load: { box.state },
+            delete: { box.state = nil }
+        )
+    }
+
+    private func today(at hour: Int) -> Date {
+        let calendar = Calendar.current
+        let midnight = calendar.startOfDay(for: Date(timeIntervalSince1970: 1_700_000_000))
+        return calendar.date(byAdding: .hour, value: hour, to: midnight) ?? midnight
+    }
+
+    // MARK: - Tests
+
+    @Test
+    func `advancing a stale state depletes hunger and writes it back`() {
+        let base = today(at: 9)
+        let box = StoreBox()
+        box.state = makeTestState(species: .emberkin, hunger: 4, at: base)
+        let now = base.addingTimeInterval(3 * TimeConstants.hungerDepletionInterval)
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(NoteCapture()),
+            refresh: capturing(RefreshCapture()), steps: nil, now: now
+        )
+
+        #expect(box.saveCount == 1)
+        #expect(box.state?.hungerHearts.value == 1)
+        #expect(box.state?.timestamps.lastAdvancedAt == now)
+    }
+
+    @Test
+    func `the notification scheduler receives the plan for the advanced state`() {
+        let base = today(at: 9)
+        let box = StoreBox()
+        box.state = makeTestState(species: .emberkin, hunger: 2, at: base)
+        let now = base.addingTimeInterval(60)
+        let note = NoteCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(note),
+            refresh: capturing(RefreshCapture()), steps: nil, now: now
+        )
+
+        let expected = CareNotificationPlanner.plan(
+            for: box.state ?? makeTestState(), now: now, steps: nil
+        )
+        #expect(note.plan == expected)
+    }
+
+    @Test
+    func `the next refresh is requested an interval ahead`() {
+        let base = today(at: 9)
+        let box = StoreBox()
+        box.state = makeTestState(at: base)
+        let now = base.addingTimeInterval(60)
+        let refresh = RefreshCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(NoteCapture()),
+            refresh: capturing(refresh), steps: nil, now: now
+        )
+
+        #expect(refresh.date == now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
+    }
+
+    @Test
+    func `no saved pet is a no-op`() {
+        let box = StoreBox()  // empty store
+        let note = NoteCapture()
+        let refresh = RefreshCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(note),
+            refresh: capturing(refresh), steps: nil, now: today(at: 9)
+        )
+
+        #expect(box.saveCount == 0)
+        #expect(note.plan == nil)
+        #expect(refresh.date == nil)
+    }
+
+    @Test
+    func `an injury that emerges during the advance is reminded`() {
+        let base = today(at: 9)
+        let box = StoreBox()
+        var seeded = makeTestState(species: .emberkin, at: base)
+        seeded.poopCount = TimeConstants.maxPoopPiles  // injures on the next advance
+        box.state = seeded
+        let now = base.addingTimeInterval(60)
+        let note = NoteCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(note),
+            refresh: capturing(RefreshCapture()), steps: nil, now: now
+        )
+
+        #expect(box.state?.isInjured == true)
+        #expect(note.plan?.contains { $0.kind == .injury } == true)
+    }
+
+    // MARK: - Scheduler builders
+
+    private func capturing(_ note: NoteCapture) -> NotificationScheduler {
+        NotificationScheduler(
+            schedule: { note.plan = $0 }, cancelAll: {}, requestAuthorization: { true }
+        )
+    }
+
+    private func capturing(_ refresh: RefreshCapture) -> BackgroundRefreshScheduler {
+        BackgroundRefreshScheduler(schedule: { refresh.date = $0 })
+    }
+}

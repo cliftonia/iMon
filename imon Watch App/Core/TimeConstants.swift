@@ -56,6 +56,12 @@ nonisolated enum TimeConstants {
     /// How far ahead to schedule the "go for a walk" nudge for a sedentary wearer.
     static let walkNudgeLead: TimeInterval = 10_800
 
+    // MARK: - Background Refresh
+
+    /// How far ahead to request the next background wake (the system grants
+    /// roughly one per hour for a Dock app, so asking sooner is pointless).
+    static let backgroundRefreshInterval: TimeInterval = 3_600
+
     // MARK: - Feeding
 
     /// Weight gained from one serving of meat (grams)
