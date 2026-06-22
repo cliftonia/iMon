@@ -1,5 +1,6 @@
 import SwiftUI
 import WatchKit
+import UserNotifications
 import os
 
 @main
@@ -18,6 +19,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
 
     func applicationDidFinishLaunching() {
         Log.presentation.info("Skykin launched")
+        UNUserNotificationCenter.current().delegate = self
         Task { await StepCountProvider.requestAuthorization() }
         Task { _ = await NotificationScheduler.live().requestAuthorization() }
     }
@@ -72,5 +74,16 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
             ComplicationReloader.live.reload()
             task.setTaskCompletedWithSnapshot(false)
         }
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    /// Show care reminders even while the app is in the foreground — otherwise
+    /// watchOS silently drops them when the screen is on the app.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .sound, .list]
     }
 }
