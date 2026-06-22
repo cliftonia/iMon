@@ -7,7 +7,7 @@ nonisolated enum JSONPetStateStore {
     // MARK: - Live
 
     static func live(
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = .skykinShared
     ) -> PetStateStore {
         // `UserDefaults` is documented thread-safe but not `Sendable`; capturing
         // it in the witness's `@Sendable` closures is safe.

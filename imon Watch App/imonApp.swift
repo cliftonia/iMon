@@ -63,6 +63,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
                 steps: steps,
                 now: Date()
             )
+            ComplicationReloader.live.reload()
             task.setTaskCompletedWithSnapshot(false)
         }
     }

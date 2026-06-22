@@ -53,4 +53,19 @@ struct PetNotificationsTests {
 
         #expect(capture.cancelCount == 1)
     }
+
+    @Test
+    func `scheduling also refreshes the complication`() {
+        let reloads = ReloadBox()
+        let presenter = makePresenter(makeTestState(), Capture())
+        presenter.complicationReloader = ComplicationReloader(reload: { reloads.count += 1 })
+
+        presenter.scheduleCareNotifications(now: .now)
+
+        #expect(reloads.count == 1)
+    }
+
+    private final class ReloadBox: @unchecked Sendable {
+        var count = 0
+    }
 }
