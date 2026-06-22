@@ -1,5 +1,6 @@
 import Foundation
 import WatchKit
+import UserNotifications
 
 // MARK: - Evolution
 
@@ -94,5 +95,21 @@ extension PetPresenter {
             kind: .hunger, fireDate: Date().addingTimeInterval(12)
         )
         notificationScheduler.schedule([reminder])
+        viewModel.debugNotice = "sched 12s"
+        Task { @MainActor [weak self] in
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            self?.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
+        }
+    }
+
+    private static func describe(_ status: UNAuthorizationStatus) -> String {
+        switch status {
+        case .authorized: "auth"
+        case .denied: "DENIED"
+        case .notDetermined: "notAsked"
+        case .provisional: "provisional"
+        case .ephemeral: "ephemeral"
+        @unknown default: "unknown"
+        }
     }
 }

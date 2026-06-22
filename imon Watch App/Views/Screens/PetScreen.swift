@@ -105,6 +105,11 @@ struct PetScreen: View {
                 Text(species.displayName)
                     .font(.system(size: 9, weight: .bold, design: .monospaced))
                     .foregroundStyle(.yellow)
+                if !presenter.viewModel.debugNotice.isEmpty {
+                    Text(presenter.viewModel.debugNotice)
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.cyan)
+                }
             }
             .accessibilityHidden(true)
         }

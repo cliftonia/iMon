@@ -92,4 +92,10 @@ final class PetViewModel {
     // MARK: - Error
 
     var error: ErrorViewConfiguration?
+
+    // MARK: - Debug
+
+    /// A short on-screen diagnostic shown in the debug row (e.g. notification
+    /// permission status after the care-test long-press).
+    var debugNotice: String = ""
 }
