@@ -83,7 +83,8 @@ struct PetScreen: View {
     // MARK: - Debug Menu
 
     /// Debug-only label by the pet's name: the current weather icon and species.
-    /// The actions live on long-presses — hold A to cycle weather, B to evolve.
+    /// The actions live on long-presses — hold A to cycle weather, B to evolve,
+    /// C to drain the pet and fire a test care notification.
     @ViewBuilder
     private var debugNameOverlay: some View {
         #if DEBUG
@@ -123,6 +124,14 @@ struct PetScreen: View {
     private var debugEvolveAction: (() -> Void)? {
         #if DEBUG
         { presenter.debugEvolve() }
+        #else
+        nil
+        #endif
+    }
+
+    private var debugCareAction: (() -> Void)? {
+        #if DEBUG
+        { presenter.debugCareTest() }
         #else
         nil
         #endif
@@ -205,7 +214,7 @@ struct PetScreen: View {
             ActionButton(label: buttonBLabel, longPressAction: debugEvolveAction) {
                 handleButtonB()
             }
-            ActionButton(label: buttonCLabel) {
+            ActionButton(label: buttonCLabel, longPressAction: debugCareAction) {
                 handleButtonC()
             }
         }

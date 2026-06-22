@@ -76,4 +76,23 @@ extension PetPresenter {
             viewModel.evolutionTarget = target
         }
     }
+
+    /// Debug: drain the pet so it visibly needs care (screen + complication flip
+    /// to "hungry"), then fire a real care reminder ~12s out to verify on-device
+    /// notification delivery. Lower your wrist right after pressing so the banner
+    /// can appear (foreground notifications are suppressed).
+    func debugCareTest() {
+        guard !viewModel.isBusy else { return }
+        state.hungerHearts = .empty
+        state.strengthHearts = .empty
+        updateViewModel()
+        updateAnimation()
+        save()
+        ComplicationStore.save(ComplicationTimeline.entries(for: state, from: .now))
+        complicationReloader.reload()
+        let reminder = CareNotification(
+            kind: .hunger, fireDate: Date().addingTimeInterval(12)
+        )
+        notificationScheduler.schedule([reminder])
+    }
 }
