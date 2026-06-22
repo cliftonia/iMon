@@ -13,6 +13,9 @@ final class PetPresenter {
     var state: PetState
     let store: PetStateStore
 
+    /// Schedules care reminders while the app is backgrounded (swappable in tests).
+    var notificationScheduler: NotificationScheduler = .live()
+
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
 
@@ -122,6 +125,22 @@ final class PetPresenter {
     func environmentDidChange() {
         advanceState()
         save()
+    }
+
+    // MARK: - Care Notifications
+
+    /// Schedules the care reminders for the current state — called when the app
+    /// backgrounds, since notifications only matter while the owner is away.
+    func scheduleCareNotifications(now: Date = .now) {
+        let plan = CareNotificationPlanner.plan(
+            for: state, now: now, steps: currentSteps()
+        )
+        notificationScheduler.schedule(plan)
+    }
+
+    /// Clears pending reminders — called when the app returns to the foreground.
+    func cancelCareNotifications() {
+        notificationScheduler.cancelAll()
     }
 
     /// The resolved day/night state — weather daylight, or the fixed window.

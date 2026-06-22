@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
     func applicationDidFinishLaunching() {
         Log.presentation.info("Skykin launched")
         Task { await StepCountProvider.requestAuthorization() }
+        Task { _ = await NotificationScheduler.live().requestAuthorization() }
     }
 
     func applicationDidBecomeActive() {

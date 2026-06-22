@@ -42,8 +42,11 @@ struct PetScreen: View {
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
+                    presenter.cancelCareNotifications()
                     appPresenter.weatherStore.refreshIfStale()
                     appPresenter.stepActivityStore.refreshIfStale()
+                } else {
+                    presenter.scheduleCareNotifications()
                 }
             }
             .onChange(of: appPresenter.weatherStore.snapshot) { _, _ in
