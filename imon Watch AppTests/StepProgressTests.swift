@@ -8,6 +8,7 @@ struct StepProgressTests {
     private static let calendar = Calendar(identifier: .gregorian)
     private static let day1 = Date(timeIntervalSince1970: 1_700_000_000) // a fixed day
     private static var day2: Date { day1.addingTimeInterval(24 * 60 * 60) }
+    private static var day4: Date { day1.addingTimeInterval(3 * 24 * 60 * 60) }
     private static var sameDayLater: Date { day1.addingTimeInterval(6 * 60 * 60) }
 
     private func advance(
@@ -65,6 +66,18 @@ struct StepProgressTests {
         #expect(result.lifetime == 9_000 - StepProgress.lazyPenalty + 100)
         #expect(result.creditedToday == 100)
         #expect(result.trackedDay == Self.day2)
+    }
+
+    @Test func `a multi-day lazy gap settles with a single decay`() {
+        // Three days elapse since the last lazy day. The rollover collapses the
+        // gap into one penalty (documented approximation), not one per day.
+        let start = StepProgress.Progress(
+            lifetime: 9_000, creditedToday: 500, trackedDay: Self.day1
+        )
+        let result = advance(start, todaySteps: 100, now: Self.day4)
+        #expect(result.lifetime == 9_000 - StepProgress.lazyPenalty + 100)
+        #expect(result.creditedToday == 100)
+        #expect(result.trackedDay == Self.day4)
     }
 
     @Test func `the decay penalty floors the lifetime at zero`() {

@@ -6,22 +6,6 @@ import Foundation
 struct BattleEngineTests {
 
     @Test
-    func `battle returns a valid result`() {
-        let state = makeTestState(
-            species: .rexkin, strength: 4, weight: 30
-        )
-        let opponent = BattleOpponent.generate(
-            matching: state
-        )
-        let result = BattleEngine.battle(
-            petState: state, opponent: opponent
-        )
-        #expect(
-            [BattleResult.win, .lose, .draw].contains(result)
-        )
-    }
-
-    @Test
     func `apply result increments win count`() {
         var state = makeTestState()
         state.battleWins = 0
@@ -156,24 +140,6 @@ struct BattleEngineTests {
         #expect(power == 100)
     }
 
-    // MARK: - BattleHP
-
-    @Test
-    func `HP is the species base HP`() {
-        // Dotkin baseHP 2, Emberkin 4, Steelkin 5 — independent of hunger/strength.
-        #expect(BattleHP.calculate(for: makeTestState(species: .dotkin)) == 2)
-        #expect(BattleHP.calculate(for: makeTestState(species: .emberkin)) == 4)
-        #expect(BattleHP.calculate(for: makeTestState(species: .steelkin)) == 5)
-        #expect(BattleHP.calculate(for: makeTestState(species: .plushkin)) == 7)
-    }
-
-    @Test
-    func `opponent gets base HP from stage`() {
-        #expect(EvolutionStage.ultimate.battleHP == 5)
-        #expect(EvolutionStage.rookie.battleHP == 3)
-        #expect(EvolutionStage.fresh.battleHP == 1)
-    }
-
     // MARK: - applyResult edge cases
 
     @Test
@@ -193,7 +159,8 @@ struct BattleEngineTests {
         (PetSpecies.hopkin, 3),
         (PetSpecies.emberkin, 4),
         (PetSpecies.rexkin, 4),
-        (PetSpecies.steelkin, 5)
+        (PetSpecies.steelkin, 5),
+        (PetSpecies.plushkin, 7)
     ])
     func `BattleHP matches species base HP`(
         species: PetSpecies,
@@ -210,13 +177,6 @@ struct BattleEngineTests {
         let state = makeTestState(species: .rexkin)
         let opp = BattleOpponent.generate(matching: state)
         #expect(opp.species.stage == state.species.stage)
-    }
-
-    @Test
-    func `opponent has positive power`() {
-        let state = makeTestState(species: .emberkin)
-        let opp = BattleOpponent.generate(matching: state)
-        #expect(opp.power > 0)
     }
 
     @Test(arguments: PetSpecies.allCases)

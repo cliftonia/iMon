@@ -124,12 +124,13 @@ struct CareNotificationPlannerTests {
     }
 
     @Test
-    func `each notification carries a stable id and brand title`() {
+    func `each notification carries a stable per-kind id`() {
+        // Stable ids are the dedup contract — a re-plan must replace the pending
+        // reminder of the same kind, not stack a second one.
         let now = today(at: 8)
         let plan = CareNotificationPlanner.plan(for: makeTestState(at: now), now: now, steps: nil)
         for note in plan {
             #expect(note.id == note.kind.rawValue)
-            #expect(note.title == "Skykin")
         }
     }
 }

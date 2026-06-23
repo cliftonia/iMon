@@ -30,6 +30,19 @@ struct CareMistakeTrackerTests {
     }
 
     @Test
+    func `empty strength alone past the window counts a mistake`() {
+        // Hunger is full — this exercises the strength operand of needsAttention,
+        // which the hunger-empty cases never reach.
+        let now = Date.now
+        var state = makeTestState(hunger: 4, strength: 0, at: now)
+        state.timestamps.pendingCareMistakeAt =
+            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+
+        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        #expect(state.careMistakes == 1)
+    }
+
+    @Test
     func `recovery clears the pending countdown`() {
         let now = Date.now
         var state = makeTestState(hunger: 4, strength: 4, at: now)

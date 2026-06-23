@@ -28,10 +28,17 @@ struct GameEngineTests {
     }
 
     @Test
-    func `egg is not advanced`() {
+    func `an egg stays frozen across days until it hatches`() {
+        let born = Date.now.addingTimeInterval(-86400 * 5)
         var state = PetState.newEgg()
+        state.timestamps.bornAt = born
         let original = state
+
+        // Five days on, the engine must still short-circuit the egg: it neither
+        // hatches itself nor drains the stats the simulators would touch.
         state = GameEngine.advance(state, to: .now)
-        #expect(state.isEgg == original.isEgg)
+        #expect(state.isEgg)
+        #expect(state.hungerHearts.value == original.hungerHearts.value)
+        #expect(state.poopCount == original.poopCount)
     }
 }
