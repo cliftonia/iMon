@@ -248,6 +248,7 @@ nonisolated enum SharedSprites {
     // MARK: - ZZZ Sleep
 
     // Z letters floating upward, two frames
+    // AUDIT 2026-06-24: drawn but never played. Future sleep "Zzz" effect or remove.
     static let zzz = SpriteAnimation(
         frames: [zzzFrame1, zzzFrame2],
         frameDuration: 0.8,

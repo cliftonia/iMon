@@ -14,6 +14,10 @@ nonisolated enum BattleEngine {
         !state.isDead && !state.isEgg && !state.isSleeping
     }
 
+    // AUDIT 2026-06-24: unused in production — live battles use the interactive
+    // `resolveRound` (height-based). This full-auto resolver (and `effectivePower`
+    // + the attribute-advantage triangle it relies on) is exercised only by tests.
+    // Keep for a future auto-battle mode, or remove with its tests.
     /// Run a battle between pet and opponent.
     /// Applies attribute advantages and RNG variance to determine outcome.
     static func battle(
@@ -61,6 +65,7 @@ nonisolated enum BattleEngine {
         return .clash
     }
 
+    // AUDIT 2026-06-24: reachable only via the unused `battle()` above + tests.
     /// Apply attribute modifier to base power (+20% advantage).
     static func effectivePower(
         basePower: Double,

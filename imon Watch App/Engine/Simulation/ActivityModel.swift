@@ -33,6 +33,8 @@ nonisolated enum ActivityModel {
         1.5 - 0.7 * factor(steps: steps)
     }
 
+    // AUDIT 2026-06-24: unused in production — the active-fitness battle bonus
+    // lives in `BattleHP`. Referenced only by tests. Keep or remove.
     /// Battle power scales up with activity (×0.85 still → ×1.15 active).
     static func battlePowerMultiplier(steps: Int) -> Double {
         0.85 + 0.3 * factor(steps: steps)

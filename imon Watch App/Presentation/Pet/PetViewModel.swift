@@ -20,7 +20,6 @@ final class PetViewModel {
     // MARK: - Pet Display
 
     var status: PetStatus?
-    var currentAnimation: SpriteCatalog.AnimationKind = .idle
     var petOffsetX: Int = 8
 
     // MARK: - Menu
@@ -88,10 +87,6 @@ final class PetViewModel {
 
     var showEvolution: Bool = false
     var evolutionTarget: PetSpecies?
-
-    // MARK: - Error
-
-    var error: ErrorViewConfiguration?
 
     // MARK: - Debug
 

@@ -8,8 +8,6 @@ nonisolated enum TrainAction {
     }
 
     struct RoundResult: Sendable {
-        let number: Int
-        let guess: Guess
         let won: Bool
     }
 
@@ -38,7 +36,7 @@ nonisolated enum TrainAction {
             case .low: number < 5
             }
         }()
-        return RoundResult(number: number, guess: guess, won: won)
+        return RoundResult(won: won)
     }
 
     // MARK: - Apply

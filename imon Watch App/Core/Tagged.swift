@@ -18,33 +18,3 @@ extension Tagged: Codable where RawValue: Codable {
         try container.encode(rawValue)
     }
 }
-
-extension Tagged: CustomStringConvertible {
-    var description: String {
-        String(describing: rawValue)
-    }
-}
-
-extension Tagged: ExpressibleByUnicodeScalarLiteral where RawValue == String {
-    init(unicodeScalarLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension Tagged: ExpressibleByExtendedGraphemeClusterLiteral where RawValue == String {
-    init(extendedGraphemeClusterLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension Tagged: ExpressibleByStringLiteral where RawValue == String {
-    init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension Tagged: ExpressibleByIntegerLiteral where RawValue == Int {
-    init(integerLiteral value: Int) {
-        self.init(rawValue: value)
-    }
-}

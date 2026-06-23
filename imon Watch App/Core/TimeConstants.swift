@@ -20,9 +20,6 @@ nonisolated enum TimeConstants {
     /// Owner has 20 minutes to respond to a care call before it counts as a care mistake
     static let careMistakeWindow: TimeInterval = 1_200
 
-    /// Hour of the day the Creature wakes up (7 AM)
-    static let sleepWakeHour: Int = 7
-
     // MARK: - Game Loop
 
     /// Main simulation tick fires every 30 seconds

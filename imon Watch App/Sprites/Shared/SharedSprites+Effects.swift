@@ -70,6 +70,7 @@ nonisolated extension SharedSprites {
     // MARK: - Battle
 
     // Battle clash — 2-frame collision burst (centered)
+    // AUDIT 2026-06-24: drawn but never played. Future battle-clash effect or remove.
     static let battleClash = SpriteAnimation(
         frames: [explosion1, explosion2],
         frameDuration: 0.3,

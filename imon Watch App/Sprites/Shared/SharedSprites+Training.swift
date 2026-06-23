@@ -173,6 +173,8 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000
     ])
 
+    // AUDIT 2026-06-24: projectileHigh/Mid/Low + trainingMissSequence are drawn but
+    // never played (training shows hit/miss streaks instead). Future use or remove.
     /// High projectile traveling left-to-right (non-looping)
     static let projectileHigh = SpriteAnimation(
         frames: [

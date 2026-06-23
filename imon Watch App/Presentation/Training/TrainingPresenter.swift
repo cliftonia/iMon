@@ -47,12 +47,6 @@ final class TrainingPresenter {
         enterAttacking(won: result.won)
     }
 
-    func nextRound() {
-        viewModel.showingNumber = false
-        viewModel.currentNumber = TrainAction.generateNumber()
-        enterReady()
-    }
-
     // MARK: - Phase Machine
 
     private func enterReady() {

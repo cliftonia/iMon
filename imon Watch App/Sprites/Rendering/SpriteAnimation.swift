@@ -18,7 +18,6 @@ nonisolated struct SpriteAnimation: Sendable, Hashable {
     }
 
     var frameCount: Int { frames.count }
-    var totalDuration: TimeInterval { Double(frames.count) * frameDuration }
 
     /// Return a copy with a different frame duration.
     func withFrameDuration(

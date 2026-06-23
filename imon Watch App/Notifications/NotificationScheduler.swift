@@ -47,6 +47,7 @@ extension NotificationScheduler {
         )
     }
 
+    // AUDIT 2026-06-24: unused — tests build witnesses inline. Kept as DI scaffolding.
     static let mock = NotificationScheduler(
         schedule: { _ in },
         cancelAll: {},

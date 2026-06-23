@@ -1,6 +1,8 @@
 import CoreGraphics
 import Foundation
 
+// AUDIT 2026-06-24: unused — the app draws sprites with a SwiftUI `Canvas` +
+// `frame.pixel(x:y:)`, never this CGImage path. Keep as an alt renderer or remove.
 /// Converts a SpriteFrame bitmap into a CGImage for display in SwiftUI.
 /// On pixels render as black (opaque), off pixels as transparent.
 nonisolated enum PixelArtRenderer {

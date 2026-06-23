@@ -10,7 +10,6 @@ struct PetNotificationsTests {
     /// within the call, so plain reference storage is safe.
     private final class Capture: @unchecked Sendable {
         var scheduled: [CareNotification]?
-        var cancelCount = 0
     }
 
     private func makePresenter(_ state: PetState, _ capture: Capture) -> PetPresenter {
@@ -18,7 +17,7 @@ struct PetNotificationsTests {
         let presenter = PetPresenter(state: state, store: store)
         presenter.notificationScheduler = NotificationScheduler(
             schedule: { capture.scheduled = $0 },
-            cancelAll: { capture.cancelCount += 1 },
+            cancelAll: {},
             requestAuthorization: { true }
         )
         return presenter
@@ -42,16 +41,6 @@ struct PetNotificationsTests {
         let expected = CareNotificationPlanner.plan(for: state, now: now, steps: nil)
         #expect(capture.scheduled == expected)
         #expect(expected.isEmpty == false)
-    }
-
-    @Test
-    func `cancelling clears pending reminders`() {
-        let capture = Capture()
-        let presenter = makePresenter(makeTestState(), capture)
-
-        presenter.cancelCareNotifications()
-
-        #expect(capture.cancelCount == 1)
     }
 
     @Test

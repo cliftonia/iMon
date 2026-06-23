@@ -35,6 +35,7 @@ nonisolated enum JSONPetStateStore {
 
     // MARK: - Mock
 
+    // AUDIT 2026-06-24: unused — tests build the store witness inline. Kept as DI scaffolding.
     static func mock(
         save: @escaping @Sendable (PetState) throws -> Void = { _ in },
         load: @escaping @Sendable () throws -> PetState? = { nil },

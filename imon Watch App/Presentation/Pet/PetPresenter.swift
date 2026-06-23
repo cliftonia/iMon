@@ -144,11 +144,6 @@ final class PetPresenter {
         complicationReloader.reload()
     }
 
-    /// Clears pending reminders — called when the app returns to the foreground.
-    func cancelCareNotifications() {
-        notificationScheduler.cancelAll()
-    }
-
     /// The resolved day/night state — weather daylight, or the fixed window.
     var currentlyNight: Bool {
         SleepSchedule.isNight(weatherNight: currentNight(), at: .now)
