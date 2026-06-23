@@ -42,7 +42,10 @@ struct PetScreen: View {
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
-                    presenter.cancelCareNotifications()
+                    // Don't cancel reminders here — a watch flips active on every
+                    // wrist raise, which would wipe pending notifications before
+                    // they ever fire. The next background reschedule keeps them
+                    // current against the latest state.
                     appPresenter.weatherStore.refreshIfStale()
                     appPresenter.stepActivityStore.refreshIfStale()
                 } else {

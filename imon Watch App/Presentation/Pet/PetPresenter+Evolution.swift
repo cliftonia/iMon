@@ -84,13 +84,8 @@ extension PetPresenter {
     /// can appear (foreground notifications are suppressed).
     func debugCareTest() {
         guard !viewModel.isBusy else { return }
-        state.hungerHearts = .empty
-        state.strengthHearts = .empty
-        updateViewModel()
-        updateAnimation()
-        save()
-        ComplicationStore.save(ComplicationTimeline.entries(for: state, from: .now))
-        complicationReloader.reload()
+        // Fire a real care reminder ~12s out (no pet harm) and surface the live
+        // notification permission status on screen so delivery can be diagnosed.
         let reminder = CareNotification(
             kind: .hunger, fireDate: Date().addingTimeInterval(12)
         )
