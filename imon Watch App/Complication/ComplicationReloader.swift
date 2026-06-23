@@ -9,9 +9,9 @@ nonisolated struct ComplicationReloader: Sendable {
 }
 
 extension ComplicationReloader {
-    static let live = ComplicationReloader(
-        reload: { WidgetCenter.shared.reloadAllTimelines() }
-    )
+    static func live() -> ComplicationReloader {
+        ComplicationReloader(reload: { WidgetCenter.shared.reloadAllTimelines() })
+    }
 
     // AUDIT 2026-06-24: unused — tests build witnesses inline. Kept as DI scaffolding.
     static let mock = ComplicationReloader(reload: {})

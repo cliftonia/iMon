@@ -16,7 +16,7 @@ final class PetPresenter {
     /// Schedules care reminders while the app is backgrounded (swappable in tests).
     var notificationScheduler: NotificationScheduler = .live()
     /// Refreshes the watch-face complication (swappable in tests).
-    var complicationReloader: ComplicationReloader = .live
+    var complicationReloader: ComplicationReloader = .live()
 
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?

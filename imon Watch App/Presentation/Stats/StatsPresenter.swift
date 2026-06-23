@@ -4,16 +4,6 @@ final class StatsPresenter {
 
     private(set) var viewModel = StatsViewModel()
 
-    private static let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
-
-    private static func grouped(_ value: Int) -> String {
-        numberFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
-    }
-
     // MARK: - Update
 
     func update(from state: PetState, steps: Int? = nil) {
@@ -35,24 +25,17 @@ final class StatsPresenter {
         } else {
             viewModel.activityLabel = "—"
         }
-        let total = Self.grouped(state.lifetimeActiveSteps)
+        let total = StatFormatter.grouped(state.lifetimeActiveSteps)
         let stage = status.species.stage
         if stage == .ultimate {
             viewModel.evolveProgress = "MAX \u{00b7} " + total
         } else {
-            viewModel.evolveProgress = total + " / " + Self.grouped(stage.stepsToEvolve)
+            viewModel.evolveProgress = total + " / " + StatFormatter.grouped(stage.stepsToEvolve)
         }
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses
 
         let battles = status.battleWins + status.battleLosses
-        if battles > 0 {
-            let rate = Int(
-                Double(status.battleWins) / Double(battles) * 100
-            )
-            viewModel.winRate = "\(rate)%"
-        } else {
-            viewModel.winRate = "—"
-        }
+        viewModel.winRate = StatFormatter.percent(status.battleWins, of: battles) ?? "—"
     }
 }

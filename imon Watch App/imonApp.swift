@@ -71,7 +71,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
                     ComplicationTimeline.entries(for: state, from: Date())
                 )
             }
-            ComplicationReloader.live.reload()
+            ComplicationReloader.live().reload()
             task.setTaskCompletedWithSnapshot(false)
         }
     }
