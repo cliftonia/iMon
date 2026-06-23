@@ -84,16 +84,23 @@ extension PetPresenter {
     /// can appear (foreground notifications are suppressed).
     func debugCareTest() {
         guard !viewModel.isBusy else { return }
-        // Fire a real care reminder ~12s out (no pet harm) and surface the live
-        // notification permission status on screen so delivery can be diagnosed.
-        let reminder = CareNotification(
-            kind: .hunger, fireDate: Date().addingTimeInterval(12)
-        )
-        notificationScheduler.schedule([reminder])
-        viewModel.debugNotice = "sched 12s"
+        viewModel.debugNotice = "checking…"
         Task { @MainActor [weak self] in
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            self?.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
+            guard let self else { return }
+            let center = UNUserNotificationCenter.current()
+            var settings = await center.notificationSettings()
+            // If permission was never answered, prompt for it now (the launch
+            // request can be missed) so the test can actually deliver.
+            if settings.authorizationStatus == .notDetermined {
+                _ = try? await center.requestAuthorization(options: [.alert, .sound])
+                settings = await center.notificationSettings()
+            }
+            self.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
+            // Fire a real care reminder ~12s out so delivery can be verified.
+            let reminder = CareNotification(
+                kind: .hunger, fireDate: Date().addingTimeInterval(12)
+            )
+            self.notificationScheduler.schedule([reminder])
         }
     }
 
