@@ -96,11 +96,18 @@ extension PetPresenter {
                 settings = await center.notificationSettings()
             }
             self.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
-            // Fire a real care reminder ~12s out so delivery can be verified.
-            let reminder = CareNotification(
-                kind: .hunger, fireDate: Date().addingTimeInterval(12)
+            // Use a unique id per press so each test shows a fresh banner — the
+            // real care reminders keep stable per-kind ids on purpose (a repeat
+            // of the same id silently updates the delivered one, no new alert).
+            let content = UNMutableNotificationContent()
+            content.title = "Skykin"
+            content.body = "Your Skykin is hungry!"
+            content.sound = .default
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 12, repeats: false)
+            let request = UNNotificationRequest(
+                identifier: "care-test-" + UUID().uuidString, content: content, trigger: trigger
             )
-            self.notificationScheduler.schedule([reminder])
+            try? await center.add(request)
         }
     }
 
