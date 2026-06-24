@@ -66,6 +66,26 @@ struct DeathEvaluatorTests {
     }
 
     @Test
+    func `dies from a collapse left past the window`() {
+        let start = Date.now
+        var state = makeTestState(hunger: 0, strength: 0)
+        state.timestamps.collapsingAt = start
+
+        let later = start.addingTimeInterval(TimeConstants.collapseDeathTime + 1)
+        #expect(DeathEvaluator.evaluate(state, at: later) == .collapse)
+    }
+
+    @Test
+    func `survives a collapse that has not yet reached the window`() {
+        let start = Date.now
+        var state = makeTestState(hunger: 0, strength: 0)
+        state.timestamps.collapsingAt = start
+
+        let justBefore = start.addingTimeInterval(TimeConstants.collapseDeathTime - 1)
+        #expect(DeathEvaluator.evaluate(state, at: justBefore) == nil)
+    }
+
+    @Test
     func `survives with acceptable stats`() {
         let state = makeTestState()
         let cause = DeathEvaluator.evaluate(state, at: .now)

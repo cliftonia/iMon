@@ -48,6 +48,10 @@ nonisolated enum TimeConstants {
     /// An untreated injury leads to death after 6 hours
     static let untreatedInjuryDeathTime: TimeInterval = 21_600
 
+    /// A pet with no hunger and no strength collapses; left languishing this
+    /// long (3 hours) without recovery, it perishes.
+    static let collapseDeathTime: TimeInterval = 10_800
+
     // MARK: - Notifications
 
     /// How far ahead to schedule the "go for a walk" nudge for a sedentary wearer.

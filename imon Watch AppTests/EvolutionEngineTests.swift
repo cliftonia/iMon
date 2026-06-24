@@ -45,6 +45,15 @@ struct EvolutionEngineTests {
     }
 
     @Test
+    func `evolving clears the lazy-day goal penalty`() {
+        var state = makeTestState(species: .dotkin)
+        state.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve
+        state.evolutionGoalPenalty = 8_000
+        let evolved = EvolutionEngine.evolve(state, to: .hopkin, at: .now)
+        #expect(evolved.evolutionGoalPenalty == 0)
+    }
+
+    @Test
     func `ultimate stage cannot evolve further`() {
         var state = makeTestState(species: .steelkin)
         state.lifetimeActiveSteps = 5_000_000

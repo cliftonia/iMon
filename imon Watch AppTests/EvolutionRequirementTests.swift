@@ -63,6 +63,21 @@ struct EvolutionRequirementTests {
     }
 
     @Test
+    func `the lazy-day penalty raises the step goal`() {
+        var state = makeTestState(species: .emberkin)
+        state.lifetimeActiveSteps = EvolutionStage.rookie.stepsToEvolve
+        let req = EvolutionRequirement(from: .emberkin, to: .galekin)
+
+        // At exactly the base goal but carrying a penalty — the bar moved up.
+        state.evolutionGoalPenalty = 5_000
+        #expect(req.isSatisfied(by: state) == false)
+
+        // Cover the raised goal and it passes again.
+        state.lifetimeActiveSteps = EvolutionStage.rookie.stepsToEvolve + 5_000
+        #expect(req.isSatisfied(by: state))
+    }
+
+    @Test
     func `weight and care-mistake bounds gate evolution`() {
         var state = makeReady()
         state.weight = Weight(50)

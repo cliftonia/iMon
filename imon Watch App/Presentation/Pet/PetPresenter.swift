@@ -180,14 +180,17 @@ final class PetPresenter {
             StepProgress.Progress(
                 lifetime: state.lifetimeActiveSteps,
                 creditedToday: state.stepsCreditedToday,
-                trackedDay: state.stepTrackedDay
+                trackedDay: state.stepTrackedDay,
+                goalPenalty: state.evolutionGoalPenalty
             ),
             todaySteps: steps,
-            now: .now
+            now: .now,
+            stagePenalty: state.species.stage.lazyDayPenalty
         )
         state.lifetimeActiveSteps = progress.lifetime
         state.stepsCreditedToday = progress.creditedToday
         state.stepTrackedDay = progress.trackedDay
+        state.evolutionGoalPenalty = progress.goalPenalty
     }
 
     // MARK: - Training & Battle Results

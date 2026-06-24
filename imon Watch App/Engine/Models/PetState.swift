@@ -38,12 +38,15 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Fitness (step-driven growth)
 
-    /// Lifetime active steps credited toward evolution; decays on lazy days.
+    /// Lifetime active steps credited toward evolution (only ever grows).
     var lifetimeActiveSteps: Int = 0
     /// Today's steps already folded into `lifetimeActiveSteps`.
     var stepsCreditedToday: Int = 0
     /// The calendar day `stepsCreditedToday` belongs to; `nil` until first credit.
     var stepTrackedDay: Date?
+    /// Extra steps added to the current stage's evolution goal by lazy days;
+    /// reset to zero on each evolution.
+    var evolutionGoalPenalty: Int = 0
 
     // MARK: - Lifecycle
 
@@ -79,6 +82,9 @@ extension PetState {
         var pendingLightsMistakeAt: Date?
         /// When the light was switched off at night — starts the sleep countdown.
         var lightsOffAt: Date?
+        /// When the pet's hunger and strength both emptied — starts the collapse
+        /// countdown toward death; cleared on recovery.
+        var collapsingAt: Date?
 
         /// A freshly created pet: every elapsed timer starts at `date`, with no
         /// pending events outstanding.
@@ -96,6 +102,7 @@ extension PetState {
             pendingCareMistakeAt = nil
             pendingLightsMistakeAt = nil
             lightsOffAt = nil
+            collapsingAt = nil
         }
 
         // Full memberwise init (a custom init above suppresses the synthesised one).
@@ -112,7 +119,8 @@ extension PetState {
             injuredAt: Date?,
             pendingCareMistakeAt: Date?,
             pendingLightsMistakeAt: Date?,
-            lightsOffAt: Date?
+            lightsOffAt: Date?,
+            collapsingAt: Date?
         ) {
             self.bornAt = bornAt
             self.lastFedAt = lastFedAt
@@ -127,6 +135,7 @@ extension PetState {
             self.pendingCareMistakeAt = pendingCareMistakeAt
             self.pendingLightsMistakeAt = pendingLightsMistakeAt
             self.lightsOffAt = lightsOffAt
+            self.collapsingAt = collapsingAt
         }
     }
 }
@@ -163,4 +172,12 @@ extension PetState {
 nonisolated extension PetState {
     /// Whether the pet can build trained HP/POW. The Fresh runt (Dotkin) cannot.
     var canCondition: Bool { species != .dotkin }
+
+    /// Lifetime steps needed to leave the current stage, including any lazy-day
+    /// penalty. Guards the `Int.max` ultimate sentinel against overflow.
+    var evolutionGoal: Int {
+        let base = species.stage.stepsToEvolve
+        guard base < Int.max - evolutionGoalPenalty else { return base }
+        return base + evolutionGoalPenalty
+    }
 }

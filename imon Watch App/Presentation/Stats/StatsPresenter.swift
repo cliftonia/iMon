@@ -26,11 +26,10 @@ final class StatsPresenter {
             viewModel.activityLabel = "—"
         }
         let total = StatFormatter.grouped(state.lifetimeActiveSteps)
-        let stage = status.species.stage
-        if stage == .ultimate {
+        if status.species.stage == .ultimate {
             viewModel.evolveProgress = "MAX \u{00b7} " + total
         } else {
-            viewModel.evolveProgress = total + " / " + StatFormatter.grouped(stage.stepsToEvolve)
+            viewModel.evolveProgress = total + " / " + StatFormatter.grouped(state.evolutionGoal)
         }
         viewModel.battleWins = status.battleWins
         viewModel.battleLosses = status.battleLosses

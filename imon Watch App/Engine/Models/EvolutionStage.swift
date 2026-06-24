@@ -34,6 +34,19 @@ nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable, Comparabl
         }
     }
 
+    /// Extra steps added to this stage's evolution goal for each lazy day (fewer
+    /// than `StepProgress.lazyThreshold` active steps). Later stages are penalised
+    /// harder, so neglecting an older pet costs more progress.
+    var lazyDayPenalty: Int {
+        switch self {
+        case .fresh: 4_000
+        case .inTraining: 6_000
+        case .rookie: 8_000
+        case .champion: 10_000
+        case .ultimate: 0
+        }
+    }
+
     var displayName: String {
         switch self {
         case .fresh: "Fresh"

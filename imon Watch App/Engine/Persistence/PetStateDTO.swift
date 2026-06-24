@@ -8,7 +8,7 @@ import Foundation
 /// and is the hook for future migrations.
 nonisolated struct PetStateDTO: Codable, Sendable {
 
-    static let currentVersion = 1
+    static let currentVersion = 2
 
     var schemaVersion: Int?
 
@@ -37,6 +37,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var lifetimeActiveSteps: Int?
     var stepsCreditedToday: Int?
     var stepTrackedDay: Date?
+    var evolutionGoalPenalty: Int?
 
     var isDead: Bool
     var isEgg: Bool
@@ -53,6 +54,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var pendingCareMistakeAt: Date?
     var pendingLightsMistakeAt: Date?
     var lightsOffAt: Date?
+    var collapsingAt: Date?
     var lastAdvancedAt: Date
     var lastBattledAt: Date?
 }
@@ -84,6 +86,7 @@ nonisolated extension PetStateDTO {
         lifetimeActiveSteps = state.lifetimeActiveSteps
         stepsCreditedToday = state.stepsCreditedToday
         stepTrackedDay = state.stepTrackedDay
+        evolutionGoalPenalty = state.evolutionGoalPenalty
         isDead = state.isDead
         isEgg = state.isEgg
         wasNight = state.wasNight
@@ -98,6 +101,7 @@ nonisolated extension PetStateDTO {
         pendingCareMistakeAt = times.pendingCareMistakeAt
         pendingLightsMistakeAt = times.pendingLightsMistakeAt
         lightsOffAt = times.lightsOffAt
+        collapsingAt = times.collapsingAt
         lastAdvancedAt = times.lastAdvancedAt
         lastBattledAt = times.lastBattledAt
     }
@@ -127,6 +131,7 @@ nonisolated extension PetState {
             lifetimeActiveSteps: dto.lifetimeActiveSteps ?? 0,
             stepsCreditedToday: dto.stepsCreditedToday ?? 0,
             stepTrackedDay: dto.stepTrackedDay,
+            evolutionGoalPenalty: dto.evolutionGoalPenalty ?? 0,
             isDead: dto.isDead,
             isEgg: dto.isEgg,
             wasNight: dto.wasNight ?? false,
@@ -143,7 +148,8 @@ nonisolated extension PetState {
                 injuredAt: dto.injuredAt,
                 pendingCareMistakeAt: dto.pendingCareMistakeAt,
                 pendingLightsMistakeAt: dto.pendingLightsMistakeAt,
-                lightsOffAt: dto.lightsOffAt
+                lightsOffAt: dto.lightsOffAt,
+                collapsingAt: dto.collapsingAt
             )
         )
     }

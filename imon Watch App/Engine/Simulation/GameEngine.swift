@@ -39,6 +39,7 @@ nonisolated enum GameEngine {
         state = PoopSimulator.apply(to: state, at: now)
         state = InjurySimulator.apply(to: state, at: now, steps: steps)
         state = CareMistakeTracker.apply(to: state, at: now, night: night)
+        state = CollapseTracker.apply(to: state, at: now)
 
         // Evaluate death
         if let cause = DeathEvaluator.evaluate(state, at: now) {

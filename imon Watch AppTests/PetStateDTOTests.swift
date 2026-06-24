@@ -55,6 +55,7 @@ struct PetStateDTOTests {
         state.lifetimeActiveSteps = 123_456
         state.stepsCreditedToday = 4_321
         state.stepTrackedDay = Self.base.addingTimeInterval(12)
+        state.evolutionGoalPenalty = 16_000
         state.timestamps.lastBattledAt = Self.base.addingTimeInterval(13)
         state.isDead = true
         state.wasNight = true
@@ -69,6 +70,7 @@ struct PetStateDTOTests {
         state.timestamps.pendingCareMistakeAt = Self.base.addingTimeInterval(9)
         state.timestamps.pendingLightsMistakeAt = Self.base.addingTimeInterval(10)
         state.timestamps.lightsOffAt = Self.base.addingTimeInterval(11)
+        state.timestamps.collapsingAt = Self.base.addingTimeInterval(14)
         return state
     }
 
@@ -104,6 +106,7 @@ struct PetStateDTOTests {
         #expect(r.lifetimeActiveSteps == state.lifetimeActiveSteps)
         #expect(r.stepsCreditedToday == state.stepsCreditedToday)
         #expect(r.stepTrackedDay == state.stepTrackedDay)
+        #expect(r.evolutionGoalPenalty == state.evolutionGoalPenalty)
     }
 
     @Test
@@ -162,6 +165,24 @@ struct PetStateDTOTests {
         #expect(t.pendingCareMistakeAt == s.pendingCareMistakeAt)
         #expect(t.pendingLightsMistakeAt == s.pendingLightsMistakeAt)
         #expect(t.lightsOffAt == s.lightsOffAt)
+        #expect(t.collapsingAt == s.collapsingAt)
+    }
+
+    @Test
+    func `a v1 save without the evolution-penalty or collapse fields decodes safely`() throws {
+        let dto = PetStateDTO(from: .hatched(at: Self.base))
+        let data = try JSONEncoder().encode(dto)
+        var json = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        json.removeValue(forKey: "evolutionGoalPenalty")
+        json.removeValue(forKey: "collapsingAt")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+
+        let decoded = PetState(from: try JSONDecoder().decode(PetStateDTO.self, from: stripped))
+
+        #expect(decoded.evolutionGoalPenalty == 0)
+        #expect(decoded.timestamps.collapsingAt == nil)
     }
 
     @Test

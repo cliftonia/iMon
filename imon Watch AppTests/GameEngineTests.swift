@@ -28,6 +28,25 @@ struct GameEngineTests {
     }
 
     @Test
+    func `a starved and weak pet collapses to death over time`() {
+        let start = Date.now
+        var state = makeTestState(hunger: 0, strength: 0, at: start)
+        state.timestamps.lastHungerDecayAt = start
+        state.timestamps.lastStrengthDecayAt = start
+
+        // First advance arms the collapse countdown but doesn't kill yet.
+        state = GameEngine.advance(state, to: start.addingTimeInterval(60))
+        #expect(state.isDead == false)
+        #expect(state.timestamps.collapsingAt != nil)
+
+        // Left languishing past the window, it perishes.
+        state = GameEngine.advance(
+            state, to: start.addingTimeInterval(TimeConstants.collapseDeathTime + 120)
+        )
+        #expect(state.isDead)
+    }
+
+    @Test
     func `an egg stays frozen across days until it hatches`() {
         let born = Date.now.addingTimeInterval(-86400 * 5)
         var state = PetState.newEgg()

@@ -8,6 +8,7 @@ nonisolated enum DeathEvaluator {
         case careMistakes
         case injuries
         case untreatedInjury
+        case collapse
     }
 
     // MARK: - Evaluate
@@ -28,6 +29,13 @@ nonisolated enum DeathEvaluator {
             let elapsed = now.timeIntervalSince(injuredAt)
             if elapsed >= TimeConstants.untreatedInjuryDeathTime {
                 return .untreatedInjury
+            }
+        }
+
+        if let collapsingAt = state.timestamps.collapsingAt {
+            let elapsed = now.timeIntervalSince(collapsingAt)
+            if elapsed >= TimeConstants.collapseDeathTime {
+                return .collapse
             }
         }
 
