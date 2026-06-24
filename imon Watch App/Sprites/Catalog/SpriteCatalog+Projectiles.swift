@@ -45,16 +45,36 @@ nonisolated extension SpriteCatalog {
         )
     }
 
-    /// Raise/lower a medium-height projectile to match attack height.
+    /// Place the projectile in one of three clearly-separated vertical bands —
+    /// high near the top, medium centred, low near the bottom — normalised from
+    /// the sprite's own lit rows so every species reads the same way and nothing
+    /// clips. A fixed ±3 nudge left high and medium near-indistinguishable.
     private static func positioned(
         _ sprite: SpriteFrame,
         height: AttackHeight
     ) -> SpriteFrame {
-        switch height {
-        case .high: sprite.shiftedUp(3)
-        case .medium: sprite
-        case .low: sprite.shiftedDown(3)
+        guard let top = topmostRow(sprite), let bottom = bottommostRow(sprite) else {
+            return sprite
         }
+        let spriteHeight = bottom - top + 1
+        let targetTop: Int
+        switch height {
+        case .high: targetTop = 1
+        case .medium: targetTop = (SpriteFrame.size - spriteHeight) / 2
+        case .low: targetTop = SpriteFrame.size - 1 - spriteHeight
+        }
+        let delta = targetTop - top
+        if delta < 0 { return sprite.shiftedUp(-delta) }
+        if delta > 0 { return sprite.shiftedDown(delta) }
+        return sprite
+    }
+
+    private static func topmostRow(_ frame: SpriteFrame) -> Int? {
+        frame.rows.firstIndex { $0 != 0 }
+    }
+
+    private static func bottommostRow(_ frame: SpriteFrame) -> Int? {
+        frame.rows.lastIndex { $0 != 0 }
     }
 
     /// Shift a sprite so its leftmost lit column sits at column 0.
