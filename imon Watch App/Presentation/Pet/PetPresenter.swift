@@ -232,6 +232,7 @@ final class PetPresenter {
 
     func updateViewModel() {
         viewModel.status = PetStatus(from: state)
+        viewModel.evolutionProgress = state.evolutionProgressFraction
         viewModel.dayPhase = DayPhase.resolve(
             isNight: currentlyNight, lightsOn: state.lightsOn
         )

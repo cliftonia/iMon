@@ -177,7 +177,7 @@ struct PetScreen: View {
         VStack(spacing: 4) {
             weatherHeader
 
-            LCDBezel {
+            LCDBezel(evolutionProgress: presenter.viewModel.evolutionProgress) {
                 LCDDisplay(configuration: LCDDisplayConfiguration(
                     leftSprite: presenter.spriteAnimator.currentFrame,
                     rightSprite: effectRightSprite,

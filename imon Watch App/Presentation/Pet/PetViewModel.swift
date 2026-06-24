@@ -22,6 +22,9 @@ final class PetViewModel {
     var status: PetStatus?
     var petOffsetX: Int = 8
 
+    /// Progress toward the next evolution (0...1) — drives the bezel ring.
+    var evolutionProgress: Double = 0
+
     // MARK: - Menu
 
     enum MenuAction: Int, CaseIterable {

@@ -180,4 +180,13 @@ nonisolated extension PetState {
         guard base < Int.max - evolutionGoalPenalty else { return base }
         return base + evolutionGoalPenalty
     }
+
+    /// Progress toward the next evolution as a 0...1 fraction, for the bezel ring.
+    /// The final (ultimate) stage reads as a full ring.
+    var evolutionProgressFraction: Double {
+        guard species.stage != .ultimate else { return 1 }
+        let goal = evolutionGoal
+        guard goal > 0 else { return 0 }
+        return min(1, max(0, Double(lifetimeActiveSteps) / Double(goal)))
+    }
 }
