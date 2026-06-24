@@ -4,6 +4,9 @@ struct LCDDisplay: View {
 
     let configuration: LCDDisplayConfiguration
 
+    /// The active palette — `nightRed` in battery-saver mode, else `classic`.
+    @Environment(\.lcdTheme) private var theme
+
     // Field accessors so the drawing code (and the +Weather/+Inside extensions)
     // read directly off the configuration.
     var leftSprite: SpriteFrame { configuration.leftSprite }
@@ -34,12 +37,12 @@ struct LCDDisplay: View {
     // MARK: - Colors
 
     private var backgroundColor: Color {
-        lightsOn ? Color("LCDBackground") : Color(white: 0.07)
+        theme.backgroundColor(lightsOn: lightsOn)
     }
 
     /// The "lit pixel" colour. Not private — the weather extension draws with it.
     var basePixelColor: Color {
-        lightsOn ? Color("LCDPixelOn") : .white
+        theme.pixelColor(lightsOn: lightsOn)
     }
 
     var body: some View {

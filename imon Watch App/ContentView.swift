@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var appPresenter = AppPresenter()
+    @State private var powerSaver = PowerSaverStore.live()
 
     var body: some View {
         @Bindable var router = appPresenter.router
@@ -41,8 +42,19 @@ struct ContentView: View {
                 }
             }
         }
+        .environment(\.lcdTheme, powerSaver.isActive ? .nightRed : .classic)
         .task {
             appPresenter.onAppear()
+        }
+        .task {
+            // Recolour live when Low Power Mode toggles (mapped to Void so no
+            // non-Sendable Notification crosses the actor boundary).
+            let changes = NotificationCenter.default
+                .notifications(named: .NSProcessInfoPowerStateDidChange)
+                .map { _ in () }
+            for await _ in changes {
+                powerSaver.refresh()
+            }
         }
     }
 }
