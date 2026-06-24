@@ -7,27 +7,43 @@ struct WeatherOverlay: View {
     let snapshot: WeatherSnapshot
 
     var body: some View {
-        HStack(spacing: 3) {
-            Text(WeatherTemperatureFormatter.string(for: snapshot.temperature))
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white)
-            separator
-            Text(humidityText)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.65))
-            separator
-            Text(snapshot.condition.displayName)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white)
+        // Largest layout that fits wins: Ultra shows temp · humidity · condition;
+        // narrow 40/42mm screens drop humidity, then condition — longest-first —
+        // so the temperature never truncates. Humidity goes before condition,
+        // since the condition is the only weather cue in a release build.
+        ViewThatFits(in: .horizontal) {
+            row(showHumidity: true, showCondition: true)
+            row(showHumidity: false, showCondition: true)
+            row(showHumidity: false, showCondition: false)
         }
         .lineLimit(1)
-        .minimumScaleFactor(0.6)
+        .minimumScaleFactor(0.7)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             "\(snapshot.condition.displayName), "
                 + WeatherTemperatureFormatter.string(for: snapshot.temperature)
                 + ", humidity \(humidityText)"
         )
+    }
+
+    private func row(showHumidity: Bool, showCondition: Bool) -> some View {
+        HStack(spacing: 3) {
+            field(WeatherTemperatureFormatter.string(for: snapshot.temperature), opacity: 1)
+            if showHumidity {
+                separator
+                field(humidityText, opacity: 0.65)
+            }
+            if showCondition {
+                separator
+                field(snapshot.condition.displayName, opacity: 1)
+            }
+        }
+    }
+
+    private func field(_ text: String, opacity: Double) -> some View {
+        Text(text)
+            .font(.system(size: 11, weight: .bold, design: .monospaced))
+            .foregroundStyle(.white.opacity(opacity))
     }
 
     private var separator: some View {
