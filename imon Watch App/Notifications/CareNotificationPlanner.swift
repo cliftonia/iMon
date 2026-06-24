@@ -16,37 +16,38 @@ nonisolated enum CareNotificationPlanner {
 
         var candidates: [CareNotification] = []
         let times = state.timestamps
+        let name = state.species.displayName
 
         // Hunger / strength reach empty.
         if state.hungerHearts.value > 0 {
             let fire = times.lastHungerDecayAt.addingTimeInterval(
                 Double(state.hungerHearts.value) * TimeConstants.hungerDepletionInterval
             )
-            candidates.append(CareNotification(kind: .hunger, fireDate: fire))
+            candidates.append(CareNotification(kind: .hunger, fireDate: fire, petName: name))
         }
         if state.strengthHearts.value > 0 {
             let fire = times.lastStrengthDecayAt.addingTimeInterval(
                 Double(state.strengthHearts.value) * TimeConstants.strengthDepletionInterval
             )
-            candidates.append(CareNotification(kind: .strength, fireDate: fire))
+            candidates.append(CareNotification(kind: .strength, fireDate: fire, petName: name))
         }
 
         // Next mess, until the pile cap is reached.
         if state.poopCount < TimeConstants.maxPoopPiles {
             let fire = times.lastPoopAt.addingTimeInterval(TimeConstants.poopInterval)
-            candidates.append(CareNotification(kind: .mess, fireDate: fire))
+            candidates.append(CareNotification(kind: .mess, fireDate: fire, petName: name))
         }
 
         // Injury — remind partway to the untreated-injury death window.
         if state.isInjured, let injuredAt = times.injuredAt {
             let fire = injuredAt.addingTimeInterval(TimeConstants.untreatedInjuryDeathTime / 2)
-            candidates.append(CareNotification(kind: .injury, fireDate: fire))
+            candidates.append(CareNotification(kind: .injury, fireDate: fire, petName: name))
         }
 
         // Walk — nudge a sedentary wearer to get moving, like a restless dog.
         if let steps, ActivityModel.isSedentary(steps: steps) {
             let fire = now.addingTimeInterval(TimeConstants.walkNudgeLead)
-            candidates.append(CareNotification(kind: .walk, fireDate: fire))
+            candidates.append(CareNotification(kind: .walk, fireDate: fire, petName: name))
         }
 
         return candidates

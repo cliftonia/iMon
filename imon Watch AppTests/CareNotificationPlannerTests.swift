@@ -124,6 +124,18 @@ struct CareNotificationPlannerTests {
     }
 
     @Test
+    func `reminders are addressed to the pet by name`() {
+        let now = today(at: 8)
+        let state = makeTestState(species: .emberkin, hunger: 1, at: now)
+        let plan = CareNotificationPlanner.plan(for: state, now: now, steps: nil)
+
+        let name = PetSpecies.emberkin.displayName
+        let hunger = notification(plan, .hunger)
+        #expect(hunger?.title == name)
+        #expect(hunger?.body == "\(name) is hungry!")
+    }
+
+    @Test
     func `each notification carries a stable per-kind id`() {
         // Stable ids are the dedup contract — a re-plan must replace the pending
         // reminder of the same kind, not stack a second one.

@@ -15,18 +15,20 @@ nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
 
     let kind: Kind
     let fireDate: Date
+    /// The pet's display name, so reminders read personally ("Dotkin is hungry!").
+    let petName: String
 
     var id: String { kind.rawValue }
 
-    var title: String { "Skykin" }
+    var title: String { petName }
 
     var body: String {
         switch kind {
-        case .hunger: "Your Skykin is hungry!"
-        case .strength: "Your Skykin is weak \u{2014} give it vitamins!"
-        case .mess: "Your Skykin made a mess!"
-        case .injury: "Your Skykin is hurt \u{2014} heal it!"
-        case .walk: "Your Skykin wants a walk!"
+        case .hunger: "\(petName) is hungry!"
+        case .strength: "\(petName) is weak \u{2014} give it vitamins!"
+        case .mess: "\(petName) made a mess!"
+        case .injury: "\(petName) is hurt \u{2014} heal it!"
+        case .walk: "\(petName) wants a walk!"
         }
     }
 }
