@@ -43,11 +43,15 @@ nonisolated enum EvolutionEngine {
         state.trainingCount = 0
         // Fresh stage, fresh goal — lazy penalties don't follow the pet across stages.
         state.evolutionGoalPenalty = 0
-        // A clean slate: stats refill, so the pet is neither languishing nor hurt
-        // (otherwise an injury could carry a death countdown into the new stage).
+        // A clean slate: stats refill and the mess is gone, so the pet is neither
+        // languishing nor hurt. Crucially the lifetime injury count resets too —
+        // otherwise ~0.5 training injuries/day would condemn a well-cared pet in
+        // ~40 days, undoing the "care mistakes don't kill" rebalance.
         state.timestamps.collapsingAt = nil
         state.isInjured = false
         state.timestamps.injuredAt = nil
+        state.injuryCount = 0
+        state.poopCount = 0
         Log.engine.info("Evolved to \(species.displayName)")
         return state
     }

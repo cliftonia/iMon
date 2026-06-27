@@ -91,14 +91,15 @@ nonisolated enum EvolutionChart {
                 from: .marshkin, to: .dreadkin,
                 maxCareMistakes: 3, minTrainingCount: 48
             ),
-            // 4+ CM -> Galekin
-            EvolutionRequirement(
-                from: .marshkin, to: .galekin, minCareMistakes: 4
-            ),
-            // 4+ CM, weight 35+ -> Tidekin
+            // 4+ CM, weight 35+ -> Tidekin. Must precede Galekin: it's the more
+            // specific gate, so first-match would otherwise shadow it away.
             EvolutionRequirement(
                 from: .marshkin, to: .tidekin,
                 minCareMistakes: 4, minWeight: 35
+            ),
+            // 4+ CM (lighter) -> Galekin
+            EvolutionRequirement(
+                from: .marshkin, to: .galekin, minCareMistakes: 4
             ),
             // Default -> Sludgekin
             EvolutionRequirement(

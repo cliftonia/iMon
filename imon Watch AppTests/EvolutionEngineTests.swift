@@ -64,6 +64,18 @@ struct EvolutionEngineTests {
     }
 
     @Test
+    func `evolving resets the lifetime injury count and clears poop`() {
+        // Otherwise a well-cared pet accruing training injuries would hit the
+        // 20-injury death cap in ~40 days despite the rebalance.
+        var state = makeTestState(species: .dotkin)
+        state.injuryCount = 18
+        state.poopCount = 3
+        let evolved = EvolutionEngine.evolve(state, to: .hopkin, at: .now)
+        #expect(evolved.injuryCount == 0)
+        #expect(evolved.poopCount == 0)
+    }
+
+    @Test
     func `ultimate stage cannot evolve further`() {
         var state = makeTestState(species: .steelkin)
         state.lifetimeActiveSteps = 5_000_000

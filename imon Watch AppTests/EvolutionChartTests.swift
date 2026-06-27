@@ -33,4 +33,21 @@ struct EvolutionChartTests {
             #expect(hasPath, "\(species) has no evolution")
         }
     }
+
+    // Graph reachability proves an edge *exists*, but `checkEvolution` returns the
+    // first *satisfied* requirement — a broader gate listed earlier can shadow a
+    // more specific one. These guard the branches where that nearly happened.
+
+    @Test
+    func `a heavy neglected Marshkin reaches Tidekin, a light one Galekin`() {
+        var heavy = makeTestState(species: .marshkin)
+        heavy.lifetimeActiveSteps = EvolutionStage.rookie.stepsToEvolve
+        heavy.careMistakes = 4
+        heavy.weight = Weight(40)                       // >= 35
+        #expect(EvolutionEngine.checkEvolution(for: heavy) == .tidekin)
+
+        var light = heavy
+        light.weight = Weight(20)                       // < 35
+        #expect(EvolutionEngine.checkEvolution(for: light) == .galekin)
+    }
 }
