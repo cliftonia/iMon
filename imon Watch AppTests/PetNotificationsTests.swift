@@ -17,6 +17,7 @@ struct PetNotificationsTests {
         let presenter = PetPresenter(state: state, store: store)
         presenter.notificationScheduler = NotificationScheduler(
             schedule: { capture.scheduled = $0 },
+            notify: { _, _, _ in },
             cancelAll: {},
             requestAuthorization: { true }
         )

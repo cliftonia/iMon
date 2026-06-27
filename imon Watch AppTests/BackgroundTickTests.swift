@@ -14,6 +14,7 @@ struct BackgroundTickTests {
 
     private final class NoteCapture: @unchecked Sendable {
         var plan: [CareNotification]?
+        var evolvedTo: PetSpecies?
     }
 
     private final class RefreshCapture: @unchecked Sendable {
@@ -121,6 +122,24 @@ struct BackgroundTickTests {
     }
 
     @Test
+    func `a pet that reaches its step gate evolves and is announced`() {
+        let now = today(at: 9)
+        let box = StoreBox()
+        var pet = makeTestState(species: .dotkin, at: now)
+        pet.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve   // ready to grow
+        box.state = pet
+        let note = NoteCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(note),
+            refresh: capturing(RefreshCapture()), steps: nil, now: now
+        )
+
+        #expect(box.state?.species == .hopkin)
+        #expect(note.evolvedTo == .hopkin)
+    }
+
+    @Test
     func `an injury that emerges during the advance is reminded`() {
         let base = today(at: 9)
         let box = StoreBox()
@@ -143,7 +162,9 @@ struct BackgroundTickTests {
 
     private func capturing(_ note: NoteCapture) -> NotificationScheduler {
         NotificationScheduler(
-            schedule: { note.plan = $0 }, cancelAll: {}, requestAuthorization: { true }
+            schedule: { note.plan = $0 },
+            notify: { _, _, species in note.evolvedTo = species },
+            cancelAll: {}, requestAuthorization: { true }
         )
     }
 

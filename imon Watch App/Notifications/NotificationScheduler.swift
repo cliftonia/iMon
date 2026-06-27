@@ -6,6 +6,8 @@ import UserNotifications
 nonisolated struct NotificationScheduler: Sendable {
     /// Replaces every pending care reminder with the supplied set.
     let schedule: @Sendable ([CareNotification]) -> Void
+    /// Fires a one-off notification immediately (e.g. an evolution announcement).
+    let notify: @Sendable (_ title: String, _ body: String, _ species: PetSpecies) -> Void
     let cancelAll: @Sendable () -> Void
     let requestAuthorization: @Sendable () async -> Bool
 }
@@ -22,6 +24,9 @@ extension NotificationScheduler {
                     content.title = notification.title
                     content.body = notification.body
                     content.sound = .default
+                    if let sprite = NotificationSpriteRenderer.attachment(for: notification.species) {
+                        content.attachments = [sprite]
+                    }
 
                     let interval = max(1, notification.fireDate.timeIntervalSince(now()))
                     let trigger = UNTimeIntervalNotificationTrigger(
@@ -32,6 +37,19 @@ extension NotificationScheduler {
                     )
                     center.add(request)
                 }
+            },
+            notify: { title, body, species in
+                let content = UNMutableNotificationContent()
+                content.title = title
+                content.body = body
+                content.sound = .default
+                if let sprite = NotificationSpriteRenderer.attachment(for: species) {
+                    content.attachments = [sprite]
+                }
+                let request = UNNotificationRequest(
+                    identifier: "event-\(title)", content: content, trigger: nil
+                )
+                UNUserNotificationCenter.current().add(request)
             },
             cancelAll: {
                 UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -50,6 +68,7 @@ extension NotificationScheduler {
     // AUDIT 2026-06-24: unused — tests build witnesses inline. Kept as DI scaffolding.
     static let mock = NotificationScheduler(
         schedule: { _ in },
+        notify: { _, _, _ in },
         cancelAll: {},
         requestAuthorization: { true }
     )

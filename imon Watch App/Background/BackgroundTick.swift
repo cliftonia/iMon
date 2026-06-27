@@ -25,7 +25,17 @@ nonisolated enum BackgroundTick {
         }
         guard let state = loaded else { return }
 
-        let advanced = GameEngine.advance(state, to: now, isNight: nil, steps: steps)
+        var advanced = GameEngine.advance(state, to: now, isNight: nil, steps: steps)
+
+        // Evolution otherwise only happens in the foreground; evaluate it here so a
+        // pet can grow while the owner is away, and announce it with a notification.
+        if let target = EvolutionEngine.checkEvolution(for: advanced) {
+            advanced = EvolutionEngine.evolve(advanced, to: target, at: now)
+            notifications.notify(
+                target.displayName, "evolved into a \(target.displayName)!", target
+            )
+        }
+
         try? store.save(advanced)
 
         // Re-arm the next wake before the caller completes the task, so the loop

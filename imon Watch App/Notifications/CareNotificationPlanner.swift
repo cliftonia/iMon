@@ -16,7 +16,6 @@ nonisolated enum CareNotificationPlanner {
 
         var candidates: [CareNotification] = []
         let times = state.timestamps
-        let name = state.species.displayName
 
         // Hunger / strength reach empty. Scale by activity exactly as the
         // simulators do, or an active wearer's faster-draining pet would be
@@ -30,25 +29,25 @@ nonisolated enum CareNotificationPlanner {
             let fire = times.lastHungerDecayAt.addingTimeInterval(
                 Double(state.hungerHearts.value) * hungerInterval
             )
-            candidates.append(CareNotification(kind: .hunger, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .hunger, fireDate: fire, species: state.species))
         }
         if state.strengthHearts.value > 0 {
             let fire = times.lastStrengthDecayAt.addingTimeInterval(
                 Double(state.strengthHearts.value) * strengthInterval
             )
-            candidates.append(CareNotification(kind: .strength, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .strength, fireDate: fire, species: state.species))
         }
 
         // Next mess, until the pile cap is reached.
         if state.poopCount < TimeConstants.maxPoopPiles {
             let fire = times.lastPoopAt.addingTimeInterval(TimeConstants.poopInterval)
-            candidates.append(CareNotification(kind: .mess, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .mess, fireDate: fire, species: state.species))
         }
 
         // Injury — remind partway to the untreated-injury death window.
         if state.isInjured, let injuredAt = times.injuredAt {
             let fire = injuredAt.addingTimeInterval(TimeConstants.untreatedInjuryDeathTime / 2)
-            candidates.append(CareNotification(kind: .injury, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .injury, fireDate: fire, species: state.species))
         }
 
         // Fading — warn before a languishing pet finally collapses to death.
@@ -56,14 +55,14 @@ nonisolated enum CareNotificationPlanner {
             let fire = collapsingAt.addingTimeInterval(
                 TimeConstants.collapseDeathTime - TimeConstants.nearingDeathLead
             )
-            candidates.append(CareNotification(kind: .fading, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .fading, fireDate: fire, species: state.species))
         }
 
         // Exercise — nudge a lazy wearer to get moving once the afternoon is gone.
         let hour = Calendar.current.component(.hour, from: now)
         if let steps, hour >= TimeConstants.exerciseHour, steps < TimeConstants.exerciseStepTarget {
             let fire = now.addingTimeInterval(TimeConstants.exerciseNudgeLead)
-            candidates.append(CareNotification(kind: .exercise, fireDate: fire, petName: name))
+            candidates.append(CareNotification(kind: .exercise, fireDate: fire, species: state.species))
         }
 
         return candidates
