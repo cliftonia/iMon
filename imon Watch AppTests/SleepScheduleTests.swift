@@ -49,11 +49,21 @@ struct SleepScheduleTests {
         #expect(state.isSleeping == false)
     }
 
+    // MARK: - Bedtime window
+
+    @Test
+    func `bedtime starts at 9pm and runs to the morning wake hour`() {
+        #expect(SleepSchedule.isBedtime(at: date(hour: 21)))      // 9pm
+        #expect(SleepSchedule.isBedtime(at: date(hour: 2)))       // 2am
+        #expect(!SleepSchedule.isBedtime(at: date(hour: 19)))     // 7pm — still up
+        #expect(!SleepSchedule.isBedtime(at: date(hour: 6)))      // 6am — awake
+    }
+
     // MARK: - Dusk / Dawn
 
     @Test
-    func `dusk turns the light off and starts the settle countdown`() {
-        let now = Date()
+    func `dusk dims the light but the pet stays up before bedtime`() {
+        let now = date(hour: 19)   // 7pm — dark, but not yet bedtime
         var state = makeTestState(at: now)
         state.lightsOn = true
         state.isSleeping = false
@@ -61,15 +71,29 @@ struct SleepScheduleTests {
 
         state = SleepSchedule.apply(to: state, at: now, night: true)
 
-        #expect(state.lightsOn == false)
+        #expect(state.lightsOn == false)              // dusk dims the light
         #expect(state.wasNight == true)
-        #expect(state.isSleeping == false)              // not yet — settling
-        #expect(state.timestamps.lightsOffAt == now)
+        #expect(state.isSleeping == false)            // but the pet is still up
+        #expect(state.timestamps.lightsOffAt == nil)  // no settle countdown yet
+    }
+
+    @Test
+    func `a dark evening before bedtime keeps the pet awake with the light off`() {
+        let now = date(hour: 20)   // 8pm — outside in the dark
+        var state = makeTestState(at: now)
+        state.wasNight = true
+        state.lightsOn = false
+        state.isSleeping = false
+
+        state = SleepSchedule.apply(to: state, at: now, night: true)
+
+        #expect(state.isSleeping == false)
+        #expect(state.timestamps.lightsOffAt == nil)
     }
 
     @Test
     func `dawn turns the light on and wakes the pet`() {
-        let now = Date()
+        let now = date(hour: 8)
         var state = makeTestState(at: now)
         state.lightsOn = false
         state.isSleeping = true
@@ -82,11 +106,25 @@ struct SleepScheduleTests {
         #expect(state.wasNight == false)
     }
 
-    // MARK: - Settle Delay
+    // MARK: - Settle Delay (bedtime only)
 
     @Test
-    func `pet sleeps once the settle delay has passed`() {
-        let now = Date()
+    func `at bedtime with the light out the settle countdown begins`() {
+        let now = date(hour: 22)
+        var state = makeTestState(at: now)
+        state.wasNight = true
+        state.lightsOn = false
+        state.isSleeping = false
+
+        state = SleepSchedule.apply(to: state, at: now, night: true)
+
+        #expect(state.timestamps.lightsOffAt == now)
+        #expect(state.isSleeping == false)
+    }
+
+    @Test
+    func `pet sleeps once the settle delay has passed at bedtime`() {
+        let now = date(hour: 22)
         var state = makeTestState(at: now)
         state.wasNight = true
         state.lightsOn = false
@@ -103,7 +141,7 @@ struct SleepScheduleTests {
 
     @Test
     func `pet stays awake before the settle delay`() {
-        let now = Date()
+        let now = date(hour: 22)
         var state = makeTestState(at: now)
         state.wasNight = true
         state.lightsOn = false
@@ -116,11 +154,12 @@ struct SleepScheduleTests {
     }
 
     @Test
-    func `light on at night keeps the pet awake`() {
-        let now = Date()
+    func `bringing it inside with the light wakes the pet at bedtime`() {
+        let now = date(hour: 22)
         var state = makeTestState(at: now)
         state.wasNight = true
         state.lightsOn = true
+        state.isSleeping = true
 
         state = SleepSchedule.apply(to: state, at: now, night: true)
 
@@ -130,7 +169,7 @@ struct SleepScheduleTests {
 
     @Test
     func `sleeping pet stays asleep with the light off`() {
-        let now = Date()
+        let now = date(hour: 22)
         var state = makeTestState(at: now)
         state.wasNight = true
         state.lightsOn = false

@@ -25,8 +25,12 @@ nonisolated enum TimeConstants {
     /// Main simulation tick fires every 30 seconds
     static let gameTickInterval: TimeInterval = 30
 
-    /// How long after the light goes off at night before the pet falls asleep
-    static let sleepDelay: TimeInterval = 10
+    /// How long after the light goes off at bedtime before the pet drops off.
+    static let sleepDelay: TimeInterval = 120
+
+    /// The pet's bedtime: it only settles to sleep from 9pm until the morning
+    /// wake hour, so an early winter dusk doesn't send it to bed at 5pm.
+    static let sleepHour: Int = 21
 
     /// Fallback dark window (24h clock) used only when weather is unavailable.
     static let nightStartHour: Int = 18

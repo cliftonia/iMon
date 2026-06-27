@@ -13,7 +13,7 @@ struct CareMistakeTrackerTests {
         var state = makeTestState(hunger: 0, at: now)
         state.timestamps.pendingCareMistakeAt = nil
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: false)
         #expect(state.careMistakes == 0)
         #expect(state.timestamps.pendingCareMistakeAt == now)
     }
@@ -25,7 +25,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingCareMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: false)
         #expect(state.careMistakes == 1)
     }
 
@@ -38,7 +38,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingCareMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: false)
         #expect(state.careMistakes == 1)
     }
 
@@ -49,7 +49,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingCareMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: false)
         #expect(state.careMistakes == 0)
         #expect(state.timestamps.pendingCareMistakeAt == nil)
     }
@@ -64,7 +64,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingCareMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow * 2)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: false)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: false)
         #expect(state.careMistakes == 0)
         #expect(state.timestamps.pendingCareMistakeAt == nil)
     }
@@ -79,7 +79,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingLightsMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: true)
         #expect(state.careMistakes == 1)
     }
 
@@ -91,7 +91,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingLightsMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: true)
         #expect(state.careMistakes == 0)
         #expect(state.timestamps.pendingLightsMistakeAt == nil)
     }
@@ -107,7 +107,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingLightsMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
 
-        state = CareMistakeTracker.apply(to: state, at: now, night: true)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: true)
         #expect(state.careMistakes == 2)
     }
 }

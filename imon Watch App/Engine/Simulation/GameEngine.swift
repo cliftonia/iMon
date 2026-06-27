@@ -28,8 +28,10 @@ nonisolated enum GameEngine {
         ).day ?? state.age
         state.age = max(0, days)
 
-        // Resolve day/night once (weather, or fixed hours as fallback).
+        // Resolve day/night once (weather, or fixed hours as fallback), plus the
+        // fixed bedtime window that drives sleep and the lights-on penalty.
         let night = SleepSchedule.isNight(weatherNight: isNight, at: now)
+        let bedtime = SleepSchedule.isBedtime(at: now)
 
         // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, night: night)
@@ -38,7 +40,7 @@ nonisolated enum GameEngine {
         state = ConditioningSimulator.apply(to: state, at: now)
         state = PoopSimulator.apply(to: state, at: now)
         state = InjurySimulator.apply(to: state, at: now, steps: steps)
-        state = CareMistakeTracker.apply(to: state, at: now, night: night)
+        state = CareMistakeTracker.apply(to: state, at: now, bedtime: bedtime)
         state = CollapseTracker.apply(to: state, at: now)
 
         // Evaluate death

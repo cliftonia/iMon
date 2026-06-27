@@ -17,13 +17,20 @@ nonisolated enum SleepSchedule {
         return hour < TimeConstants.nightEndHour || hour >= TimeConstants.nightStartHour
     }
 
-    /// Apply the resolved night signal to the light and sleep state. At night
-    /// the pet only drops off `sleepDelay` seconds after the light goes out.
+    /// The pet's bedtime window — it only settles to sleep from `sleepHour` (9pm)
+    /// until the morning wake hour. Outside it the pet stays up, even after dark.
+    static func isBedtime(at now: Date) -> Bool {
+        let hour = Calendar.current.component(.hour, from: now)
+        return hour >= TimeConstants.sleepHour || hour < TimeConstants.nightEndHour
+    }
+
+    /// Apply the resolved night signal to the light and sleep state. The pet only
+    /// drops off once it's past bedtime and the light has been out for `sleepDelay`.
     static func apply(to state: PetState, at now: Date, night: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        // Dusk/dawn: flip the light automatically on the transition.
+        // Dusk/dawn: flip the light automatically on the day↔night transition.
         if night != state.wasNight {
             state.lightsOn = !night
             state.wasNight = night
@@ -37,21 +44,23 @@ nonisolated enum SleepSchedule {
             return state
         }
 
-        // Night, light on — wide awake.
-        if state.lightsOn {
+        let bedtime = isBedtime(at: now)
+
+        if state.lightsOn || !bedtime {
+            // Light on (brought inside), or dark-but-not-yet-bedtime — wide awake.
             state.isSleeping = false
             state.timestamps.lightsOffAt = nil
         } else if state.isSleeping {
             // Already settled — stay asleep, no countdown.
             state.timestamps.lightsOffAt = nil
         } else if let offAt = state.timestamps.lightsOffAt {
-            // Light is off — drop off once the settle delay has passed.
+            // Past bedtime, light out — drop off once the settle delay has passed.
             if now.timeIntervalSince(offAt) >= TimeConstants.sleepDelay {
                 state.isSleeping = true
                 state.timestamps.lightsOffAt = nil
             }
         } else {
-            // Light just went out — start the settle countdown.
+            // Bedtime, light just went out — start the settle countdown.
             state.timestamps.lightsOffAt = now
         }
 
