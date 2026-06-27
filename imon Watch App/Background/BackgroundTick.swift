@@ -14,7 +14,16 @@ nonisolated enum BackgroundTick {
         steps: Int?,
         now: Date
     ) {
-        guard let state = try? store.load() else { return }
+        // A transient decode failure must not break the wake chain — re-arm and
+        // bail. A genuine absence of a saved pet (hatching) is a true no-op.
+        let loaded: PetState?
+        do {
+            loaded = try store.load()
+        } catch {
+            refresh.schedule(now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
+            return
+        }
+        guard let state = loaded else { return }
 
         let advanced = GameEngine.advance(state, to: now, isNight: nil, steps: steps)
         try? store.save(advanced)

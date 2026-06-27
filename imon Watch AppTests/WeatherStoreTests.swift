@@ -22,6 +22,19 @@ struct WeatherStoreTests {
     }
 
     @Test
+    func `a failed fetch still applies the cache window`() async {
+        // Otherwise a missing authorization spins a fetch on every wrist raise.
+        let store = WeatherStore(provider: .mockFailing())
+        let base = Date(timeIntervalSinceReferenceDate: 0)
+
+        await store.refreshIfStale(now: base)?.value   // fails, but stamps lastFetch
+        let skipped = store.refreshIfStale(
+            now: base.addingTimeInterval(TimeConstants.weatherCacheInterval - 1)
+        )
+        #expect(skipped == nil)
+    }
+
+    @Test
     func `refreshIfStale skips within the cache window`() async {
         let counter = Counter()
         let store = WeatherStore(provider: .counting(counter))

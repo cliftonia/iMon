@@ -38,6 +38,9 @@ final class StepActivityStore {
             lastFetch = now
         } catch {
             Log.health.error("Step fetch failed: \(error, privacy: .public)")
+            // Apply the cache window to failures too, so a missing authorization
+            // doesn't spin a fetch on every wrist raise.
+            lastFetch = now
         }
     }
 

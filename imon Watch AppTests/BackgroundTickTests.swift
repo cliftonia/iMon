@@ -105,6 +105,22 @@ struct BackgroundTickTests {
     }
 
     @Test
+    func `a load failure still re-arms the next wake`() {
+        struct LoadError: Error {}
+        let store = PetStateStore(save: { _ in }, load: { throw LoadError() }, delete: {})
+        let refresh = RefreshCapture()
+        let now = today(at: 9)
+
+        BackgroundTick.perform(
+            store: store, notifications: capturing(NoteCapture()),
+            refresh: capturing(refresh), steps: nil, now: now
+        )
+
+        // A transient decode failure must not kill the refresh chain.
+        #expect(refresh.date == now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
+    }
+
+    @Test
     func `an injury that emerges during the advance is reminded`() {
         let base = today(at: 9)
         let box = StoreBox()

@@ -76,8 +76,10 @@ final class WeatherStore {
             lastFetch = now
         } catch {
             Log.weather.error("Weather fetch failed: \(error, privacy: .public)")
-            // Leave `snapshot` nil so day/night uses the time window, not the
-            // DEBUG sample. The overlay still shows the sample via displaySnapshot.
+            // Apply the cache window to failures too, so a missing authorization
+            // doesn't spin a fetch on every wrist raise. Leave `snapshot` nil so
+            // day/night falls back to the time window.
+            lastFetch = now
         }
     }
 

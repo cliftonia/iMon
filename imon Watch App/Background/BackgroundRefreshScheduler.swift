@@ -14,7 +14,10 @@ extension BackgroundRefreshScheduler {
     static func live() -> BackgroundRefreshScheduler {
         BackgroundRefreshScheduler(
             schedule: { date in
-                Task { @MainActor in
+                // Register synchronously (callers are all on the main actor). A
+                // deferred Task could lose the race with setTaskCompleted and leave
+                // the next wake unscheduled, silently breaking the refresh chain.
+                MainActor.assumeIsolated {
                     WKApplication.shared().scheduleBackgroundRefresh(
                         withPreferredDate: date, userInfo: nil
                     ) { error in
