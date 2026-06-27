@@ -72,12 +72,14 @@ nonisolated enum TrainAction {
             state.timestamps.lastPoopAt = date
         case 7...9:
             break
-        default:
+        case 10:
             if !state.isInjured {
                 state.isInjured = true
                 state.timestamps.injuredAt = date
                 state.injuryCount += 1
             }
+        default:
+            break
         }
 
         return state

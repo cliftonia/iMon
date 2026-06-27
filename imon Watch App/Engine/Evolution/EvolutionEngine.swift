@@ -6,7 +6,7 @@ nonisolated enum EvolutionEngine {
     /// Check if the pet is ready to evolve and return the target species.
     /// Returns `nil` if no evolution is available.
     static func checkEvolution(for state: PetState) -> PetSpecies? {
-        guard state.species.stage != .ultimate else { return nil }
+        guard !state.isEgg, state.species.stage != .ultimate else { return nil }
 
         let candidates = EvolutionChart.evolutions(for: state.species)
 
