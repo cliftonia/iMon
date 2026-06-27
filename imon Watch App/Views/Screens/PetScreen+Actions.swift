@@ -42,7 +42,10 @@ extension PetScreen {
         if presenter.feedingAnimator.isPlaying {
             return presenter.feedingAnimator.currentFrame
         }
-        if presenter.viewModel.status?.isInjured == true {
+        // Poop owns the right side until it's cleared; only then does the
+        // medication skull appear, so the two never sit on top of each other.
+        let hasPoop = (presenter.viewModel.status?.poopCount ?? 0) > 0
+        if presenter.viewModel.status?.isInjured == true, !hasPoop {
             return SharedSprites.skull
         }
         return nil
