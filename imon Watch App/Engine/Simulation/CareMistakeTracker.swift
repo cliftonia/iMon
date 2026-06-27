@@ -12,8 +12,13 @@ nonisolated enum CareMistakeTracker {
         // Light left on at night keeps the pet awake — a care mistake.
         state = trackLightsMistake(state: state, at: now, night: night)
 
-        // Hunger/strength neglect only applies while awake
-        guard !state.isSleeping else { return state }
+        // Hunger/strength neglect only applies while awake. Reset the pending
+        // clock while asleep so the first waking tick doesn't back-fill the whole
+        // night at once (a sparse background wake would otherwise count hours).
+        guard !state.isSleeping else {
+            state.timestamps.pendingCareMistakeAt = nil
+            return state
+        }
 
         let needsAttention = state.hungerHearts.isEmpty || state.strengthHearts.isEmpty
 

@@ -43,8 +43,11 @@ nonisolated enum EvolutionEngine {
         state.trainingCount = 0
         // Fresh stage, fresh goal — lazy penalties don't follow the pet across stages.
         state.evolutionGoalPenalty = 0
-        // Stats refill, so the pet is no longer languishing.
+        // A clean slate: stats refill, so the pet is neither languishing nor hurt
+        // (otherwise an injury could carry a death countdown into the new stage).
         state.timestamps.collapsingAt = nil
+        state.isInjured = false
+        state.timestamps.injuredAt = nil
         Log.engine.info("Evolved to \(species.displayName)")
         return state
     }

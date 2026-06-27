@@ -55,7 +55,9 @@ struct CareMistakeTrackerTests {
     }
 
     @Test
-    func `does not accrue neglect while sleeping`() {
+    func `sleeping accrues no neglect and resets the pending clock`() {
+        // The reset is what stops a sparse morning wake from back-filling the
+        // whole night and dumping a pile of mistakes at once.
         let now = Date.now
         var state = makeTestState(hunger: 0, at: now)
         state.isSleeping = true
@@ -64,6 +66,7 @@ struct CareMistakeTrackerTests {
 
         state = CareMistakeTracker.apply(to: state, at: now, night: false)
         #expect(state.careMistakes == 0)
+        #expect(state.timestamps.pendingCareMistakeAt == nil)
     }
 
     // MARK: - Lights-at-night penalty (independent accumulator)

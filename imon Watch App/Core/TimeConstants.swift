@@ -39,18 +39,17 @@ nonisolated enum TimeConstants {
 
     // MARK: - Death Thresholds
 
-    /// Total care mistakes before the Creature dies
-    static let maxCareMistakesBeforeDeath: Int = 20
-
     /// Total untreated injuries before the Creature dies
     static let maxInjuriesBeforeDeath: Int = 20
 
-    /// An untreated injury leads to death after 6 hours
+    /// An untreated injury leads to death after 6 hours (an acute condition the
+    /// owner is expected to treat promptly).
     static let untreatedInjuryDeathTime: TimeInterval = 21_600
 
     /// A pet with no hunger and no strength collapses; left languishing this
-    /// long (3 hours) without recovery, it perishes.
-    static let collapseDeathTime: TimeInterval = 10_800
+    /// long (48 hours) without recovery, it finally perishes. Care mistakes no
+    /// longer kill — they only steer evolution — so this is the sole neglect death.
+    static let collapseDeathTime: TimeInterval = 172_800
 
     // MARK: - Notifications
 

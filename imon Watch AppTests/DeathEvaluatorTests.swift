@@ -6,11 +6,10 @@ import Foundation
 struct DeathEvaluatorTests {
 
     @Test
-    func `dies from too many care mistakes`() {
+    func `care mistakes alone never kill (they only steer evolution)`() {
         var state = makeTestState()
-        state.careMistakes = 20
-        let cause = DeathEvaluator.evaluate(state, at: .now)
-        #expect(cause == .careMistakes)
+        state.careMistakes = 999
+        #expect(DeathEvaluator.evaluate(state, at: .now) == nil)
     }
 
     @Test
@@ -36,13 +35,6 @@ struct DeathEvaluatorTests {
     }
 
     @Test
-    func `dies exactly at the care-mistake threshold`() {
-        var state = makeTestState()
-        state.careMistakes = TimeConstants.maxCareMistakesBeforeDeath
-        #expect(DeathEvaluator.evaluate(state, at: .now) == .careMistakes)
-    }
-
-    @Test
     func `dies exactly at the injury-count threshold`() {
         var state = makeTestState()
         state.injuryCount = TimeConstants.maxInjuriesBeforeDeath
@@ -53,7 +45,6 @@ struct DeathEvaluatorTests {
     func `survives one short of every threshold`() {
         let start = Date.now
         var state = makeTestState()
-        state.careMistakes = TimeConstants.maxCareMistakesBeforeDeath - 1
         state.injuryCount = TimeConstants.maxInjuriesBeforeDeath - 1
         state.isInjured = true
         state.timestamps.injuredAt = start

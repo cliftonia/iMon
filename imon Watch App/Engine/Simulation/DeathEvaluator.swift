@@ -5,7 +5,6 @@ import Foundation
 nonisolated enum DeathEvaluator {
 
     nonisolated enum CauseOfDeath: Sendable {
-        case careMistakes
         case injuries
         case untreatedInjury
         case collapse
@@ -16,10 +15,6 @@ nonisolated enum DeathEvaluator {
     /// Returns the cause of death if a threshold is met, or `nil` if the pet is alive.
     static func evaluate(_ state: PetState, at now: Date) -> CauseOfDeath? {
         guard !state.isDead, !state.isEgg else { return nil }
-
-        if state.careMistakes >= TimeConstants.maxCareMistakesBeforeDeath {
-            return .careMistakes
-        }
 
         if state.injuryCount >= TimeConstants.maxInjuriesBeforeDeath {
             return .injuries

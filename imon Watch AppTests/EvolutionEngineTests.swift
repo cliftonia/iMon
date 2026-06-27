@@ -54,6 +54,16 @@ struct EvolutionEngineTests {
     }
 
     @Test
+    func `evolving heals any standing injury so no death carries over`() {
+        var state = makeTestState(species: .dotkin)
+        state.isInjured = true
+        state.timestamps.injuredAt = .now
+        let evolved = EvolutionEngine.evolve(state, to: .hopkin, at: .now)
+        #expect(evolved.isInjured == false)
+        #expect(evolved.timestamps.injuredAt == nil)
+    }
+
+    @Test
     func `ultimate stage cannot evolve further`() {
         var state = makeTestState(species: .steelkin)
         state.lifetimeActiveSteps = 5_000_000
