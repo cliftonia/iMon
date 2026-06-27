@@ -138,6 +138,7 @@ extension PetPresenter {
     }
 
     func dismissTraining() {
+        trainingPresenter?.cancel()
         trainingPresenter?.spriteAnimator.stop()
         trainingPresenter?.targetAnimator.stop()
         trainingPresenter = nil
