@@ -42,6 +42,11 @@ struct PetScreen: View {
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
+                    // Catch the simulation up to now at once, so returning hours
+                    // later doesn't briefly show the stale (e.g. night) scene
+                    // before the next tick. Restart the loop if it was stopped.
+                    presenter.startGameLoop()
+                    presenter.environmentDidChange()
                     // Don't cancel reminders here — a watch flips active on every
                     // wrist raise, which would wipe pending notifications before
                     // they ever fire. The next background reschedule keeps them

@@ -46,16 +46,29 @@ final class AppPresenter {
 
     private func loadOrStartNew() {
         do {
-            if let saved = try store.load() {
-                if saved.isDead {
-                    startDeath(state: saved)
-                } else if saved.isEgg {
-                    startHatching()
-                } else {
-                    startAlive(state: saved)
-                }
-            } else {
+            guard let saved = try store.load() else {
                 startHatching()
+                return
+            }
+            if saved.isEgg {
+                startHatching()
+                return
+            }
+
+            // Catch the saved pet up to now *before* the first render, so the
+            // scene (day/night, sleep) is current immediately — no stale-night
+            // flash — and a death that happened while away is surfaced at once.
+            let advanced = GameEngine.advance(
+                saved, to: .now,
+                isNight: weatherStore.snapshot.map { !$0.isDaylight },
+                steps: stepActivityStore.todaySteps
+            )
+            try? store.save(advanced)
+
+            if advanced.isDead {
+                startDeath(state: advanced)
+            } else {
+                startAlive(state: advanced)
             }
         } catch {
             Log.presentation.error("Failed to load state: \(error)")
