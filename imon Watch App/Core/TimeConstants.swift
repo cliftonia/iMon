@@ -20,6 +20,10 @@ nonisolated enum TimeConstants {
     /// Owner has 20 minutes to respond to a care call before it counts as a care mistake
     static let careMistakeWindow: TimeInterval = 1_200
 
+    /// A light left on at night accrues a mistake only every 3 hours, so one
+    /// forgetful night nudges evolution toward neglect without hard-locking it.
+    static let lightsMistakeWindow: TimeInterval = 10_800
+
     // MARK: - Game Loop
 
     /// Main simulation tick fires every 30 seconds

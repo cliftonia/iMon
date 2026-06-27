@@ -18,16 +18,23 @@ nonisolated enum CareNotificationPlanner {
         let times = state.timestamps
         let name = state.species.displayName
 
-        // Hunger / strength reach empty.
+        // Hunger / strength reach empty. Scale by activity exactly as the
+        // simulators do, or an active wearer's faster-draining pet would be
+        // flagged late (it's already starving by the time the alert fires).
+        let hungerInterval = TimeConstants.hungerDepletionInterval
+            / (steps.map { ActivityModel.hungerRateMultiplier(steps: $0) } ?? 1.0)
+        let strengthInterval = TimeConstants.strengthDepletionInterval
+            / (steps.map { ActivityModel.strengthRateMultiplier(steps: $0) } ?? 1.0)
+
         if state.hungerHearts.value > 0 {
             let fire = times.lastHungerDecayAt.addingTimeInterval(
-                Double(state.hungerHearts.value) * TimeConstants.hungerDepletionInterval
+                Double(state.hungerHearts.value) * hungerInterval
             )
             candidates.append(CareNotification(kind: .hunger, fireDate: fire, petName: name))
         }
         if state.strengthHearts.value > 0 {
             let fire = times.lastStrengthDecayAt.addingTimeInterval(
-                Double(state.strengthHearts.value) * TimeConstants.strengthDepletionInterval
+                Double(state.strengthHearts.value) * strengthInterval
             )
             candidates.append(CareNotification(kind: .strength, fireDate: fire, petName: name))
         }

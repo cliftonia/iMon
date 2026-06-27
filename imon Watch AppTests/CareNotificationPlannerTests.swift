@@ -95,6 +95,19 @@ struct CareNotificationPlannerTests {
     }
 
     @Test
+    func `an active wearer's hunger alert fires sooner than a still one`() {
+        let now = today(at: 8)
+        let state = makeTestState(species: .emberkin, hunger: 2, at: now)
+        let active = notification(
+            CareNotificationPlanner.plan(for: state, now: now, steps: 9_000), .hunger
+        )
+        let still = notification(
+            CareNotificationPlanner.plan(for: state, now: now, steps: nil), .hunger
+        )
+        #expect((active?.fireDate ?? .distantFuture) < (still?.fireDate ?? .distantPast))
+    }
+
+    @Test
     func `a collapsing pet is warned before it fades`() {
         // The fading warning is exempt from the night drop, so it fires whenever due.
         let now = today(at: 18)   // 6pm — already "night" for the drop filter

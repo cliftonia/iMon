@@ -77,7 +77,7 @@ struct CareMistakeTrackerTests {
         var state = makeTestState(hunger: 4, strength: 4, at: now)
         state.lightsOn = true
         state.timestamps.pendingLightsMistakeAt =
-            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+            now.addingTimeInterval(-TimeConstants.lightsMistakeWindow)
 
         state = CareMistakeTracker.apply(to: state, at: now, bedtime: true)
         #expect(state.careMistakes == 1)
@@ -105,7 +105,7 @@ struct CareMistakeTrackerTests {
         state.timestamps.pendingCareMistakeAt =
             now.addingTimeInterval(-TimeConstants.careMistakeWindow)
         state.timestamps.pendingLightsMistakeAt =
-            now.addingTimeInterval(-TimeConstants.careMistakeWindow)
+            now.addingTimeInterval(-TimeConstants.lightsMistakeWindow)
 
         state = CareMistakeTracker.apply(to: state, at: now, bedtime: true)
         #expect(state.careMistakes == 2)

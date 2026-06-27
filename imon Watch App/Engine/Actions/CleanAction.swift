@@ -15,6 +15,9 @@ nonisolated enum CleanAction {
 
         var state = state
         state.poopCount = 0
+        // Reset the poop timer so cleaning grants a fresh interval — otherwise a
+        // pile nearly due could reappear minutes after the owner just tidied up.
+        state.timestamps.lastPoopAt = date
         return state
     }
 }

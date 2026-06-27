@@ -59,12 +59,12 @@ nonisolated enum CareMistakeTracker {
             if let pendingAt = state.timestamps.pendingLightsMistakeAt {
                 let mistakes = TickMath.ticks(
                     from: pendingAt, to: now,
-                    interval: TimeConstants.careMistakeWindow
+                    interval: TimeConstants.lightsMistakeWindow
                 )
                 if mistakes > 0 {
                     state.careMistakes += mistakes
                     state.timestamps.pendingLightsMistakeAt = pendingAt.addingTimeInterval(
-                        Double(mistakes) * TimeConstants.careMistakeWindow
+                        Double(mistakes) * TimeConstants.lightsMistakeWindow
                     )
                 }
             } else {
