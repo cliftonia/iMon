@@ -57,8 +57,17 @@ nonisolated enum TimeConstants {
 
     // MARK: - Notifications
 
-    /// How far ahead to schedule the "go for a walk" nudge for a sedentary wearer.
-    static let walkNudgeLead: TimeInterval = 10_800
+    /// Local hour (24h) from which a low step count earns an exercise nudge.
+    static let exerciseHour: Int = 15
+
+    /// Today's steps below this after `exerciseHour` earn an exercise nudge.
+    static let exerciseStepTarget: Int = 5_000
+
+    /// Small lead before the exercise nudge fires, so it's prompt but not instant.
+    static let exerciseNudgeLead: TimeInterval = 600
+
+    /// How long before a collapse death to warn that the pet is fading (6 hours).
+    static let nearingDeathLead: TimeInterval = 21_600
 
     // MARK: - Background Refresh
 

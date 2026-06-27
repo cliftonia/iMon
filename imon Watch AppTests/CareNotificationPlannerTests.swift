@@ -72,34 +72,55 @@ struct CareNotificationPlannerTests {
     }
 
     @Test
-    func `a sedentary wearer gets a walk nudge, an active one does not`() {
-        let now = today(at: 8)
-        let state = makeTestState(at: now)
+    func `a lazy afternoon earns an exercise nudge`() {
+        let afternoon = today(at: 16)   // after 3pm
+        let state = makeTestState(at: afternoon)
+
+        // Lazy after 3pm → nudge; active → none; no step data → none.
         #expect(notification(
-            CareNotificationPlanner.plan(for: state, now: now, steps: 0), .walk
+            CareNotificationPlanner.plan(for: state, now: afternoon, steps: 1_000), .exercise
         ) != nil)
         #expect(notification(
-            CareNotificationPlanner.plan(for: state, now: now, steps: 8_000), .walk
+            CareNotificationPlanner.plan(for: state, now: afternoon, steps: 9_000), .exercise
         ) == nil)
         #expect(notification(
-            CareNotificationPlanner.plan(for: state, now: now, steps: nil), .walk
+            CareNotificationPlanner.plan(for: state, now: afternoon, steps: nil), .exercise
+        ) == nil)
+
+        // Before 3pm, no nudge even when lazy.
+        let morning = today(at: 9)
+        #expect(notification(
+            CareNotificationPlanner.plan(for: state, now: morning, steps: 1_000), .exercise
         ) == nil)
     }
 
     @Test
-    func `night-time events are dropped`() {
-        // Only a walk candidate (hunger/strength empty, piles maxed, not injured).
-        var state = makeTestState(species: .emberkin, hunger: 0, strength: 0)
-        state.poopCount = TimeConstants.maxPoopPiles
+    func `a collapsing pet is warned before it fades`() {
+        // The fading warning is exempt from the night drop, so it fires whenever due.
+        let now = today(at: 18)   // 6pm — already "night" for the drop filter
+        var state = makeTestState(hunger: 0, strength: 0, at: now)
+        state.timestamps.collapsingAt = now
 
-        // 16:00 + 3h walk lead = 19:00 → night → dropped.
-        let night = today(at: 16)
-        #expect(CareNotificationPlanner.plan(for: state, now: night, steps: 0).isEmpty)
+        let fading = notification(
+            CareNotificationPlanner.plan(for: state, now: now, steps: nil), .fading
+        )
+        let expected = now.addingTimeInterval(
+            TimeConstants.collapseDeathTime - TimeConstants.nearingDeathLead
+        )
+        #expect(fading?.fireDate == expected)
+    }
 
-        // 09:00 + 3h = 12:00 → daytime → kept.
-        let day = today(at: 9)
+    @Test
+    func `ordinary events that would land at night are dropped`() {
+        // An exercise nudge that would fire after dark is suppressed.
+        let state = makeTestState(at: today(at: 7))
+        let afterDark = today(at: 18)   // 6pm + lead → still dark → dropped
         #expect(notification(
-            CareNotificationPlanner.plan(for: state, now: day, steps: 0), .walk
+            CareNotificationPlanner.plan(for: state, now: afterDark, steps: 0), .exercise
+        ) == nil)
+        let daytime = today(at: 16)     // 4pm + lead → daytime → kept
+        #expect(notification(
+            CareNotificationPlanner.plan(for: state, now: daytime, steps: 0), .exercise
         ) != nil)
     }
 

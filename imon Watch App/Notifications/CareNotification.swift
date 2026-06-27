@@ -10,7 +10,8 @@ nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
         case strength
         case mess
         case injury
-        case walk
+        case exercise
+        case fading
     }
 
     let kind: Kind
@@ -28,7 +29,8 @@ nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
         case .strength: "\(petName) is weak \u{2014} give it vitamins!"
         case .mess: "\(petName) made a mess!"
         case .injury: "\(petName) is hurt \u{2014} heal it!"
-        case .walk: "\(petName) wants a walk!"
+        case .exercise: "\(petName) needs some exercise!"
+        case .fading: "\(petName) is fading \u{2014} care for it now!"
         }
     }
 }

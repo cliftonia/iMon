@@ -44,15 +44,29 @@ nonisolated enum CareNotificationPlanner {
             candidates.append(CareNotification(kind: .injury, fireDate: fire, petName: name))
         }
 
-        // Walk — nudge a sedentary wearer to get moving, like a restless dog.
-        if let steps, ActivityModel.isSedentary(steps: steps) {
-            let fire = now.addingTimeInterval(TimeConstants.walkNudgeLead)
-            candidates.append(CareNotification(kind: .walk, fireDate: fire, petName: name))
+        // Fading — warn before a languishing pet finally collapses to death.
+        if let collapsingAt = times.collapsingAt {
+            let fire = collapsingAt.addingTimeInterval(
+                TimeConstants.collapseDeathTime - TimeConstants.nearingDeathLead
+            )
+            candidates.append(CareNotification(kind: .fading, fireDate: fire, petName: name))
+        }
+
+        // Exercise — nudge a lazy wearer to get moving once the afternoon is gone.
+        let hour = Calendar.current.component(.hour, from: now)
+        if let steps, hour >= TimeConstants.exerciseHour, steps < TimeConstants.exerciseStepTarget {
+            let fire = now.addingTimeInterval(TimeConstants.exerciseNudgeLead)
+            candidates.append(CareNotification(kind: .exercise, fireDate: fire, petName: name))
         }
 
         return candidates
             .filter { $0.fireDate > now }
-            .filter { !SleepSchedule.isNight(weatherNight: nil, at: $0.fireDate) }
+            // Night-time events are dropped so the owner isn't buzzed at 2am — but
+            // a death warning is important enough to fire whenever it's due.
+            .filter {
+                $0.kind == .fading
+                    || !SleepSchedule.isNight(weatherNight: nil, at: $0.fireDate)
+            }
             .sorted { $0.fireDate < $1.fireDate }
     }
 }
