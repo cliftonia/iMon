@@ -109,6 +109,9 @@ final class AppPresenter {
     }
 
     private func startDeath(state: PetState) {
+        // Pop any pushed screen (e.g. Stats) first, or the grave would appear
+        // underneath it when the pet dies mid-navigation.
+        router.popToRoot()
         phase = .dead
         deathPresenter = DeathPresenter(state: state, onRestart: { [weak self] in
             self?.onRestart()
