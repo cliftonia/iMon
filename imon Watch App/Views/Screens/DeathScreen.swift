@@ -5,31 +5,42 @@ struct DeathScreen: View {
     let presenter: DeathPresenter
 
     var body: some View {
-        VStack(spacing: 12) {
-            LCDBezel {
-                SpriteView(animator: presenter.spriteAnimator, pixelSize: 4)
-                    .background(Color("LCDBackground"))
-                    .padding(4)
+        // Scroll-bounded so the grave + labels + button can't overflow (and
+        // collide with the clock) on the smaller 40/41mm screens.
+        ScrollView {
+            VStack(spacing: 10) {
+                LCDBezel {
+                    SpriteView(animator: presenter.spriteAnimator, pixelSize: 3)
+                        .background(Color("LCDBackground"))
+                        .padding(4)
+                }
+
+                Text("R.I.P.")
+                    .font(.system(
+                        size: 16,
+                        weight: .bold,
+                        design: .monospaced
+                    ))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+
+                Text(presenter.viewModel.speciesName)
+                    .font(.system(size: 11, design: .monospaced))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+
+                Text("Age: \(presenter.viewModel.ageDays) days")
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundStyle(Color.gray)
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+
+                Button("New Egg") {
+                    presenter.restartAction()
+                }
+                .accessibilityLabel("Start new egg")
             }
-
-            Text("R.I.P.")
-                .font(.system(
-                    size: 16,
-                    weight: .bold,
-                    design: .monospaced
-                ))
-
-            Text(presenter.viewModel.speciesName)
-                .font(.system(size: 11, design: .monospaced))
-
-            Text("Age: \(presenter.viewModel.ageDays) days")
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundStyle(Color.gray)
-
-            Button("New Egg") {
-                presenter.restartAction()
-            }
-            .accessibilityLabel("Start new egg")
+            .padding(.vertical, 4)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(

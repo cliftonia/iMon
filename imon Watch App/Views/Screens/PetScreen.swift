@@ -91,7 +91,7 @@ struct PetScreen: View {
     // MARK: - Debug Menu
 
     /// Debug-only label by the pet's name: the current weather icon and species.
-    /// The actions live on long-presses — hold A to cycle weather, B to evolve,
+    /// The actions live on long-presses - hold A to cycle weather, B to evolve,
     /// C to drain the pet and fire a test care notification.
     @ViewBuilder
     private var debugNameOverlay: some View {
