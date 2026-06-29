@@ -4,7 +4,7 @@ struct LCDDisplay: View {
 
     let configuration: LCDDisplayConfiguration
 
-    /// The active palette — `nightRed` in battery-saver mode, else `classic`.
+    /// The active palette - `nightRed` in battery-saver mode, else `classic`.
     @Environment(\.lcdTheme) private var theme
 
     // Field accessors so the drawing code (and the +Weather/+Inside extensions)
@@ -27,7 +27,7 @@ struct LCDDisplay: View {
         weatherCondition != nil || stormFlash
     }
 
-    /// Lit at night — the weather plays in a window inside a room.
+    /// Lit at night - the weather plays in a window inside a room.
     private var isIndoor: Bool {
         dayPhase == .inside
     }
@@ -40,16 +40,28 @@ struct LCDDisplay: View {
         theme.backgroundColor(lightsOn: lightsOn)
     }
 
-    /// The "lit pixel" colour. Not private — the weather extension draws with it.
+    /// The "lit pixel" colour. Not private - the weather extension draws with it.
     var basePixelColor: Color {
         theme.pixelColor(lightsOn: lightsOn)
+    }
+
+    /// The room's ambient shade, away from the lamp's bright pool. Shared by the
+    /// indoor glow and the eye-hole backing so they stay in step.
+    static let roomAmbientColor = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
+
+    /// The opaque colour that fills a creature's interior holes (eyes, mouths)
+    /// so the bare-eye look is kept while the backdrop behind it is blocked.
+    /// Matched to the scene: the room ambient when inside, else the screen
+    /// background - which already tracks lights-on/off, i.e. day/night dimming.
+    private var holeBackingColor: Color {
+        isIndoor ? Self.roomAmbientColor : backgroundColor
     }
 
     var body: some View {
         if isAnimated {
             TimelineView(.periodic(from: .now, by: Self.weatherFrameInterval)) { timeline in
                 // Wrap the tick count well within 32-bit Int range (watchOS is
-                // arm64_32) — the effects all cycle on `% n` so a slow wrap is fine.
+                // arm64_32) - the effects all cycle on `% n` so a slow wrap is fine.
                 let ticks = timeline.date.timeIntervalSinceReferenceDate
                     / Self.weatherFrameInterval
                 let phase = Int(ticks.truncatingRemainder(dividingBy: 1_000_000))
@@ -110,6 +122,14 @@ struct LCDDisplay: View {
                 phase: weatherPhase, in: context, size: size,
                 pixelWidth: pixelWidth, pixelHeight: pixelHeight
             )
+            // Outdoors the sky/weather plays in front of the pet, so re-stamp the
+            // creature's eyes on top - otherwise a walking pet's eyes sweep across
+            // the animated layer and flicker as sun, stars or rain pass behind.
+            fillInteriorHoles(
+                leftSprite, in: context,
+                offsetX: leftSpriteOffsetX, offsetY: leftSpriteOffsetY,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight
+            )
         }
     }
 
@@ -151,19 +171,50 @@ struct LCDDisplay: View {
     ) {
         let pixelColor = basePixelColor
 
+        // Enclosed holes first, blocking whatever is drawn behind the body.
+        fillInteriorHoles(
+            sprite, in: context,
+            offsetX: offsetX, offsetY: offsetY,
+            pixelWidth: pixelWidth, pixelHeight: pixelHeight
+        )
+
+        // The lit body on top.
         for y in 0..<SpriteFrame.size {
-            for x in 0..<SpriteFrame.size {
-                guard sprite.pixel(x: x, y: y) else { continue }
+            for x in 0..<SpriteFrame.size where sprite.pixel(x: x, y: y) {
                 let rect = CGRect(
                     x: Double(x + offsetX) * pixelWidth,
                     y: Double(y + offsetY) * pixelHeight,
                     width: pixelWidth + 0.5,
                     height: pixelHeight + 0.5
                 )
-                context.fill(
-                    Path(rect),
-                    with: .color(pixelColor)
+                context.fill(Path(rect), with: .color(pixelColor))
+            }
+        }
+    }
+
+    /// Fills a sprite's enclosed holes (eyes, mouths) with an opaque,
+    /// scene-matched colour so the gap keeps the bare-eye look while nothing
+    /// shows through it. Run under the body to block the backdrop behind, and
+    /// again on top of front-drawn weather so a walking pet's eyes never flicker.
+    func fillInteriorHoles(
+        _ sprite: SpriteFrame,
+        in context: GraphicsContext,
+        offsetX: Int,
+        offsetY: Int = 0,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        let holes = sprite.interiorHoles()
+        let backing = holeBackingColor
+        for y in 0..<SpriteFrame.size {
+            for x in 0..<SpriteFrame.size where holes.pixel(x: x, y: y) {
+                let rect = CGRect(
+                    x: Double(x + offsetX) * pixelWidth,
+                    y: Double(y + offsetY) * pixelHeight,
+                    width: pixelWidth + 0.5,
+                    height: pixelHeight + 0.5
                 )
+                context.fill(Path(rect), with: .color(backing))
             }
         }
     }

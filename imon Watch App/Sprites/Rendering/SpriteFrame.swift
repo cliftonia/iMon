@@ -61,6 +61,41 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         SpriteFrame(rows: zip(rows, other.rows).map { $0 | $1 })
     }
 
+    /// The enclosed "holes": off pixels unreachable from the border through
+    /// other off pixels (4-connected) - eyes, mouths, any gap walled in by the
+    /// body. The renderer fills these with a dim, opaque colour so the animated
+    /// backdrop can't show through the creature. Gaps that open to the edge
+    /// (e.g. the space between two legs) stay empty and keep showing the scene.
+    func interiorHoles() -> SpriteFrame {
+        let n = Self.size
+        var exterior = [Bool](repeating: false, count: n * n)
+        var stack: [(x: Int, y: Int)] = []
+
+        func markExterior(_ x: Int, _ y: Int) {
+            guard x >= 0, x < n, y >= 0, y < n else { return }
+            guard !pixel(x: x, y: y), !exterior[y * n + x] else { return }
+            exterior[y * n + x] = true
+            stack.append((x, y))
+        }
+
+        for i in 0..<n {
+            markExterior(i, 0); markExterior(i, n - 1)
+            markExterior(0, i); markExterior(n - 1, i)
+        }
+        while let (x, y) = stack.popLast() {
+            markExterior(x + 1, y); markExterior(x - 1, y)
+            markExterior(x, y + 1); markExterior(x, y - 1)
+        }
+
+        var holeRows = [UInt16](repeating: 0, count: n)
+        for y in 0..<n {
+            for x in 0..<n where !pixel(x: x, y: y) && !exterior[y * n + x] {
+                holeRows[y] |= 1 << (15 - x)
+            }
+        }
+        return SpriteFrame(rows: holeRows)
+    }
+
     static let empty = SpriteFrame(
         rows: [UInt16](repeating: 0, count: 16)
     )

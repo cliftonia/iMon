@@ -18,7 +18,7 @@ extension LCDDisplay {
     ) {
         let center = CGPoint(x: 10.5 * pixelWidth, y: 2.5 * pixelHeight)
         let bright = Color(red: 150 / 255, green: 184 / 255, blue: 118 / 255)
-        let dim = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
+        let dim = Self.roomAmbientColor
         context.fill(
             Path(CGRect(origin: .zero, size: size)),
             with: .radialGradient(
@@ -74,7 +74,7 @@ extension LCDDisplay {
     static let windowCols = 21...28
     static let windowRows = 2...9
 
-    /// The window frame on the back wall — a clean border, no mullion bars.
+    /// The window frame on the back wall - a clean border, no mullion bars.
     static func windowFrameCells() -> [(x: Int, y: Int)] {
         let x0 = 20, x1 = 29, y0 = 1, y1 = 10
         var cells: [(x: Int, y: Int)] = []
@@ -83,7 +83,7 @@ extension LCDDisplay {
         return cells
     }
 
-    /// A small light tucked up against the ceiling — tiny cord and bulb.
+    /// A small light tucked up against the ceiling - tiny cord and bulb.
     static func lampCells(phase: Int) -> [(x: Int, y: Int)] {
         let cx = 10
         return [
@@ -94,7 +94,7 @@ extension LCDDisplay {
         ]
     }
 
-    /// Pulsing gleam around the hanging bulb — drawn dimmer, like a glow.
+    /// Pulsing gleam around the hanging bulb - drawn dimmer, like a glow.
     static func lampGleamCells(phase: Int) -> [(x: Int, y: Int)] {
         guard (phase / 3) % 2 == 0 else { return [] }
         let cx = 10
