@@ -26,15 +26,27 @@ struct StepProgressTests {
         )
     }
 
-    @Test func `first credit starts tracking without penalty`() {
+    @Test func `first credit baselines today without crediting pre-hatch steps`() {
+        // A pet hatched mid-day (or freshly reset) must not inherit the steps
+        // already walked today - it only earns the delta from here on.
         let start = StepProgress.Progress(
             lifetime: 0, creditedToday: 0, trackedDay: nil, goalPenalty: 0
         )
         let result = advance(start, todaySteps: 3_000, now: Self.day1)
-        #expect(result.lifetime == 3_000)
+        #expect(result.lifetime == 0)
         #expect(result.creditedToday == 3_000)
         #expect(result.trackedDay == Self.day1)
         #expect(result.goalPenalty == 0)
+    }
+
+    @Test func `steps after the first credit accrue from the baseline`() {
+        // Born at 3_000 steps today, later reaching 5_000 → only 2_000 credited.
+        let start = StepProgress.Progress(
+            lifetime: 0, creditedToday: 3_000, trackedDay: Self.day1, goalPenalty: 0
+        )
+        let result = advance(start, todaySteps: 5_000, now: Self.sameDayLater)
+        #expect(result.lifetime == 2_000)
+        #expect(result.creditedToday == 5_000)
     }
 
     @Test func `same day credits only the delta since last seen`() {

@@ -18,6 +18,9 @@ extension StepCountProvider {
                     end: .now,
                     options: .strictStartDate
                 )
+                // HKStatisticsQueryDescriptor + .cumulativeSum already merges and
+                // deduplicates across sources (watch + synced iPhone), matching
+                // the system Health app's daily total. No source filtering needed.
                 let samplePredicate = HKSamplePredicate.quantitySample(
                     type: stepType,
                     predicate: predicate
