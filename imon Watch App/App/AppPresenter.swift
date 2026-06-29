@@ -10,6 +10,7 @@ final class AppPresenter {
     enum LifecyclePhase {
         case loading
         case hatching
+        case onboarding
         case alive
         case dead
     }
@@ -18,6 +19,7 @@ final class AppPresenter {
     private(set) var petPresenter: PetPresenter?
     private(set) var statsPresenter: StatsPresenter?
     private(set) var hatchPresenter: HatchPresenter?
+    private(set) var onboardingPresenter: OnboardingPresenter?
     private(set) var deathPresenter: DeathPresenter?
 
     let router = AppRouter()
@@ -56,8 +58,8 @@ final class AppPresenter {
             }
 
             // Catch the saved pet up to now *before* the first render, so the
-            // scene (day/night, sleep) is current immediately — no stale-night
-            // flash — and a death that happened while away is surfaced at once.
+            // scene (day/night, sleep) is current immediately - no stale-night
+            // flash - and a death that happened while away is surfaced at once.
             let advanced = GameEngine.advance(
                 saved, to: .now,
                 isNight: weatherStore.snapshot.map { !$0.isDaylight },
@@ -86,8 +88,20 @@ final class AppPresenter {
     }
 
     private func onHatchComplete() {
-        let state = PetState.hatched(at: .now)
-        startAlive(state: state)
+        startOnboarding()
+    }
+
+    private func startOnboarding() {
+        phase = .onboarding
+        hatchPresenter = nil
+        onboardingPresenter = OnboardingPresenter { [weak self] in
+            self?.finishOnboarding()
+        }
+    }
+
+    private func finishOnboarding() {
+        onboardingPresenter = nil
+        startAlive(state: PetState.hatched(at: .now))
     }
 
     private func startAlive(state: PetState) {
@@ -104,6 +118,7 @@ final class AppPresenter {
         petPresenter = presenter
         statsPresenter = StatsPresenter()
         hatchPresenter = nil
+        onboardingPresenter = nil
         deathPresenter = nil
         router.popToRoot()
     }
@@ -153,6 +168,19 @@ final class AppPresenter {
 
     /// Reset the current pet back to a fresh egg (the ⚠️ menu button).
     func restartPet() {
+        #if DEBUG
+        // Debug: kill the pet instead of resetting, so the Death screen can be
+        // verified on demand. "New Egg" there still starts a fresh pet.
+        if let petPresenter {
+            var state = petPresenter.getCurrentState()
+            state.isDead = true
+            try? store.save(state)
+            petPresenter.stopGameLoop()
+            self.petPresenter = nil
+            startDeath(state: state)
+            return
+        }
+        #endif
         petPresenter?.stopGameLoop()
         petPresenter = nil
         onRestart()

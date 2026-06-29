@@ -18,6 +18,11 @@ struct ContentView: View {
                         HatchScreen(presenter: hatchPresenter)
                     }
 
+                case .onboarding:
+                    if let onboardingPresenter = appPresenter.onboardingPresenter {
+                        OnboardingScreen(presenter: onboardingPresenter)
+                    }
+
                 case .alive:
                     if let petPresenter = appPresenter.petPresenter {
                         PetScreen(presenter: petPresenter)
