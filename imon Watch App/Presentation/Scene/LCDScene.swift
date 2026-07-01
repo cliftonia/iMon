@@ -16,18 +16,25 @@ nonisolated enum SceneResolver {
     /// - An **action ceremony** (feeding, cleaning, healing) plays in its own
     ///   clean scene — no room, no weather — but the **lighting matches where
     ///   the pet is**: lit inside or by day, dark outside at night.
+    /// - A **care mess** (poop on the floor, or an injury needing medicine)
+    ///   hides the weather so the care cue reads clearly against the scene.
     /// - Otherwise (idle, or a **refusal**) it's the full environment: real
     ///   light, day phase and weather.
     static func home(
         dayPhase: DayPhase,
         lightsOn: Bool,
         weather: WeatherIconCondition?,
-        isInActionScene: Bool
+        isInActionScene: Bool,
+        careMessPresent: Bool
     ) -> LCDScene {
         if isInActionScene {
             return LCDScene(lightsOn: lightsOn, dayPhase: .day, weather: nil)
         }
-        return LCDScene(lightsOn: lightsOn, dayPhase: dayPhase, weather: weather)
+        return LCDScene(
+            lightsOn: lightsOn,
+            dayPhase: dayPhase,
+            weather: careMessPresent ? nil : weather
+        )
     }
 
     /// The battle / training arena — always outdoors: lit by day, dark at night,

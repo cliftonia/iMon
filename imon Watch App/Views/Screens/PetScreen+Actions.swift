@@ -9,11 +9,14 @@ extension PetScreen {
     /// The home screen's scene: a clean booth during an action ceremony, else
     /// the full environment. Resolved by `SceneResolver` (the rules' home).
     var homeScene: LCDScene {
-        SceneResolver.home(
+        let status = presenter.viewModel.status
+        let careMessPresent = (status?.poopCount ?? 0) > 0 || status?.isInjured == true
+        return SceneResolver.home(
             dayPhase: presenter.viewModel.dayPhase,
-            lightsOn: presenter.viewModel.status?.lightsOn ?? true,
+            lightsOn: status?.lightsOn ?? true,
             weather: appPresenter.weatherStore.displaySnapshot?.condition,
-            isInActionScene: presenter.viewModel.isInActionScene
+            isInActionScene: presenter.viewModel.isInActionScene,
+            careMessPresent: careMessPresent
         )
     }
 

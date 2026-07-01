@@ -13,7 +13,8 @@ struct SceneResolverTests {
     @Test func `idle home shows the full environment`() {
         let scene = SceneResolver.home(
             dayPhase: .night, lightsOn: false,
-            weather: .rain, isInActionScene: false
+            weather: .rain, isInActionScene: false,
+            careMessPresent: false
         )
         #expect(scene.lightsOn == false)
         #expect(scene.dayPhase == .night)
@@ -23,7 +24,8 @@ struct SceneResolverTests {
     @Test func `inside at night keeps the room and weather when idle`() {
         let scene = SceneResolver.home(
             dayPhase: .inside, lightsOn: true,
-            weather: .cloudy, isInActionScene: false
+            weather: .cloudy, isInActionScene: false,
+            careMessPresent: false
         )
         #expect(scene.dayPhase == .inside)
         #expect(scene.weather == .cloudy)
@@ -33,7 +35,8 @@ struct SceneResolverTests {
     @Test func `refusal at night stays outside in the dark`() {
         let scene = SceneResolver.home(
             dayPhase: .night, lightsOn: false,
-            weather: .storm, isInActionScene: false
+            weather: .storm, isInActionScene: false,
+            careMessPresent: false
         )
         #expect(scene.lightsOn == false)
         #expect(scene.dayPhase == .night)
@@ -46,7 +49,8 @@ struct SceneResolverTests {
     @Test func `action outside at night is a dark clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .night, lightsOn: false,
-            weather: .rain, isInActionScene: true
+            weather: .rain, isInActionScene: true,
+            careMessPresent: false
         )
         #expect(scene.lightsOn == false)        // dark outside at night
         #expect(scene.dayPhase == .day)         // own scene — no room
@@ -56,7 +60,8 @@ struct SceneResolverTests {
     @Test func `action inside is a lit clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .inside, lightsOn: true,
-            weather: .cloudy, isInActionScene: true
+            weather: .cloudy, isInActionScene: true,
+            careMessPresent: false
         )
         #expect(scene.lightsOn)                 // lit because the light is on
         #expect(scene.dayPhase == .day)         // own scene — no room
@@ -66,11 +71,25 @@ struct SceneResolverTests {
     @Test func `action by day is a lit clean booth`() {
         let scene = SceneResolver.home(
             dayPhase: .day, lightsOn: true,
-            weather: .snow, isInActionScene: true
+            weather: .snow, isInActionScene: true,
+            careMessPresent: false
         )
         #expect(scene.lightsOn)
         #expect(scene.dayPhase == .day)
         #expect(scene.weather == nil)
+    }
+
+    // MARK: - Home: a care mess (poop / injury) hides the weather
+
+    @Test func `a care mess hides the weather but keeps the environment`() {
+        let scene = SceneResolver.home(
+            dayPhase: .day, lightsOn: true,
+            weather: .rain, isInActionScene: false,
+            careMessPresent: true
+        )
+        #expect(scene.weather == nil)       // weather hidden for the care cue
+        #expect(scene.dayPhase == .day)     // still the full environment
+        #expect(scene.lightsOn)
     }
 
     // MARK: - Arena: outdoors, follows day/night, never the room
