@@ -1,5 +1,4 @@
 import Foundation
-import WatchKit
 
 // MARK: - Lights
 
@@ -10,8 +9,9 @@ extension PetPresenter {
             to: state, night: currentlyNight, at: .now
         )
         guard result == .toggled else {
-            // Refused — by day the light must stay on.
-            WKInterfaceDevice.rejectHaptic()
+            // Refused: by day the light is forced on, so play the head-shake
+            // (which also fires the reject haptic) like every other refusal.
+            refuse()
             return
         }
         state = newState
