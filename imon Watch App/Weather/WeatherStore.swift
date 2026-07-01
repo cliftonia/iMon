@@ -55,6 +55,19 @@ final class WeatherStore {
         self.fallback = fallback
     }
 
+    /// Night derived from the reading's daylight flag, but only while the reading
+    /// is still fresh. A stale reading (e.g. last night's, on reopening the next
+    /// day) returns nil so day/night falls back to the clock instead of showing
+    /// the old night until a fetch completes.
+    func nightSignal(now: Date = .now) -> Bool? {
+        guard let snapshot, let lastFetch,
+              now.timeIntervalSince(lastFetch) < TimeConstants.weatherCacheInterval
+        else {
+            return nil
+        }
+        return !snapshot.isDaylight
+    }
+
     /// Kicks off a refresh unless one is in flight or the last fetch is still
     /// within the cache window. Returns the spawned task (nil if skipped).
     @discardableResult

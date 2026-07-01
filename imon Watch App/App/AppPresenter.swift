@@ -62,7 +62,7 @@ final class AppPresenter {
             // flash - and a death that happened while away is surfaced at once.
             let advanced = GameEngine.advance(
                 saved, to: .now,
-                isNight: weatherStore.snapshot.map { !$0.isDaylight },
+                isNight: weatherStore.nightSignal(),
                 steps: stepActivityStore.todaySteps
             )
             try? store.save(advanced)
@@ -110,7 +110,7 @@ final class AppPresenter {
             state: state,
             store: store,
             currentNight: { [weatherStore] in
-                weatherStore.snapshot.map { !$0.isDaylight }
+                weatherStore.nightSignal()
             },
             currentSteps: { [stepActivityStore] in stepActivityStore.todaySteps },
             onDeath: { [weak self] in self?.checkDeath() }
