@@ -12,7 +12,23 @@ nonisolated struct NotificationScheduler: Sendable {
     let requestAuthorization: @Sendable () async -> Bool
 }
 
-extension NotificationScheduler {
+nonisolated extension NotificationScheduler {
+
+    /// Builds a reminder's content, attaching the pet's home-scene sprite for the
+    /// sky at `fireDate` (the moment it shows). Shared by scheduled and one-off sends.
+    private static func makeContent(
+        title: String, body: String, species: PetSpecies, fireDate: Date
+    ) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        let isNight = SleepSchedule.isNight(weatherNight: nil, at: fireDate)
+        if let sprite = NotificationSpriteRenderer.attachment(for: species, isNight: isNight) {
+            content.attachments = [sprite]
+        }
+        return content
+    }
 
     static func live(now: @escaping @Sendable () -> Date = { Date() }) -> NotificationScheduler {
         NotificationScheduler(
@@ -20,14 +36,10 @@ extension NotificationScheduler {
                 let center = UNUserNotificationCenter.current()
                 center.removeAllPendingNotificationRequests()
                 for notification in notifications {
-                    let content = UNMutableNotificationContent()
-                    content.title = notification.title
-                    content.body = notification.body
-                    content.sound = .default
-                    if let sprite = NotificationSpriteRenderer.attachment(for: notification.species) {
-                        content.attachments = [sprite]
-                    }
-
+                    let content = makeContent(
+                        title: notification.title, body: notification.body,
+                        species: notification.species, fireDate: notification.fireDate
+                    )
                     let interval = max(1, notification.fireDate.timeIntervalSince(now()))
                     let trigger = UNTimeIntervalNotificationTrigger(
                         timeInterval: interval, repeats: false
@@ -39,13 +51,7 @@ extension NotificationScheduler {
                 }
             },
             notify: { title, body, species in
-                let content = UNMutableNotificationContent()
-                content.title = title
-                content.body = body
-                content.sound = .default
-                if let sprite = NotificationSpriteRenderer.attachment(for: species) {
-                    content.attachments = [sprite]
-                }
+                let content = makeContent(title: title, body: body, species: species, fireDate: now())
                 let request = UNNotificationRequest(
                     identifier: "event-\(title)", content: content, trigger: nil
                 )
