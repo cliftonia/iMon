@@ -21,6 +21,27 @@ struct FeedActionTests {
     }
 
     @Test
+    func `meat is refused only when hunger is full`() {
+        let full = makeTestState(hunger: PetSpecies.emberkin.maxHunger, strength: 1)
+        #expect(FeedAction.isSated(full, food: .meat))
+        #expect(!FeedAction.isSated(full, food: .vitamin))
+    }
+
+    @Test
+    func `vitamin is refused only when strength is full`() {
+        let full = makeTestState(hunger: 1, strength: PetSpecies.emberkin.maxStrength)
+        #expect(FeedAction.isSated(full, food: .vitamin))
+        #expect(!FeedAction.isSated(full, food: .meat))
+    }
+
+    @Test
+    func `neither food is refused when both stats have room`() {
+        let hungry = makeTestState(hunger: 1, strength: 1)
+        #expect(!FeedAction.isSated(hungry, food: .meat))
+        #expect(!FeedAction.isSated(hungry, food: .vitamin))
+    }
+
+    @Test
     func `cannot feed while sleeping`() {
         var state = makeTestState()
         state.isSleeping = true

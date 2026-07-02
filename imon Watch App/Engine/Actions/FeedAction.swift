@@ -13,6 +13,17 @@ nonisolated enum FeedAction {
         !state.isDead && !state.isEgg && !state.isSleeping
     }
 
+    /// Whether the stat this food refills is already at capacity, so eating it
+    /// would only add weight — a cue for the pet to refuse as "full".
+    static func isSated(_ state: PetState, food: FoodKind) -> Bool {
+        switch food {
+        case .meat:
+            return state.hungerHearts.value >= state.species.maxHunger
+        case .vitamin:
+            return state.strengthHearts.value >= state.species.maxStrength
+        }
+    }
+
     // MARK: - Apply
 
     static func apply(to state: PetState, food: FoodKind, at date: Date = .now) -> PetState {

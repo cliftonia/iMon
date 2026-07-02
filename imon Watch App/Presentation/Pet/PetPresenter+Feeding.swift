@@ -20,6 +20,11 @@ extension PetPresenter {
             cancelActivity()
             return
         }
+        guard !FeedAction.isSated(state, food: food) else {
+            // Already full on this stat — shake it off rather than overfeed.
+            refuse()
+            return
+        }
         viewModel.selectedFood = food
         WKInterfaceDevice.buttonHaptic()
         activityTask?.cancel()
