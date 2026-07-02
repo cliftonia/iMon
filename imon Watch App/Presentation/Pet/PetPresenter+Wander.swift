@@ -20,6 +20,7 @@ extension PetPresenter {
             || viewModel.screenMode != .normal
             || state.isSleeping
             || state.isDead
+            || state.isLanguishing
     }
 
     private func scheduleNextWander() {

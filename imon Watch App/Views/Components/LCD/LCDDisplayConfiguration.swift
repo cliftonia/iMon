@@ -15,6 +15,8 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
     let moonPhase: MoonPhase
     let dayPhase: DayPhase
     let stormFlash: Bool
+    /// Blinks a Call sign (the toy's attention alert) while the pet languishes.
+    let showCallSign: Bool
 
     init(
         leftSprite: SpriteFrame,
@@ -28,7 +30,8 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
         weatherCondition: WeatherIconCondition? = nil,
         moonPhase: MoonPhase = .full,
         dayPhase: DayPhase = .day,
-        stormFlash: Bool = false
+        stormFlash: Bool = false,
+        showCallSign: Bool = false
     ) {
         self.leftSprite = leftSprite
         self.rightSprite = rightSprite
@@ -42,5 +45,6 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
         self.moonPhase = moonPhase
         self.dayPhase = dayPhase
         self.stormFlash = stormFlash
+        self.showCallSign = showCallSign
     }
 }

@@ -10,8 +10,7 @@ nonisolated enum CollapseTracker {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        let languishing = state.hungerHearts.isEmpty && state.strengthHearts.isEmpty
-        if languishing {
+        if state.isLanguishing {
             if state.timestamps.collapsingAt == nil {
                 state.timestamps.collapsingAt = now
             }

@@ -6,6 +6,14 @@ import Foundation
 struct CollapseTrackerTests {
 
     @Test
+    func `isLanguishing is true only when both stats are empty`() {
+        #expect(makeTestState(hunger: 0, strength: 0).isLanguishing)
+        #expect(!makeTestState(hunger: 1, strength: 0).isLanguishing)
+        #expect(!makeTestState(hunger: 0, strength: 1).isLanguishing)
+        #expect(!makeTestState(hunger: 2, strength: 2).isLanguishing)
+    }
+
+    @Test
     func `both stats empty starts the collapse countdown`() {
         let now = Date.now
         let state = makeTestState(hunger: 0, strength: 0, at: now)

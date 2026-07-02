@@ -173,6 +173,12 @@ nonisolated extension PetState {
     /// Whether the pet can build trained HP/POW. The Fresh runt (Dotkin) cannot.
     var canCondition: Bool { species != .dotkin }
 
+    /// Both stats are empty — the pet is languishing and the collapse countdown
+    /// toward death is running. Drives the on-screen weak look and Call sign.
+    var isLanguishing: Bool {
+        hungerHearts.isEmpty && strengthHearts.isEmpty
+    }
+
     /// Lifetime steps needed to leave the current stage, including any lazy-day
     /// penalty. Guards the `Int.max` ultimate sentinel against overflow.
     var evolutionGoal: Int {

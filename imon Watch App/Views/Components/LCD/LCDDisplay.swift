@@ -21,10 +21,12 @@ struct LCDDisplay: View {
     var moonPhase: MoonPhase { configuration.moonPhase }
     var dayPhase: DayPhase { configuration.dayPhase }
     var stormFlash: Bool { configuration.stormFlash }
+    var showCallSign: Bool { configuration.showCallSign }
 
-    /// Whether the LCD has an animated overlay (weather or the storm flash).
+    /// Whether the LCD has an animated overlay (weather, storm flash, or the
+    /// blinking Call sign) and so needs the periodic timeline to drive it.
     private var isAnimated: Bool {
-        weatherCondition != nil || stormFlash
+        weatherCondition != nil || stormFlash || showCallSign
     }
 
     /// Lit at night - the weather plays in a window inside a room.
@@ -130,6 +132,40 @@ struct LCDDisplay: View {
                 offsetX: leftSpriteOffsetX, offsetY: leftSpriteOffsetY,
                 pixelWidth: pixelWidth, pixelHeight: pixelHeight
             )
+        }
+
+        // Call sign last of all, so the attention alert reads over any scene.
+        drawCallSign(
+            phase: weatherPhase, in: context,
+            pixelWidth: pixelWidth, pixelHeight: pixelHeight
+        )
+    }
+
+    // MARK: - Call Sign
+
+    /// The toy's attention alert: a blinking "!" in the top-left while the pet
+    /// is languishing (hunger and strength both empty), summoning care.
+    private func drawCallSign(
+        phase: Int,
+        in context: GraphicsContext,
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) {
+        guard showCallSign, (phase / 3) % 2 == 0 else { return }
+
+        // A 2px-wide exclamation mark tucked into the top-left corner.
+        let cells: [(x: Int, y: Int)] = [
+            (1, 0), (2, 0), (1, 1), (2, 1), (1, 2), (2, 2),
+            (1, 4), (2, 4)
+        ]
+        for cell in cells {
+            let rect = CGRect(
+                x: Double(cell.x) * pixelWidth,
+                y: Double(cell.y) * pixelHeight,
+                width: pixelWidth + 0.5,
+                height: pixelHeight + 0.5
+            )
+            context.fill(Path(rect), with: .color(basePixelColor))
         }
     }
 

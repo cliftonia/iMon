@@ -13,6 +13,7 @@ nonisolated struct PetStatus: Sendable {
     let isInjured: Bool
     let isDead: Bool
     let isEgg: Bool
+    let isLanguishing: Bool
     let battleWins: Int
     let battleLosses: Int
     let needsAttention: Bool
@@ -30,6 +31,7 @@ nonisolated struct PetStatus: Sendable {
         isInjured = state.isInjured
         isDead = state.isDead
         isEgg = state.isEgg
+        isLanguishing = state.isLanguishing
         battleWins = state.battleWins
         battleLosses = state.battleLosses
         needsAttention = state.hungerHearts.isEmpty

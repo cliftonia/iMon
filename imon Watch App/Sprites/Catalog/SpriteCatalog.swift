@@ -174,6 +174,25 @@ nonisolated extension SpriteCatalog {
         }
     }
 
+    /// A weak, sagging loop derived from the idle frames — no per-species art,
+    /// matching how sleep/happy are derived. Slow and drooping so a languishing
+    /// pet reads as faint; paired on-screen with the flashing Call sign.
+    static func weakAnimation(for species: PetSpecies) -> SpriteAnimation {
+        let idle = frames(for: species, kind: .idle)
+        let idle1 = idle.first ?? .empty
+        let idle2 = idle.count > 1 ? idle[1] : idle1
+        return SpriteAnimation(
+            frames: [
+                idle1.shiftedDown(1),
+                idle1.shiftedDown(2),
+                idle2.shiftedDown(1),
+                idle1.shiftedDown(2)
+            ],
+            frameDuration: 0.7,
+            loops: true
+        )
+    }
+
     /// Generates a simple 2-frame side-walk from idle frames
     /// using horizontal shift as a placeholder side profile.
     static func defaultSideWalkFromIdle(

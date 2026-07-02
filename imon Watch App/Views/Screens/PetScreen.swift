@@ -194,7 +194,10 @@ struct PetScreen: View {
                     leftSpriteOffsetX: presenter.viewModel.petOffsetX,
                     weatherCondition: homeScene.weather,
                     moonPhase: MoonPhase.current(date: .now),
-                    dayPhase: homeScene.dayPhase
+                    dayPhase: homeScene.dayPhase,
+                    showCallSign: !presenter.viewModel.isInActionScene
+                        && presenter.viewModel.status?.isLanguishing == true
+                        && presenter.viewModel.status?.isSleeping == false
                 ))
             }
             .fixedSize(horizontal: false, vertical: true)

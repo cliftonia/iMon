@@ -84,6 +84,13 @@ extension PetPresenter {
     /// can appear (foreground notifications are suppressed).
     func debugCareTest() {
         guard !viewModel.isBusy else { return }
+        // Empty both stats so the languishing state shows at once (weak body +
+        // blinking Call sign), then fire the care notification test.
+        state.hungerHearts = StatHearts(0)
+        state.strengthHearts = StatHearts(0)
+        updateViewModel()
+        updateAnimation()
+        save()
         viewModel.debugNotice = "checking…"
         Task { @MainActor [weak self] in
             guard let self else { return }

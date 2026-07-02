@@ -244,9 +244,15 @@ final class PetPresenter {
         // every other activity plays its own ceremony animation.
         switch viewModel.activity {
         case .idle, .feeding(.selecting):
-            let kind: SpriteCatalog.AnimationKind =
-                state.isSleeping ? .sleep : .idle
-            spriteAnimator.play(kind, for: state.species)
+            if state.isLanguishing, !state.isSleeping {
+                // Both stats empty: a weak, drooping loop (the Call sign blinks
+                // alongside it). Asleep at night it still rests, like the toy.
+                spriteAnimator.play(SpriteCatalog.weakAnimation(for: state.species))
+            } else {
+                let kind: SpriteCatalog.AnimationKind =
+                    state.isSleeping ? .sleep : .idle
+                spriteAnimator.play(kind, for: state.species)
+            }
         case .feeding(.serving), .feeding(.bite), .feeding(.satisfied),
              .cleaning, .healing, .refusing:
             break
