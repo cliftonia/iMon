@@ -31,5 +31,6 @@ struct SettingsDebugActions {
     let forceEvolve: () -> Void
     let careTest: () -> Void
     let killPet: () -> Void
+    let morph: (PetSpecies) -> Void
 }
 #endif

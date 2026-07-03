@@ -32,6 +32,11 @@ struct SettingsScreen: View {
             Button("Drain + care test") { presenter.debug.careTest() }
             Button("Kill pet", role: .destructive) { presenter.debug.killPet() }
         }
+        Section("Morph into") {
+            ForEach(PetSpecies.allCases) { species in
+                Button(species.displayName) { presenter.debug.morph(species) }
+            }
+        }
     }
     #endif
 }

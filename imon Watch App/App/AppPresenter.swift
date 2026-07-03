@@ -173,7 +173,11 @@ final class AppPresenter {
             cycleWeather: { [weatherStore] in weatherStore.cycleDebugCondition() },
             forceEvolve: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugEvolve() },
             careTest: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugCareTest() },
-            killPet: { [weak self] in self?.restartPet() }
+            killPet: { [weak self] in self?.restartPet() },
+            morph: { [weak self] species in
+                self?.router.popToRoot()
+                self?.petPresenter?.debugMorph(into: species)
+            }
         ))
         #else
         let presenter = SettingsPresenter(settings: settings)

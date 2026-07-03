@@ -78,6 +78,18 @@ extension PetPresenter {
         }
     }
 
+    /// Debug: morph the pet straight into any species, skipping the evolution
+    /// tree, so every creature's animations can be reviewed on demand.
+    func debugMorph(into species: PetSpecies) {
+        state = EvolutionEngine.evolve(state, to: species, at: .now)
+        state.isEgg = false
+        state.isDead = false
+        updateViewModel()
+        updateAnimation()
+        save()
+        WKInterfaceDevice.evolveHaptic()
+    }
+
     /// Debug: drain the pet so it visibly needs care (screen + complication flip
     /// to "hungry"), then fire a real care reminder ~12s out to verify on-device
     /// notification delivery. Lower your wrist right after pressing so the banner
