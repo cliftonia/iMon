@@ -4,135 +4,242 @@ import Foundation
 
 nonisolated extension SpriteCatalog {
 
+    // Dreadkin: gaunt bat-winged demon — out-curved horns at the skull's
+    // corners, grim slit face, long thin legs. The front frames carry
+    // three wing positions (up / mid / down) so the idle beats a full
+    // wingflap. A solid face row separates the eyes from the mouth slit.
+    //
+    //         ...#........#...    horn tips curve outward
+    //         .#..#......#..#.    horns + wing tips (mid)
+    //         .#...######...#.    head + wings
+    //         .##..#.##.#..##.    eyes
+    //         .##..######..##.    solid face row
+    //         ..##.##..##.##..    grim mouth slit + membrane
+    //         ...##########...    wings meet the shoulders
+    //         ..#.########.#..    scalloped membrane edge
+    //         .....######.....    chest
+    //         ......####......    gaunt body
+    //         ......#..#......    long thin legs
+    //         .....##..##.....    feet
+
     static func dreadkinFrames(
         _ kind: AnimationKind
     ) -> [SpriteFrame] {
-        let idle1 = SpriteFrame(rows: [
-            0x0380, //  ......###.......  horns
-            0x07C0, //  .....#####......
-            0x0FE0, //  ....#######.....  head
-            0x0DA0, //  ....##.##.#.....  eyes
-            0x0FE0, //  ....#######.....
-            0x0240, //  ......#..#......
-            0x07E0, //  .....######.....  body
-            0x0FF0, //  ....########....
-            0x3FFC, //  ..############..  wings spread
-            0x7FFE, //  .##############.
-            0x4FF2, //  .#..########..#.  wing tips
-            0x07E0, //  .....######.....
-            0x03C0, //  ......####......  waist
+        // Wings spread wide at shoulder height.
+        let wingsMid = SpriteFrame(rows: [
+            0x1008, //  ...#........#...  horn tips
+            0x4812, //  .#..#......#..#.  horns + wing tips
+            0x47E2, //  .#...######...#.  head + wings
+            0x65A6, //  .##..#.##.#..##.  eyes
+            0x67E6, //  .##..######..##.  solid face row
+            0x366C, //  ..##.##..##.##..  mouth slit + membrane
+            0x1FF8, //  ...##########...  wings meet shoulders
+            0x2FF4, //  ..#.########.#..  scalloped membrane edge
+            0x07E0, //  .....######.....  chest
             0x03C0, //  ......####......
-            0x0240, //  ......#..#......  legs
-            0x0660  //  .....##..##.....  feet
+            0x03C0, //  ......####......
+            0x03C0, //  ......####......
+            0x0240, //  ......#..#......
+            0x0240, //  ......#..#......
+            0x0660, //  .....##..##.....
+            0x0000  //  ................
         ])
 
-        let idle2 = SpriteFrame(rows: [
-            0x0380, 0x07C0, 0x0FE0, 0x0DA0, 0x0FE0,
-            0x0240, 0x07E0, 0x0FF0,
-            0x7FFE, //  wings up
-            0x3FFC,
-            0x0FF0,
+        // Wings swept fully down along the body, tips pointing low.
+        let wingsDown = SpriteFrame(rows: [
+            0x1008, //  ...#........#...  horn tips
+            0x0810, //  ....#......#....  horns
+            0x07E0, //  .....######.....  head
+            0x05A0, //  .....#.##.#.....  eyes
+            0x07E0, //  .....######.....  solid face row
+            0x1668, //  ...#.##..##.#...  mouth slit + wing roots
+            0x37EC, //  ..##.######.##..  chin + wings sweeping down
+            0x6FF6, //  .##.########.##.  shoulders + wings
+            0x67E6, //  .##..######..##.  chest + wings
+            0x43C2, //  .#....####....#.  body + wing tips low
+            0x03C0, //  ......####......
+            0x03C0, //  ......####......
+            0x0240, //  ......#..#......
+            0x0240, //  ......#..#......
+            0x0660, //  .....##..##.....
+            0x0000  //  ................
+        ])
+
+        let walk1 = SpriteFrame(rows: [
+            0x1008, 0x4812, 0x47E2, 0x65A6, 0x67E6, //  wings mid
+            0x366C,
+            0x1FF8,
+            0x2FF4,
             0x07E0,
             0x03C0,
             0x03C0,
+            0x03C0,
             0x0240,
-            0x0660
+            0x0420, //  .....#....#.....  legs striding apart
+            0x0C30, //  ....##....##....
+            0x0000
         ])
 
-        // Death Claw (Touch of Evil) — wings spread, claws slash forward
-        let attack1 = SpriteFrame(rows: [
-            0x0380, //  ......###.......  horns
-            0x07C0, //  .....#####......
-            0x0FE0, //  ....#######.....  head
-            0x0DA0, //  ....##.##.#.....  eyes
-            0x0FE0, //  ....#######.....
-            0x03C0, //  ......####......  neck
-            0x0FF0, //  ....########....  body leaning forward
-            0x1FF8, //  ...##########...
-            0x7FFE, //  .##############.  wings wide
-            0xFFFF, //  ################  wings fully spread
-            0x4FF2, //  .#..########..#.  wing tips
-            0x0FE0, //  ....#######.....  arms raised
-            0x03C0, //  ......####......
-            0x03C0, //  ......####......
-            0x0240, //  ......#..#......
-            0x0660  //  .....##..##.....
+        let eat1 = SpriteFrame(rows: [
+            0x1008,
+            0x4812,
+            0x47E2,
+            0x65A6,
+            0x67E6,
+            0x342C, //  ..##.#....#.##..  maw gapes wide
+            0x1FF8,
+            0x2FF4,
+            0x07E0,
+            0x03C0,
+            0x03C0,
+            0x03C0,
+            0x0240,
+            0x0240,
+            0x0660,
+            0x0000
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0380, //  ......###.......  horns
-            0x07C0, //  .....#####......
-            0x0FE0, //  ....#######.....
-            0x0DA0, //  ....##.##.#.....
-            0x0FE4, //  ....#######..#..  claw scratch 1
-            0x03C8, //  ......####..#...  diagonal slash
-            0x0FF4, //  ....########.#..  claw mark
-            0x1FE8, //  ...########.#...  slash
-            0x7FF4, //  .###########.#..  claw scratch 2
-            0xFFF8, //  #############...
-            0x4FF4, //  .#..########.#..  scratch 3
-            0x07E8, //  .....######.#...  diagonal
-            0x03D4, //  ......####.#.#..  claw tips
-            0x03C0, //  ......####......
-            0x0240, //  ......#..#......
-            0x0660  //  .....##..##.....
+        let eat2 = SpriteFrame(rows: [
+            0x1008,
+            0x4812,
+            0x47E2,
+            0x65A6,
+            0x67E6,
+            0x37EC, //  ..##.######.##..  mouth clamped shut
+            0x1FF8,
+            0x2FF4,
+            0x07E0,
+            0x03C0,
+            0x03C0,
+            0x03C0,
+            0x0240,
+            0x0240,
+            0x0660,
+            0x0000
         ])
 
-        // Side-walk: tall demon side, one wing visible, long limbs
+        // Sleep: eyes shut, wings drooped fully down.
+        let sleep1 = SpriteFrame(rows: [
+            0x1008,
+            0x0810,
+            0x07E0,
+            0x07E0, //  .....######.....  eyes shut
+            0x07E0,
+            0x1668,
+            0x37EC,
+            0x6FF6,
+            0x67E6,
+            0x43C2,
+            0x03C0,
+            0x03C0,
+            0x0240,
+            0x0240,
+            0x0660,
+            0x0000
+        ])
+
+        // Death Claw — twin diagonal rake slashes streak down-right.
+        let attackRake = SpriteFrame(rows: [
+            0x1008,
+            0x4812,
+            0x47E2,
+            0x65A6,
+            0x67E6,
+            0x366C,
+            0x1FF8,
+            0x2FF4,
+            0x07E0,
+            0x03D4, //  ......####.#.#..  rake slash tips
+            0x03CA, //  ......####..#.#.  slashes streak down
+            0x03C5, //  ......####...#.#
+            0x0240,
+            0x0240,
+            0x0660,
+            0x0000
+        ])
+
+        // Side-walk: gaunt profile — swept horns, folded cloak-wing on
+        // the back, long striding legs
         let sideWalk1 = SpriteFrame(rows: [
-            0x0700, //  .....###........  horns
-            0x0F80, //  ....#####.......
-            0x1F80, //  ...######.......  head
-            0x1B80, //  ...##.###.......  eye
-            0x0F80, //  ....#####.......
-            0x0700, //  .....###........  neck
-            0x0F80, //  ....#####.......  body
-            0x1FC0, //  ...#######......
-            0x3FC0, //  ..########......  wing
-            0x7F80, //  .########.......  wing spread
-            0x1FC0, //  ...#######......
+            0x0300, //  ......##........  horns swept back
+            0x3E00, //  ..#####.........  head top
+            0x7F00, //  .#######........  head
+            0x6F00, //  .##.####........  eye
+            0x3F00, //  ..######........  jaw
+            0x0E20, //  ....###...#.....  neck, wing tip behind
+            0x1F20, //  ...#####..#.....  shoulders + wing
+            0x0F60, //  ....####.##.....  body + wing
+            0x0FF0, //  ....########....  wing folds against the back
+            0x0FE0, //  ....#######.....
             0x0F80, //  ....#####.......
             0x0700, //  .....###........  waist
             0x0700, //  .....###........
-            0x0500, //  .....#.#........  legs stride
-            0x0900  //  ....#..#........  feet apart
+            0x0880, //  ....#...#.......  long legs stride
+            0x1080, //  ...#....#.......
+            0x3180  //  ..##...##.......  feet
         ])
 
+        // Legs pass under the body; the demon stalks down a pixel.
         let sideWalk2 = SpriteFrame(rows: [
-            0x0700, //  .....###........  horns
+            0x0000, //  ................
+            0x0300, //  ......##........  horns, head bobs down
+            0x3E00, //  ..#####.........
+            0x7F00, //  .#######........
+            0x6F00, //  .##.####........  eye
+            0x3F00, //  ..######........
+            0x0E20, //  ....###...#.....  neck, wing tip
+            0x1F20, //  ...#####..#.....
+            0x0F60, //  ....####.##.....
+            0x0FF0, //  ....########....
+            0x0FE0, //  ....#######.....
             0x0F80, //  ....#####.......
-            0x1F80, //  ...######.......  head
-            0x1B80, //  ...##.###.......  eye
-            0x0F80, //  ....#####.......
-            0x0700, //  .....###........  neck
-            0x0F80, //  ....#####.......  body
-            0x1FC0, //  ...#######......
-            0x7F80, //  .########.......  wing up
-            0x3FC0, //  ..########......
-            0x1FC0, //  ...#######......
-            0x0F80, //  ....#####.......
-            0x0700, //  .....###........  waist
             0x0700, //  .....###........
-            0x0A00, //  ....#.#.........  legs together
-            0x0A00  //  ....#.#.........  feet
+            0x0700, //  .....###........
+            0x0500, //  .....#.#........  legs together
+            0x0D80  //  ....##.##.......  feet
         ])
 
         switch kind {
-        case .idle, .walk:
-            return [idle1, idle2]
+        case .idle:
+            // An uneven wingbeat — held glides and quick double flaps —
+            // so the looping idle doesn't read as a metronome.
+            return [
+                wingsMid, wingsDown,
+                wingsMid, wingsMid,
+                wingsDown, wingsMid,
+                wingsDown, wingsDown
+            ]
+        case .walk:
+            return [walk1, wingsDown]
         case .sideWalk:
             return [sideWalk1, sideWalk2]
-        case .happy, .eat, .sleep:
-            return defaultAnimationFromIdle(idle1, idle2, kind)
+        case .happy:
+            // Crouch with wings down, then leap on beating wings.
+            return [
+                wingsDown.shiftedDown(1),
+                wingsMid,
+                wingsDown,
+                wingsMid.overlaying(SharedSprites.landingDust)
+            ]
+        case .eat:
+            return [eat1, eat2, eat1, wingsMid]
+        case .sleep:
+            // Eyes stay shut on every beat while the Z's pulse.
+            return [
+                sleep1,
+                sleep1.overlaying(SharedSprites.sleepZ2),
+                sleep1,
+                sleep1.overlaying(SharedSprites.sleepZ3)
+            ]
         case .attack:
             return [
-                idle1.shiftedRight(1),
-                attack1,
-                attack2,
-                idle1
+                wingsMid.shiftedRight(1),
+                wingsDown,
+                attackRake,
+                wingsMid
             ]
         case .refuse:
-            return defaultAnimationFromIdle(idle1, idle2, kind)
+            return defaultAnimationFromIdle(wingsMid, wingsDown, kind)
         }
     }
 }

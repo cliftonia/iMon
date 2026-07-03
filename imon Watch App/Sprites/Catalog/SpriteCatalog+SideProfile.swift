@@ -125,42 +125,50 @@ nonisolated extension SpriteCatalog {
         0x0000  //  ................
     ])
 
+    // T-rex mouth-open (native left), built on the sideWalk profile: the
+    // jaws jut FORWARD into a wide maw while the hinge at the back stays
+    // solid, so the silhouette never breaks. Horn, body, tail, and braced
+    // legs match the new side-profile stance.
     private static let rexkinMouthWide = SpriteFrame(rows: [
-        0x0600, //  .....##.........  horn
-        0x0F00, //  ....####........
-        0x1F80, //  ...######.......
-        0x1B80, //  ...##.###.......  eye
-        0x3E00, //  ..#####.........  upper jaw forward
-        0x0700, //  .....###........  mouth gap
-        0x3E00, //  ..#####.........  lower jaw forward
-        0x1F80, //  ...######.......  body
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x1FE0, //  ...########.....  tail
-        0x0FF0, //  ....########....
-        0x0FE0, //  ....#######.....
-        0x0F00, //  ....####........
-        0x0900, //  ....#..#........
-        0x1100  //  ...#...#........
+        0x0180, //  .......##.......  horn
+        0x3F00, //  ..######........  skull top
+        0x7700, //  .###.###........  eye
+        0xFF00, //  ########........  upper jaw juts forward
+        0x0300, //  ......##........  maw open, hinge at the back
+        0x7F00, //  .#######........  lower jaw juts forward
+        0x0F80, //  ....#####.......  neck
+        0x0FE0, //  ....#######.....  shoulders
+        0x1FF6, //  ...#########.##.  body + tail tip kicked up
+        0x1FFE, //  ...############.  body + tail
+        0x1FF8, //  ...##########...  tail underside
+        0x0FE0, //  ....#######.....  belly
+        0x07C0, //  .....#####......  legs braced together
+        0x0480, //  .....#..#.......
+        0x0CC0, //  ....##..##......  feet
+        0x0000  //  ................
     ])
 
+    // Stocky dino mouth-open (native left), built on the sideWalk profile:
+    // the jaws jut FORWARD into a wide maw while the hinge at the back
+    // stays solid, so the silhouette never breaks. Deep body, short thick
+    // tail, and braced legs match the new side-profile stance.
     private static let blazekinMouthWide = SpriteFrame(rows: [
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0F00, //  ....####........
-        0x1F80, //  ...######.......
-        0x1B80, //  ...##.###.......  eye
-        0x3E00, //  ..#####.........  upper jaw forward
-        0x0700, //  .....###........  mouth gap
-        0x1F80, //  ...######.......  body
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x1FE0, //  ...########.....  tail
-        0x0FF0, //  ....########....
-        0x0FE0, //  ....#######.....
-        0x0F00, //  ....####........
-        0x0900, //  ....#..#........
-        0x1100  //  ...#...#........
+        0x2A00, //  ..#.#.#.........  flame crest
+        0x3E00, //  ..#####.........  skull top, reared up
+        0x7700, //  .###.###........  eye
+        0xFF00, //  ########........  upper jaw juts forward
+        0x0300, //  ......##........  maw open, hinge at the back
+        0x7F00, //  .#######........  lower jaw juts forward
+        0x0FC0, //  ....######......  neck
+        0x1FE2, //  ...########...#.  shoulders, flame lick over tail
+        0x1FF6, //  ...#########.##.  body + flame-tip tail
+        0x3FFE, //  ..#############.  deep body + tail
+        0x3FF8, //  ..############..  tail underside
+        0x1FE0, //  ...########.....  belly
+        0x07C0, //  .....#####......  legs braced together
+        0x0480, //  .....#..#.......
+        0x0CC0, //  ....##..##......  feet
+        0x0000  //  ................
     ])
 
     private static let galekinMouthWide = SpriteFrame(rows: [
@@ -239,23 +247,27 @@ nonisolated extension SpriteCatalog {
         0x1180  //  ...#...##.......
     ])
 
+    // Demon mouth-open (native left), built on the sideWalk profile: the
+    // jaws jut FORWARD into a wide maw while the hinge at the back stays
+    // solid. Swept horns, folded cloak-wing, and braced legs match the
+    // new side-profile stance.
     private static let dreadkinMouthWide = SpriteFrame(rows: [
-        0x0700, //  .....###........  horns
-        0x0F80, //  ....#####.......
-        0x1F80, //  ...######.......
-        0x1B80, //  ...##.###.......  eye
-        0x3E00, //  ..#####.........  upper jaw forward
-        0x0700, //  .....###........  mouth gap
-        0x0F80, //  ....#####.......  body
-        0x1FC0, //  ...#######......
-        0x3FC0, //  ..########......  wing
-        0x7F80, //  .########.......
-        0x1FC0, //  ...#######......
+        0x0300, //  ......##........  horns swept back
+        0x3E00, //  ..#####.........  skull top
+        0x6F00, //  .##.####........  eye
+        0xFF00, //  ########........  upper jaw juts forward
+        0x0300, //  ......##........  maw open, hinge at the back
+        0x7F00, //  .#######........  lower jaw juts forward
+        0x0E20, //  ....###...#.....  neck, wing tip behind
+        0x1F20, //  ...#####..#.....  shoulders + wing
+        0x0F60, //  ....####.##.....  body + wing
+        0x0FF0, //  ....########....  wing folds against the back
+        0x0FE0, //  ....#######.....
         0x0F80, //  ....#####.......
         0x0700, //  .....###........  waist
         0x0700, //  .....###........
-        0x0500, //  .....#.#........
-        0x0900  //  ....#..#........
+        0x0500, //  .....#.#........  legs braced
+        0x0D80  //  ....##.##.......  feet
     ])
 
     private static let pyrekinMouthWide = SpriteFrame(rows: [
