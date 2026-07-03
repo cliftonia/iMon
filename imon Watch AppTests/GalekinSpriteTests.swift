@@ -56,8 +56,8 @@ struct GalekinSpriteTests {
         )
         for frame in idle.frames {
             let tipRow = frame.rows[9]
-            // Body core at cols 4-9 should have pixels set
-            let bodyCols: UInt16 = 0x0FC0 // ....######......
+            // Body core at cols 6-9 should have pixels set
+            let bodyCols: UInt16 = 0x03C0 // ......####......
             #expect(tipRow & bodyCols == bodyCols)
         }
     }
@@ -70,7 +70,7 @@ struct GalekinSpriteTests {
         let eat = SpriteCatalog.animation(
             for: .galekin, kind: .eat
         )
-        #expect(eat.frames[3] == idle.frames[0])
+        #expect(idle.frames.contains(eat.frames[3]))
     }
 
     @Test

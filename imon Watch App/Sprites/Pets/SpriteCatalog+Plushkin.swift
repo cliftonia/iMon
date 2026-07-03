@@ -4,123 +4,265 @@ import Foundation
 
 nonisolated extension SpriteCatalog {
 
+    // Plushkin: round teddy — wiggling ears, button eyes, stitched
+    // mouth, hug-ready arms with paw tips, and a heart pressed into
+    // the belly as negative space
+    //
+    //         ..###......###..    big round ears
+    //         .#####....#####.
+    //         ....########....    head top
+    //         ...##########...
+    //         ...##.####.##...    button eyes
+    //         ...##########...
+    //         ...####..####...    stitched mouth
+    //         ....########....    chin
+    //         .##############.    arms spread for a hug
+    //         .#.##########.#.    paw tips
+    //         ...###..#..##...    heart lobes on the belly
+    //         ...###.....##...    heart body
+    //         ...####...###...    heart point
+    //         ....########....
+    //         .....##..##.....    legs
+    //         ....###..###....    feet
+    //
+    // swiftlint:disable:next function_body_length
     static func plushkinFrames(
         _ kind: AnimationKind
     ) -> [SpriteFrame] {
         let idle1 = SpriteFrame(rows: [
-            0x0000, //  ................
-            0x1188, //  ...#...##...#...  ears
-            0x1188, //  ...#...##...#...
-            0x0FF0, //  ....########....  head
+            0x381C, //  ..###......###..  ears
+            0x7C3E, //  .#####....#####.  big round ears
+            0x0FF0, //  ....########....  head top
             0x1FF8, //  ...##########...
-            0x1BD8, //  ...##.####.##...  eyes (button)
-            0x0E70, //  ....###..###....
-            0x0CE0, //  ....##..###.....  mouth (stitched)
-            0x0FF0, //  ....########....  body
+            0x1BD8, //  ...##.####.##...  button eyes
             0x1FF8, //  ...##########...
-            0x3FFC, //  ..############..  wide body
-            0x3A5C, //  ..###.#..#.###..  heart on belly
-            0x3FFC, //  ..############..
-            0x1FF8, //  ...##########...
-            0x0990, //  ....#..##..#....  legs
-            0x1998  //  ...##..##..##...  feet
-        ])
-
-        let idle2 = SpriteFrame(rows: [
-            0x1188, //  ears
-            0x1188,
-            0x0FF0, 0x1FF8,
-            0x1BD8,
-            0x0E70,
-            0x0CE0,
-            0x0FF0,
-            0x1FF8,
-            0x3FFC,
-            0x3A5C, //  heart
-            0x3FFC,
-            0x1FF8,
-            0x0FF0,
-            0x0990,
-            0x1998
-        ])
-
-        // Hearts Attack (Lovely Attack) — arms reach forward, hearts fly out
-        let attack1 = SpriteFrame(rows: [
-            0x0000, //  ................
-            0x1188, //  ...#...##...#...  ears
-            0x1188, //  ...#...##...#...
-            0x0FF0, //  ....########....  head
-            0x1FF8, //  ...##########...
-            0x1BD8, //  ...##.####.##...  eyes
+            0x1E78, //  ...####..####...  stitched mouth
+            0x0FF0, //  ....########....  chin
+            0x7FFE, //  .##############.  arms spread for a hug
+            0x5FFA, //  .#.##########.#.  paw tips
+            0x1C98, //  ...###..#..##...  heart lobes on the belly
+            0x1C18, //  ...###.....##...  heart body
+            0x1E38, //  ...####...###...  heart point
             0x0FF0, //  ....########....
-            0x0CE0, //  ....##..###.....  mouth
-            0x1FF0, //  ...#########....  body shifted left (reaching)
-            0x3FF8, //  ..###########...  arms forward
-            0x7FFC, //  .#############..
-            0x7A5C, //  .####.#..#.###..  heart on belly
-            0x3FFC, //  ..############..
+            0x0660, //  .....##..##.....  legs
+            0x0E70  //  ....###..###....  feet
+        ])
+
+        // Ears wiggle in and the arms settle lower.
+        let idle2 = SpriteFrame(rows: [
+            0x1C38, //  ...###....###...  ears wiggle
+            0x7C3E, //  .#####....#####.  big round ears
+            0x0FF0,
+            0x1FF8,
+            0x1BD8, //  button eyes
+            0x1FF8,
+            0x1E78, //  stitched mouth
+            0x0FF0,
+            0x1FF8, //  ...##########...  shoulders
+            0x7FFE, //  .##############.  arms settle lower
+            0x5C9A, //  .#.###..#..##.#.  paw tips + heart lobes
+            0x1C18, //  heart body
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        // Happy: arms thrown high in a cheer.
+        let happy1 = SpriteFrame(rows: [
+            0x381C,
+            0x7C3E,
+            0x0FF0,
+            0x1FF8,
+            0x1BD8,
+            0x1FF8,
+            0x1E78,
+            0x6FF6, //  .##.########.##.  arms thrown high
+            0x7FFE, //  .##############.
+            0x1FF8,
+            0x1C98, //  heart
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        let happy2 = SpriteFrame(rows: [
+            0x1C38, //  ears wiggle mid-cheer
+            0x7C3E,
+            0x0FF0,
+            0x1FF8,
+            0x1BD8,
+            0x1FF8,
+            0x1E78,
+            0x6FF6,
+            0x7FFE,
+            0x1FF8,
+            0x1C98,
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        let eat1 = SpriteFrame(rows: [
+            0x381C,
+            0x7C3E,
+            0x0FF0,
+            0x1FF8,
+            0x1BD8,
+            0x1FF8,
+            0x1C38, //  ...###....###...  mouth open wide
+            0x0FF0,
+            0x1FF8, //  arms tucked while nibbling
+            0x1FF8,
+            0x1C98,
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        let eat2 = SpriteFrame(rows: [
+            0x381C,
+            0x7C3E,
+            0x0FF0,
+            0x1FF8,
+            0x1BD8,
+            0x1FF8,
+            0x1FF8, //  ...##########...  mouth closed
+            0x0FF0,
+            0x1FF8,
+            0x1FF8,
+            0x1C98,
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        // Sleep: ears flopped flat, eyes shut, arms hugging itself.
+        let sleep1 = SpriteFrame(rows: [
+            0x0038, //  ..........###...  Z
+            0x6006, //  .##..........##.  ears flopped flat
+            0x0FF0, //  ....########....
             0x1FF8, //  ...##########...
-            0x0990, //  ....#..##..#....
-            0x1998  //  ...##..##..##...
+            0x1FF8, //  ...##########...  eyes shut
+            0x1FF8, //  ...##########...
+            0x1E78, //  ...####..####...
+            0x0FF0, //  ....########....
+            0x3FFC, //  ..############..  arms hugging itself
+            0x1FF8, //  ...##########...
+            0x1C98, //  heart
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        let sleep2 = SpriteFrame(rows: [
+            0x001C, //  Z drifts up
+            0x6006,
+            0x0FF0,
+            0x1FF8,
+            0x1FF8,
+            0x1FF8,
+            0x1E78,
+            0x0FF0,
+            0x3FFC,
+            0x1FF8,
+            0x1C98,
+            0x1C18,
+            0x1E38, //  ...####...###...  heart point
+            0x0FF0,
+            0x0660,
+            0x0E70
+        ])
+
+        // Hearts Attack — the bear leans in, arms reaching, and a
+        // heart bursts out to the right.
+        let attack1 = SpriteFrame(rows: [
+            0x7038, //  .###......###...  ears (leaning in)
+            0xF87C, //  #####....#####..
+            0x1FE0, //  ...########.....  head top
+            0x3FF0, //  ..##########....
+            0x37B0, //  ..##.####.##....  button eyes
+            0x3FF0, //  ..##########....
+            0x3CF0, //  ..####..####....  stitched mouth
+            0x1FE0, //  ...########.....
+            0x3FFE, //  ..#############.  arm reaches out
+            0x7FF0, //  .###########....  paw braced
+            0x3930, //  ..###..#..##....  heart lobes
+            0x3830, //  ..###.....##....  heart body
+            0x3C70, //  ..####...###....  heart point
+            0x1FE0, //  ...########.....
+            0x0CC0, //  ....##..##......
+            0x1CE0  //  ...###..###.....
         ])
 
         let attack2 = SpriteFrame(rows: [
-            0x0000, //  ................
-            0x1188, //  ...#...##...#...
-            0x1188, //  ...#...##...#...
-            0x0FF0, //  ....########....
-            0x1FFE, //  ...############.  heart 1 flying
-            0x1BDA, //  ...##.####.##.#.  heart shape
-            0x0FFE, //  ....###########.
-            0x0CE0, //  ....##..###.....
-            0x0FF0, //  ....########....
-            0x1FF8, //  ...##########...  heart 2 flying
-            0x3FFC, //  ..############..
-            0x3A5A, //  ..###.#..#.#.#.  heart shape
-            0x3FFE, //  ..#############.
-            0x1FF8, //  ...##########...
-            0x0990, //  ....#..##..#....
-            0x1998  //  ...##..##..##...
+            0x7038,
+            0xF87C,
+            0x1FE5, //  ...########..#.#  heart lobes fly
+            0x3FF7, //  ..##########.###  heart body
+            0x37B2, //  ..##.####.##..#.  heart point
+            0x3FF0,
+            0x3CF0,
+            0x1FE0,
+            0x3FFE, //  arm still reaching
+            0x7FF0,
+            0x3930,
+            0x3830,
+            0x3C70,
+            0x1FE0,
+            0x0CC0,
+            0x1CE0
         ])
 
-        // Side profile facing left: teddy with one ear, a muzzle at
-        // the front, one eye, and a little tail at the back.
+        // Side profile: waddling teddy — one ear, muzzle poking out,
+        // tail nub on the back, stubby waddling legs
         let sideWalk1 = SpriteFrame(rows: [
-            0x1800, //  ...##...........  ear
-            0x3C00, //  ..####..........
+            0x0000, //  ................
+            0x0000, //  ................
+            0x3C00, //  ..####..........  ear
+            0x7E00, //  .######.........
             0x3F00, //  ..######........  head
             0x7F80, //  .########.......
-            0xDF80, //  ##.######.......  muzzle + eye
+            0xEF80, //  ###.#####.......  muzzle + eye
             0x7F80, //  .########.......
-            0x3F80, //  ..#######.......
-            0x7FC2, //  .#########....#.  body + tail tip
-            0x7FEC, //  .##########.##..  body + tail
-            0x7FF0, //  .###########....
+            0x3F00, //  ..######........  chin
+            0x3FD8, //  ..########.##...  body + tail nub
+            0x7FF8, //  .############...  body + tail
+            0x7FE0, //  .##########.....
             0x7FE0, //  .##########.....
             0x3FC0, //  ..########......
-            0x6F60, //  .##.####.##.....  arms/legs
-            0x6060, //  .##......##.....  feet
-            0x0000, //  ................
-            0x0000  //  ................
+            0x30C0, //  ..##....##......  waddle stride
+            0x70E0  //  .###....###.....  feet
         ])
 
+        // Ear bobs as the legs come together mid-waddle.
         let sideWalk2 = SpriteFrame(rows: [
-            0x1800, //  ...##...........  ear
-            0x3C00, //  ..####..........
-            0x3F00, //  ..######........  head
+            0x0000, //  ................
+            0x0000, //  ................
+            0x1E00, //  ...####.........  ear bobs
+            0x7E00, //  .######.........
+            0x3F00, //  ..######........
             0x7F80, //  .########.......
-            0xDF80, //  ##.######.......  muzzle + eye
+            0xEF80, //  ###.#####.......  muzzle + eye
             0x7F80, //  .########.......
-            0x3F80, //  ..#######.......
-            0x7FC2, //  .#########....#.  body + tail tip
-            0x7FEC, //  .##########.##..  body + tail
-            0x7FF0, //  .###########....
+            0x3F00, //  ..######........
+            0x3FD8, //  ..########.##...  body + tail nub
+            0x7FF8, //  .############...
+            0x7FE0, //  .##########.....
             0x7FE0, //  .##########.....
             0x3FC0, //  ..########......
-            0x3360, //  ..##..##.##.....  arms/legs
-            0x3060, //  ..##.....##.....  feet
-            0x0000, //  ................
-            0x0000  //  ................
+            0x0CC0, //  ....##..##......  legs together
+            0x1CE0  //  ...###..###.....  feet
         ])
 
         switch kind {
@@ -128,8 +270,18 @@ nonisolated extension SpriteCatalog {
             return [idle1, idle2]
         case .sideWalk:
             return [sideWalk1, sideWalk2]
-        case .happy, .eat, .sleep:
-            return defaultAnimationFromIdle(idle1, idle2, kind)
+        case .happy:
+            return [
+                idle1.shiftedDown(1),
+                happy1,
+                happy2,
+                idle1.overlaying(SharedSprites.landingDust)
+            ]
+        case .eat:
+            return [eat1, eat2, eat1, idle1]
+        case .sleep:
+            // Eyes stay shut on every beat while the Z's pulse.
+            return [sleep1, sleep2, sleep1, sleep2]
         case .attack:
             return [
                 idle1.shiftedRight(1),
