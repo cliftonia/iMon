@@ -10,7 +10,7 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let gridColor = basePixelColor.opacity(0.06)
+        let gridColor = basePixelColor.opacity(isDarkScreen ? 0.14 : 0.06)
 
         for col in stride(from: 0, through: 32, by: 4) {
             let x = Double(col) * pixelWidth
@@ -40,7 +40,7 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let groundColor = basePixelColor.opacity(0.12)
+        let groundColor = basePixelColor.opacity(isDarkScreen ? 0.22 : 0.12)
 
         let groundY = 19.0 * pixelHeight
         let groundLine = Path(
@@ -52,7 +52,7 @@ extension LCDDisplay {
         context.fill(groundLine, with: .color(groundColor))
 
         let tufts: [Int] = [1, 5, 10, 15, 21, 26, 30]
-        let tuftColor = basePixelColor.opacity(0.10)
+        let tuftColor = basePixelColor.opacity(isDarkScreen ? 0.18 : 0.10)
         for col in tufts {
             let rect = CGRect(
                 x: Double(col) * pixelWidth,

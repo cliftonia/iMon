@@ -47,6 +47,14 @@ struct LCDDisplay: View {
         theme.pixelColor(lightsOn: lightsOn)
     }
 
+    /// True when the screen background is dark - the lights-off night scene or the
+    /// red battery-saver palette. Not private - the scene extension reads it to
+    /// lift the faint grid and ground, since a bright line at low opacity is all
+    /// but invisible on black. On the lit green day screen the low opacity reads.
+    var isDarkScreen: Bool {
+        theme == .nightRed || !lightsOn
+    }
+
     /// The room's ambient shade, away from the lamp's bright pool. Shared by the
     /// indoor glow and the eye-hole backing so they stay in step.
     static let roomAmbientColor = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
