@@ -14,7 +14,7 @@ nonisolated extension SpriteCatalog {
             0x0FF0, //  ....########....  head
             0x0DB0, //  ....##.##.##....  eye + visor
             0x0FF0, //  ....########....
-            0x07E0, //  .....######.....  neck
+            0x0660, //  .....##..##.....
             0x1FF8, //  ...##########...  body + metal
             0x3FFC, //  ..############..
             0x7FFE, //  .##############.  wings/arms
@@ -28,7 +28,7 @@ nonisolated extension SpriteCatalog {
 
         let idle2 = SpriteFrame(rows: [
             0x0180, 0x03C0, 0x07E0, 0x0FF0,
-            0x0DB0, 0x0FF0, 0x07E0,
+            0x0DB0, 0x0FF0, 0x0660,
             0x1FF8, 0x3FFC,
             0xFFFF, //  wings
             0x7FFE,

@@ -14,7 +14,7 @@ nonisolated extension SpriteCatalog {
             0x0FF0, //  ....########....  head
             0x1FF8, //  ...##########...
             0x1BD8, //  ...##.####.##...  eyes (button)
-            0x0FF0, //  ....########....
+            0x0E70, //  ....###..###....
             0x0CE0, //  ....##..###.....  mouth (stitched)
             0x0FF0, //  ....########....  body
             0x1FF8, //  ...##########...
@@ -31,7 +31,7 @@ nonisolated extension SpriteCatalog {
             0x1188,
             0x0FF0, 0x1FF8,
             0x1BD8,
-            0x0FF0,
+            0x0E70,
             0x0CE0,
             0x0FF0,
             0x1FF8,

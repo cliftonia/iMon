@@ -16,7 +16,7 @@ nonisolated extension SpriteCatalog {
             0x0FE0, //  ....#######.....  head
             0x0DA0, //  ....##.##.#.....  eye + stripe
             0x0FE0, //  ....#######.....
-            0x0FC0, //  ....######......  jaw
+            0x0CC0, //  ....##..##......
             0x07C0, //  .....#####......  neck
             0x0FE0, //  ....#######.....  body
             0x3FF8, //  ..###########...  wide body
@@ -35,7 +35,7 @@ nonisolated extension SpriteCatalog {
             0x0FE0,
             0x0DA0,
             0x0FE0,
-            0x0FC0,
+            0x0CC0,
             0x07C0,
             0x0FE0,
             0x3FF8,

@@ -13,7 +13,7 @@ nonisolated extension SpriteCatalog {
             0x0FC0, //  ....######......
             0x0DC0, //  ....##.###......  eye
             0x0FC0, //  ....######......  jaw
-            0x07C0, //  .....#####......  neck
+            0x06C0, //  .....##.##......
             0x03C0, //  ......####......
             0x03C0, //  ......####......
             0x07E0, //  .....######.....  body thickens
@@ -29,7 +29,7 @@ nonisolated extension SpriteCatalog {
         let idle2 = SpriteFrame(rows: [
             0x0000,
             0x0780, 0x0FC0, 0x0DC0, 0x0FC0,
-            0x07C0,
+            0x06C0,
             0x03E0, //  ......#####.....  neck sway
             0x03E0,
             0x07E0,

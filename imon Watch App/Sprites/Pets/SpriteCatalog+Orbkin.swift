@@ -15,7 +15,7 @@ nonisolated extension SpriteCatalog {
             0x0FF0, //  ....########....
             0x0DB0, //  ....##.##.##....  eyes
             0x0FF0, //  ....########....
-            0x0FF0, //  ....########....  body
+            0x0E70, //  ....###..###....
             0x1FF8, //  ...##########...
             0x1FF8, //  ...##########...
             0xFFF0, //  ############....  big glove arm
@@ -29,7 +29,7 @@ nonisolated extension SpriteCatalog {
         let idle2 = SpriteFrame(rows: [
             0x0000, 0x0000,
             0x03C0, 0x07E0, 0x0FF0,
-            0x0DB0, 0x0FF0, 0x0FF0,
+            0x0DB0, 0x0FF0, 0x0E70,
             0x1FF8, 0x1FF8,
             0x0FFF, //  ....############  glove other side
             0x0FFF,
