@@ -193,6 +193,19 @@ nonisolated extension SpriteCatalog {
         )
     }
 
+    /// Defeated slump: the pet sags low and heaves on the spot, head hung.
+    /// Built from the first idle frame only — unlike `weakAnimation` it never
+    /// cycles to the second idle, so species whose idle glances around don't
+    /// look about mid-defeat.
+    static func defeatAnimation(for species: PetSpecies) -> SpriteAnimation {
+        let idle1 = frames(for: species, kind: .idle).first ?? .empty
+        return SpriteAnimation(
+            frames: [idle1.shiftedDown(1), idle1.shiftedDown(2)],
+            frameDuration: 0.8,
+            loops: true
+        )
+    }
+
     /// Generates a simple 2-frame side-walk from idle frames
     /// using horizontal shift as a placeholder side profile.
     static func defaultSideWalkFromIdle(

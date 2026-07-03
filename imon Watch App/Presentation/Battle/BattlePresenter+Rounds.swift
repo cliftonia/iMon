@@ -138,7 +138,9 @@ extension BattlePresenter {
         guard let opp = opponent else { return }
         viewModel.result = .lose
         viewModel.phase = .defeat
-        petAnimator.stop()
+        petAnimator.play(
+            SpriteCatalog.defeatAnimation(for: petState.species)
+        )
         opponentAnimator.play(.happy, for: opp.species)
         WKInterfaceDevice.battleLoseHaptic()
         onComplete(.lose)

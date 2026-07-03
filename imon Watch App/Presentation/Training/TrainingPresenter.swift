@@ -187,10 +187,7 @@ final class TrainingPresenter {
     private func enterDefeat() {
         viewModel.phase = .defeat
         spriteAnimator.play(
-            SpriteCatalog.animation(for: species, kind: .sleep)
-                .withFrameDuration(0.8)
-                .withLoops(true)
-                .facing(.right)
+            SpriteCatalog.defeatAnimation(for: species).facing(.right)
         )
         targetAnimator.stop()
         WKInterfaceDevice.trainingLoseHaptic()
