@@ -29,6 +29,24 @@ nonisolated enum LCDTheme: Sendable {
             }
         }
     }
+
+    /// The primary chrome tint outside the LCD - selected menu icons, button
+    /// labels, the weather line. Battery-saver keeps all of it on the one red.
+    var chromeTint: Color {
+        switch self {
+        case .classic: .white
+        case .nightRed: Color(red: 1, green: 0.12, blue: 0.08)
+        }
+    }
+
+    /// The muted chrome tint - unselected icons and secondary text. A dimmer red
+    /// under battery-saver so nothing on screen falls back to grey or white.
+    var chromeMutedTint: Color {
+        switch self {
+        case .classic: .gray
+        case .nightRed: Color(red: 0.55, green: 0.10, blue: 0.07)
+        }
+    }
 }
 
 private struct LCDThemeKey: EnvironmentKey {

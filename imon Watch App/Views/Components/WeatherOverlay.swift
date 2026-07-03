@@ -5,6 +5,7 @@ import SwiftUI
 struct WeatherOverlay: View {
 
     let snapshot: WeatherSnapshot
+    @Environment(\.lcdTheme) private var theme
 
     var body: some View {
         // Largest layout that fits wins: Ultra shows temp · humidity · condition;
@@ -43,13 +44,13 @@ struct WeatherOverlay: View {
     private func field(_ text: String, opacity: Double) -> some View {
         Text(text)
             .font(.system(size: 11, weight: .bold, design: .monospaced))
-            .foregroundStyle(.white.opacity(opacity))
+            .foregroundStyle(theme.chromeTint.opacity(opacity))
     }
 
     private var separator: some View {
         Text("|")
             .font(.system(size: 11, weight: .bold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.35))
+            .foregroundStyle(theme.chromeTint.opacity(0.35))
     }
 
     private var humidityText: String {

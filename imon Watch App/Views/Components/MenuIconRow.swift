@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuIconRow: View {
 
     let selectedIndex: Int
+    @Environment(\.lcdTheme) private var theme
 
     private let icons: [(String, String)] = [
         ("heart.text.square", "Status"),
@@ -27,13 +28,13 @@ struct MenuIconRow: View {
                     .frame(height: 22)
                     .foregroundStyle(
                         index == selectedIndex
-                            ? Color.white
-                            : Color.gray
+                            ? theme.chromeTint
+                            : theme.chromeMutedTint
                     )
                     .background(
                         index == selectedIndex
                             ? RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.white.opacity(0.2))
+                                .fill(theme.chromeTint.opacity(0.2))
                             : nil
                     )
                     .accessibilityLabel(icon.1)
