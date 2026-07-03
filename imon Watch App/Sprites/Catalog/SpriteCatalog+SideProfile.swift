@@ -102,25 +102,26 @@ nonisolated extension SpriteCatalog {
         0x0000  //  ................
     ])
 
-    // Dino mouth-open (native left): the jaws jut FORWARD into a wide maw while
-    // the back of the skull stays solid (x7-8 bridge the jaws to the head), so
-    // the silhouette never breaks - the earlier pose hollowed out the back.
+    // Raptor mouth-open (native left), built on the sideWalk profile: the
+    // head rears up a pixel and the jaws jut FORWARD into a wide maw while
+    // the hinge at the back stays solid, so the silhouette never breaks.
+    // Body, tail, and braced legs match the new side-profile stance.
     private static let emberkinMouthWide = SpriteFrame(rows: [
         0x0000, //  ................
-        0x0000, //  ................
-        0x0F00, //  ....####........  skull top
-        0x1F80, //  ...######.......  skull
-        0x1B80, //  ...##.###.......  eye
-        0x3F80, //  ..#######.......  upper jaw (juts front, back solid to x8)
-        0x0180, //  .......##.......  maw open, hinge at the back
-        0x3F80, //  ..#######.......  lower jaw (juts front, back solid to x8)
-        0x1F80, //  ...######.......  body
-        0x1F80, //  ...######.......
-        0x0FC0, //  ....######......  tail
-        0x0F00, //  ....####........
-        0x0F00, //  ....####........  legs
-        0x0900, //  ....#..#........
-        0x1100, //  ...#...#........  feet
+        0x3C00, //  ..####..........  skull top, reared up
+        0x7E00, //  .######.........  skull
+        0x7600, //  .###.##.........  eye
+        0xFE00, //  #######.........  upper jaw juts forward
+        0x0600, //  .....##.........  maw open, hinge at the back
+        0x7E00, //  .######.........  lower jaw juts forward
+        0x0F00, //  ....####........  neck
+        0x0FE6, //  ....#######..##.  body + tail tip kicked up
+        0x1FFC, //  ...###########..  body + tail
+        0x1FE0, //  ...########.....  tail underside
+        0x0FC0, //  ....######......  belly
+        0x0780, //  .....####.......  legs braced together
+        0x0480, //  .....#..#.......
+        0x0CC0, //  ....##..##......  feet
         0x0000  //  ................
     ])
 

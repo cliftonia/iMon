@@ -40,11 +40,13 @@ struct SpriteFrameTests {
     }
 
     @Test func `a real creature's eyes are detected as holes`() {
-        // Emberkin idle row 4 is 0x0A80 = `....#.#.#` (cols 4,6,8 lit), so the
-        // enclosed eye gaps sit at x = 5 and x = 7, walled in by the body.
-        let idle = SpriteCatalog.emberkinFrames(.idle)[0]
-        let holes = idle.interiorHoles()
-        #expect(holes.pixel(x: 5, y: 4))
-        #expect(holes.pixel(x: 7, y: 4))
+        // Emberkin's turned head has one enclosed eye gap at (6, 4) — row 4
+        // is 0x3D80 = `..####.##` gazing left, 0x0DE0 = `....##.####` gazing
+        // right, each with the eye walled in by the skull.
+        let frames = SpriteCatalog.emberkinFrames(.idle)
+        let leftGaze = frames[0].interiorHoles()
+        let rightGaze = frames[2].interiorHoles()
+        #expect(leftGaze.pixel(x: 6, y: 4))
+        #expect(rightGaze.pixel(x: 6, y: 4))
     }
 }
