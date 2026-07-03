@@ -35,7 +35,7 @@ final class PetViewModel {
         case clean
         case lights
         case heal
-        case call
+        case settings
     }
 
     var menuSelection: MenuAction = .stats

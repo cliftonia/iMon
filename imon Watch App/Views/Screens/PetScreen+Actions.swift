@@ -14,7 +14,9 @@ extension PetScreen {
         return SceneResolver.home(
             dayPhase: presenter.viewModel.dayPhase,
             lightsOn: status?.lightsOn ?? true,
-            weather: appPresenter.weatherStore.displaySnapshot?.condition,
+            weather: appPresenter.settings.weatherEnabled
+                ? appPresenter.weatherStore.displaySnapshot?.condition
+                : nil,
             isInActionScene: presenter.viewModel.isInActionScene,
             careMessPresent: careMessPresent
         )
@@ -123,8 +125,8 @@ extension PetScreen {
             presenter.lightsAction()
         case .heal:
             presenter.healAction()
-        case .call:
-            appPresenter.restartPet()
+        case .settings:
+            appPresenter.navigateToSettings()
         }
     }
 }

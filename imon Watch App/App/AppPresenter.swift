@@ -18,6 +18,7 @@ final class AppPresenter {
     private(set) var phase: LifecyclePhase = .loading
     private(set) var petPresenter: PetPresenter?
     private(set) var statsPresenter: StatsPresenter?
+    private(set) var settingsPresenter: SettingsPresenter?
     private(set) var hatchPresenter: HatchPresenter?
     private(set) var onboardingPresenter: OnboardingPresenter?
     private(set) var deathPresenter: DeathPresenter?
@@ -25,6 +26,7 @@ final class AppPresenter {
     let router = AppRouter()
     let weatherStore: WeatherStore
     let stepActivityStore: StepActivityStore
+    let settings: SettingsStore
 
     private let store: PetStateStore
 
@@ -33,11 +35,13 @@ final class AppPresenter {
     init(
         store: PetStateStore = JSONPetStateStore.live(),
         weatherStore: WeatherStore = .makeDefault(),
-        stepActivityStore: StepActivityStore = .makeDefault()
+        stepActivityStore: StepActivityStore = .makeDefault(),
+        settings: SettingsStore = SettingsStore()
     ) {
         self.store = store
         self.weatherStore = weatherStore
         self.stepActivityStore = stepActivityStore
+        self.settings = settings
     }
 
     // MARK: - Lifecycle
@@ -109,10 +113,14 @@ final class AppPresenter {
         let presenter = PetPresenter(
             state: state,
             store: store,
-            currentNight: { [weatherStore] in
-                weatherStore.nightSignal()
+            currentNight: { [weatherStore, settings] in
+                // Weather off -> no night signal, so day/night falls back to the clock.
+                settings.weatherEnabled ? weatherStore.nightSignal() : nil
             },
-            currentSteps: { [stepActivityStore] in stepActivityStore.todaySteps },
+            currentSteps: { [stepActivityStore, settings] in
+                // Steps off -> no reading, so no step bonuses accrue.
+                settings.stepsEnabled ? stepActivityStore.todaySteps : nil
+            },
             onDeath: { [weak self] in self?.checkDeath() }
         )
         petPresenter = presenter
@@ -155,6 +163,23 @@ final class AppPresenter {
         )
         statsPresenter = presenter
         router.navigate(to: .stats)
+    }
+
+    func navigateToSettings() {
+        #if DEBUG
+        // Debug actions pop back to the pet screen first, so their effect (the
+        // evolution sheet, the drained pet, the grave) is visible straight away.
+        let presenter = SettingsPresenter(settings: settings, debug: SettingsDebugActions(
+            cycleWeather: { [weatherStore] in weatherStore.cycleDebugCondition() },
+            forceEvolve: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugEvolve() },
+            careTest: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugCareTest() },
+            killPet: { [weak self] in self?.restartPet() }
+        ))
+        #else
+        let presenter = SettingsPresenter(settings: settings)
+        #endif
+        settingsPresenter = presenter
+        router.navigate(to: .settings)
     }
 
     /// Check if pet has died after a debug evolution cycle.

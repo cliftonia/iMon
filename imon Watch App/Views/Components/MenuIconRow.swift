@@ -13,7 +13,7 @@ struct MenuIconRow: View {
         ("shower", "Clean"),
         ("lightbulb", "Lights"),
         ("cross.case", "Medical"),
-        ("exclamationmark.triangle", "Call")
+        ("gearshape", "Settings")
     ]
 
     var body: some View {

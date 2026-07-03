@@ -6,6 +6,7 @@ enum AppRoute: Hashable {
     // unused route cases — keep for future push-navigation or remove.
     case pet
     case stats
+    case settings
     case hatch
     case death
 }

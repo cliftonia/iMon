@@ -4,6 +4,12 @@ struct ContentView: View {
     @State private var appPresenter = AppPresenter()
     @State private var powerSaver = PowerSaverStore.live()
 
+    /// The manual Settings switch or the system Low Power Mode - either turns on
+    /// the red palette.
+    private var batterySaverActive: Bool {
+        appPresenter.settings.batterySaverEnabled || powerSaver.isActive
+    }
+
     var body: some View {
         @Bindable var router = appPresenter.router
         NavigationStack(path: $router.path) {
@@ -42,12 +48,17 @@ struct ContentView: View {
                         StatsScreen(presenter: statsPresenter)
                     }
 
+                case .settings:
+                    if let settingsPresenter = appPresenter.settingsPresenter {
+                        SettingsScreen(presenter: settingsPresenter)
+                    }
+
                 case .pet, .hatch, .death:
                     EmptyView()
                 }
             }
         }
-        .environment(\.lcdTheme, powerSaver.isActive ? .nightRed : .classic)
+        .environment(\.lcdTheme, batterySaverActive ? .nightRed : .classic)
         .task {
             appPresenter.onAppear()
         }

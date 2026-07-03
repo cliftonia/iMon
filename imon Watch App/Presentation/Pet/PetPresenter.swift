@@ -144,6 +144,12 @@ final class PetPresenter {
         complicationReloader.reload()
     }
 
+    /// Clears any pending reminders — used when the player switches notifications
+    /// off, so stale ones don't keep firing.
+    func cancelCareNotifications() {
+        notificationScheduler.cancelAll()
+    }
+
     /// The resolved day/night state — weather daylight, or the fixed window.
     var currentlyNight: Bool {
         SleepSchedule.isNight(weatherNight: currentNight(), at: .now)

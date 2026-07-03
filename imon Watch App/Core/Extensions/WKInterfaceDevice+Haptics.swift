@@ -2,63 +2,42 @@ import WatchKit
 
 extension WKInterfaceDevice {
 
-    static func feedHaptic() {
-        WKInterfaceDevice.current().play(.click)
+    /// Master switch for every haptic, mirrored from the Settings toggle. When
+    /// off, all the cues below become no-ops so buttons and actions stay silent.
+    static var hapticsEnabled = true
+
+    private static func perform(_ type: WKHapticType) {
+        guard hapticsEnabled else { return }
+        WKInterfaceDevice.current().play(type)
     }
 
-    static func chompHaptic() {
-        WKInterfaceDevice.current().play(.directionDown)
-    }
+    static func feedHaptic() { perform(.click) }
 
-    static func rejectHaptic() {
-        WKInterfaceDevice.current().play(.failure)
-    }
+    static func chompHaptic() { perform(.directionDown) }
 
-    static func cleanHaptic() {
-        WKInterfaceDevice.current().play(.success)
-    }
+    static func rejectHaptic() { perform(.failure) }
 
-    static func healHaptic() {
-        WKInterfaceDevice.current().play(.success)
-    }
+    static func cleanHaptic() { perform(.success) }
 
-    static func evolveHaptic() {
-        WKInterfaceDevice.current().play(.notification)
-    }
+    static func healHaptic() { perform(.success) }
 
-    static func battleHaptic() {
-        WKInterfaceDevice.current().play(.directionUp)
-    }
+    static func evolveHaptic() { perform(.notification) }
 
-    static func battleWinHaptic() {
-        WKInterfaceDevice.current().play(.success)
-    }
+    static func battleHaptic() { perform(.directionUp) }
 
-    static func battleLoseHaptic() {
-        WKInterfaceDevice.current().play(.failure)
-    }
+    static func battleWinHaptic() { perform(.success) }
 
-    static func hatchHaptic() {
-        WKInterfaceDevice.current().play(.start)
-    }
+    static func battleLoseHaptic() { perform(.failure) }
 
-    static func buttonHaptic() {
-        WKInterfaceDevice.current().play(.click)
-    }
+    static func hatchHaptic() { perform(.start) }
 
-    static func trainingHitHaptic() {
-        WKInterfaceDevice.current().play(.success)
-    }
+    static func buttonHaptic() { perform(.click) }
 
-    static func trainingMissHaptic() {
-        WKInterfaceDevice.current().play(.retry)
-    }
+    static func trainingHitHaptic() { perform(.success) }
 
-    static func trainingWinHaptic() {
-        WKInterfaceDevice.current().play(.notification)
-    }
+    static func trainingMissHaptic() { perform(.retry) }
 
-    static func trainingLoseHaptic() {
-        WKInterfaceDevice.current().play(.failure)
-    }
+    static func trainingWinHaptic() { perform(.notification) }
+
+    static func trainingLoseHaptic() { perform(.failure) }
 }

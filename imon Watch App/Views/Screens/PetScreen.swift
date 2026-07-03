@@ -37,8 +37,7 @@ struct PetScreen: View {
             }
             .task {
                 presenter.startGameLoop()
-                appPresenter.weatherStore.refreshIfStale()
-                appPresenter.stepActivityStore.refreshIfStale()
+                refreshEnabledIntegrations()
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
@@ -51,10 +50,11 @@ struct PetScreen: View {
                     // wrist raise, which would wipe pending notifications before
                     // they ever fire. The next background reschedule keeps them
                     // current against the latest state.
-                    appPresenter.weatherStore.refreshIfStale()
-                    appPresenter.stepActivityStore.refreshIfStale()
-                } else {
+                    refreshEnabledIntegrations()
+                } else if appPresenter.settings.notificationsEnabled {
                     presenter.scheduleCareNotifications()
+                } else {
+                    presenter.cancelCareNotifications()
                 }
             }
             .onChange(of: appPresenter.weatherStore.snapshot) { _, _ in
@@ -75,10 +75,21 @@ struct PetScreen: View {
 
     // MARK: - Weather
 
+    /// Refreshes only the integrations the player has left switched on.
+    private func refreshEnabledIntegrations() {
+        if appPresenter.settings.weatherEnabled {
+            appPresenter.weatherStore.refreshIfStale()
+        }
+        if appPresenter.settings.stepsEnabled {
+            appPresenter.stepActivityStore.refreshIfStale()
+        }
+    }
+
     @ViewBuilder
     private var weatherHeader: some View {
         HStack(spacing: 0) {
-            if let snapshot = appPresenter.weatherStore.displaySnapshot {
+            if appPresenter.settings.weatherEnabled,
+               let snapshot = appPresenter.weatherStore.displaySnapshot {
                 WeatherOverlay(snapshot: snapshot)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
