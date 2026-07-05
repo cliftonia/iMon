@@ -10,7 +10,14 @@ final class SpriteAnimator {
     private(set) var currentFrameIndex: Int = 0
 
     private var animation: SpriteAnimation?
-    private var timer: Timer?
+    // The run loop retains a repeating timer, so it must be invalidated in
+    // deinit or every discarded animator leaves a timer firing forever.
+    // `nonisolated(unsafe)` lets deinit reach it; all other access is on main.
+    nonisolated(unsafe) private var timer: Timer?
+
+    deinit {
+        timer?.invalidate()
+    }
 
     func play(_ animation: SpriteAnimation) {
         stop()

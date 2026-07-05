@@ -21,6 +21,7 @@ final class OnboardingPresenter {
     /// Advances to the next tip, or finishes on the last one.
     func advanceAction() {
         guard !viewModel.isLastStep else {
+            spriteAnimator.stop()
             onComplete()
             return
         }
@@ -31,6 +32,7 @@ final class OnboardingPresenter {
 
     /// Jumps straight to play, skipping the rest of the walkthrough.
     func skipAction() {
+        spriteAnimator.stop()
         onComplete()
     }
 

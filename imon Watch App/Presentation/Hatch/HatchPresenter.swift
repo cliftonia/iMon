@@ -34,6 +34,7 @@ final class HatchPresenter {
 
             try? await Task.sleep(for: .seconds(1.5))
 
+            spriteAnimator.stop()
             onHatched()
         }
     }

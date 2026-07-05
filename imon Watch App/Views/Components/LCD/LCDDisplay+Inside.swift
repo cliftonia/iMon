@@ -16,17 +16,26 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let center = CGPoint(x: 10.5 * pixelWidth, y: 2.5 * pixelHeight)
-        let bright = Color(red: 150 / 255, green: 184 / 255, blue: 118 / 255)
-        let dim = Self.roomAmbientColor
         context.fill(
             Path(CGRect(origin: .zero, size: size)),
-            with: .radialGradient(
-                Gradient(colors: [bright, dim]),
-                center: center,
-                startRadius: 0,
-                endRadius: size.width * 0.72
-            )
+            with: roomGlowShading(pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+        )
+    }
+
+    /// The lamp-lit room gradient — bright pool under the lamp fading to the
+    /// ambient shade. Shared by the room glow and the indoor eye-hole backing
+    /// so the eyes match the wall behind them exactly, wherever the pet stands.
+    func roomGlowShading(
+        pixelWidth: CGFloat,
+        pixelHeight: CGFloat
+    ) -> GraphicsContext.Shading {
+        let center = CGPoint(x: 10.5 * pixelWidth, y: 2.5 * pixelHeight)
+        let bright = Color(red: 150 / 255, green: 184 / 255, blue: 118 / 255)
+        return .radialGradient(
+            Gradient(colors: [bright, Self.roomAmbientColor]),
+            center: center,
+            startRadius: 0,
+            endRadius: 32 * pixelWidth * 0.72
         )
     }
 

@@ -59,12 +59,19 @@ struct LCDDisplay: View {
     /// indoor glow and the eye-hole backing so they stay in step.
     static let roomAmbientColor = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
 
-    /// The opaque colour that fills a creature's interior holes (eyes, mouths)
-    /// so the bare-eye look is kept while the backdrop behind it is blocked.
-    /// Matched to the scene: the room ambient when inside, else the screen
-    /// background - which already tracks lights-on/off, i.e. day/night dimming.
-    private var holeBackingColor: Color {
-        isIndoor ? Self.roomAmbientColor : backgroundColor
+    /// Interior-hole masks are pure functions of the sprite, so cache them —
+    /// the flood fill would otherwise rerun for every sprite on every canvas
+    /// tick (several per second whenever weather or the call sign animates).
+    private static var holeCache: [SpriteFrame: SpriteFrame] = [:]
+
+    private static func interiorHoles(of sprite: SpriteFrame) -> SpriteFrame {
+        if let cached = holeCache[sprite] { return cached }
+        let holes = sprite.interiorHoles()
+        // The frame catalog is finite, but composed one-off frames (overlays,
+        // shifts) could grow the cache slowly — reset rather than grow forever.
+        if holeCache.count > 512 { holeCache.removeAll(keepingCapacity: true) }
+        holeCache[sprite] = holes
+        return holes
     }
 
     var body: some View {
@@ -135,11 +142,15 @@ struct LCDDisplay: View {
             // Outdoors the sky/weather plays in front of the pet, so re-stamp the
             // creature's eyes on top - otherwise a walking pet's eyes sweep across
             // the animated layer and flicker as sun, stars or rain pass behind.
-            fillInteriorHoles(
-                leftSprite, in: context,
-                offsetX: leftSpriteOffsetX, offsetY: leftSpriteOffsetY,
-                pixelWidth: pixelWidth, pixelHeight: pixelHeight
-            )
+            // Skipped while a lightning flash washes the screen: the flash covers
+            // the body too, and dark eye holes would punch through the white-out.
+            if !isFlashFrame(phase: weatherPhase) {
+                fillInteriorHoles(
+                    leftSprite, in: context,
+                    offsetX: leftSpriteOffsetX, offsetY: leftSpriteOffsetY,
+                    pixelWidth: pixelWidth, pixelHeight: pixelHeight
+                )
+            }
         }
 
         // Call sign last of all, so the attention alert reads over any scene.
@@ -236,10 +247,12 @@ struct LCDDisplay: View {
         }
     }
 
-    /// Fills a sprite's enclosed holes (eyes, mouths) with an opaque,
-    /// scene-matched colour so the gap keeps the bare-eye look while nothing
+    /// Fills a sprite's enclosed holes (eyes, mouths) with opaque,
+    /// scene-matched shading so the gap keeps the bare-eye look while nothing
     /// shows through it. Run under the body to block the backdrop behind, and
     /// again on top of front-drawn weather so a walking pet's eyes never flicker.
+    /// Indoors the backing is the same radial lamp gradient as the room glow,
+    /// so eyes match the wall behind them wherever the pet stands.
     func fillInteriorHoles(
         _ sprite: SpriteFrame,
         in context: GraphicsContext,
@@ -248,19 +261,23 @@ struct LCDDisplay: View {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        let holes = sprite.interiorHoles()
-        let backing = holeBackingColor
+        let holes = Self.interiorHoles(of: sprite)
+        var path = Path()
         for y in 0..<SpriteFrame.size {
             for x in 0..<SpriteFrame.size where holes.pixel(x: x, y: y) {
-                let rect = CGRect(
+                path.addRect(CGRect(
                     x: Double(x + offsetX) * pixelWidth,
                     y: Double(y + offsetY) * pixelHeight,
                     width: pixelWidth + 0.5,
                     height: pixelHeight + 0.5
-                )
-                context.fill(Path(rect), with: .color(backing))
+                ))
             }
         }
+        guard !path.isEmpty else { return }
+        let shading: GraphicsContext.Shading = isIndoor
+            ? roomGlowShading(pixelWidth: pixelWidth, pixelHeight: pixelHeight)
+            : .color(backgroundColor)
+        context.fill(path, with: shading)
     }
 
     // MARK: - Poop

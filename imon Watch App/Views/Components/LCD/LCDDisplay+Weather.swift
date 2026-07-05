@@ -84,6 +84,19 @@ extension LCDDisplay {
         }
     }
 
+    /// Whether this tick is inside a lightning white-out (storm weather or the
+    /// battle storm flash), i.e. the whole screen is washed by the flash fill.
+    /// The eye re-stamp is skipped on these frames so dark holes don't punch
+    /// through the flash.
+    func isFlashFrame(phase: Int) -> Bool {
+        guard (weatherCondition == .storm && dayPhase != .inside) || stormFlash else {
+            return false
+        }
+        return stormFlash
+            ? Self.isVSFlash(phase)
+            : Self.isLightningFlash(phase)
+    }
+
     /// Full-screen lightning: a bright flash plus jagged diagonal bolts.
     /// Drawn for weather storms and — with a bold "VS" — the battle intro.
     func drawLightning(
@@ -116,10 +129,7 @@ extension LCDDisplay {
             fillCells(Self.vsTextCells(), basePixelColor)
         }
 
-        let flashing = stormFlash
-            ? Self.isVSFlash(phase)
-            : Self.isLightningFlash(phase)
-        guard flashing else { return }
+        guard isFlashFrame(phase: phase) else { return }
 
         // Flash in the active palette: bright green when lit, dim grey at night.
         let flashColor = lightsOn ? Self.lightningFlashColor : Color(white: 0.35)
