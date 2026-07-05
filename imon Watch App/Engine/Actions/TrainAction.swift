@@ -47,7 +47,7 @@ nonisolated enum TrainAction {
     static func applyResult(
         to state: PetState,
         won: Bool,
-        at date: Date = .now
+        at now: Date = .now
     ) -> PetState {
         guard canTrain(state) else { return state }
 
@@ -64,14 +64,14 @@ nonisolated enum TrainAction {
         }
 
         state.trainingCount += 1
-        state.timestamps.lastTrainedAt = date
+        state.timestamps.lastTrainedAt = now
         let roll = Int.random(in: 1...10)
         if (1...6).contains(roll) {
             state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + 1)
-            state.timestamps.lastPoopAt = date
+            state.timestamps.lastPoopAt = now
         } else if roll == 10, !state.isInjured {
             state.isInjured = true
-            state.timestamps.injuredAt = date
+            state.timestamps.injuredAt = now
             state.injuryCount += 1
         }
 

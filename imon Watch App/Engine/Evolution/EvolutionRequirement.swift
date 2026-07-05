@@ -9,9 +9,6 @@ nonisolated struct EvolutionRequirement: Sendable {
     let minBattleWins: Int?
     let minWinRate: Double?
     let minTrainingCount: Int?
-    // AUDIT 2026-06-24: every EvolutionChart entry leaves this nil, so its gate in
-    // `isSatisfied` is unreachable. Keep for a future weight-capped branch or remove.
-    let maxWeight: Int?
     let minWeight: Int?
     let isDefault: Bool
 
@@ -23,7 +20,6 @@ nonisolated struct EvolutionRequirement: Sendable {
         minBattleWins: Int? = nil,
         minWinRate: Double? = nil,
         minTrainingCount: Int? = nil,
-        maxWeight: Int? = nil,
         minWeight: Int? = nil,
         isDefault: Bool = false
     ) {
@@ -34,7 +30,6 @@ nonisolated struct EvolutionRequirement: Sendable {
         self.minBattleWins = minBattleWins
         self.minWinRate = minWinRate
         self.minTrainingCount = minTrainingCount
-        self.maxWeight = maxWeight
         self.minWeight = minWeight
         self.isDefault = isDefault
     }
@@ -61,7 +56,6 @@ nonisolated struct EvolutionRequirement: Sendable {
         }
 
         if let train = minTrainingCount, state.trainingCount < train { return false }
-        if let maxW = maxWeight, state.weight.grams > maxW { return false }
         if let minW = minWeight, state.weight.grams < minW { return false }
 
         return true

@@ -11,16 +11,20 @@ nonisolated enum SleepSchedule {
     /// Whether it is night. Always defer to the weather's daylight flag; only
     /// when no reading is available fall back to a fixed window (6am–6pm is day,
     /// the rest is night).
-    static func isNight(weatherNight: Bool?, at now: Date) -> Bool {
+    static func isNight(
+        weatherNight: Bool?,
+        at now: Date,
+        calendar: Calendar = .current
+    ) -> Bool {
         if let weatherNight { return weatherNight }
-        let hour = Calendar.current.component(.hour, from: now)
+        let hour = calendar.component(.hour, from: now)
         return hour < TimeConstants.nightEndHour || hour >= TimeConstants.nightStartHour
     }
 
     /// The pet's bedtime window — it only settles to sleep from `sleepHour` (9pm)
     /// until the morning wake hour. Outside it the pet stays up, even after dark.
-    static func isBedtime(at now: Date) -> Bool {
-        let hour = Calendar.current.component(.hour, from: now)
+    static func isBedtime(at now: Date, calendar: Calendar = .current) -> Bool {
+        let hour = calendar.component(.hour, from: now)
         return hour >= TimeConstants.sleepHour || hour < TimeConstants.nightEndHour
     }
 

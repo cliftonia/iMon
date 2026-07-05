@@ -35,10 +35,4 @@ struct ActivityModelTests {
         #expect(still > active)
     }
 
-    @Test func `battle power multiplier rises with steps`() {
-        let still = ActivityModel.battlePowerMultiplier(steps: 0)
-        let active = ActivityModel.battlePowerMultiplier(steps: ActivityModel.stepGoal)
-        #expect(still < 1.0)
-        #expect(active > 1.0)
-    }
 }

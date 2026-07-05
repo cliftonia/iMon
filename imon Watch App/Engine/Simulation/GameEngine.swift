@@ -11,7 +11,8 @@ nonisolated enum GameEngine {
         _ state: PetState,
         to now: Date,
         isNight: Bool? = nil,
-        steps: Int? = nil
+        steps: Int? = nil,
+        calendar: Calendar = .current
     ) -> PetState {
         var state = state
 
@@ -22,7 +23,6 @@ nonisolated enum GameEngine {
 
         // Update age (whole days since birth) — clamped so a backward clock
         // can't produce a negative age.
-        let calendar = Calendar.current
         let days = calendar.dateComponents(
             [.day], from: state.timestamps.bornAt, to: now
         ).day ?? state.age
@@ -30,8 +30,8 @@ nonisolated enum GameEngine {
 
         // Resolve day/night once (weather, or fixed hours as fallback), plus the
         // fixed bedtime window that drives sleep and the lights-on penalty.
-        let night = SleepSchedule.isNight(weatherNight: isNight, at: now)
-        let bedtime = SleepSchedule.isBedtime(at: now)
+        let night = SleepSchedule.isNight(weatherNight: isNight, at: now, calendar: calendar)
+        let bedtime = SleepSchedule.isBedtime(at: now, calendar: calendar)
 
         // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, night: night)

@@ -10,14 +10,14 @@ nonisolated enum CleanAction {
 
     // MARK: - Apply
 
-    static func apply(to state: PetState, at date: Date = .now) -> PetState {
+    static func apply(to state: PetState, at now: Date = .now) -> PetState {
         guard canClean(state) else { return state }
 
         var state = state
         state.poopCount = 0
         // Reset the poop timer so cleaning grants a fresh interval — otherwise a
         // pile nearly due could reappear minutes after the owner just tidied up.
-        state.timestamps.lastPoopAt = date
+        state.timestamps.lastPoopAt = now
         return state
     }
 }

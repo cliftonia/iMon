@@ -44,7 +44,7 @@ nonisolated enum BattleEngine {
         let finalOpponent = effectiveOpp * opponentRNG
 
         let difference = abs(finalPet - finalOpponent)
-        let threshold = max(finalPet, finalOpponent) * 0.05
+        let threshold = max(finalPet, finalOpponent) * TimeConstants.battleDrawThreshold
 
         if difference < threshold { return .draw }
         return finalPet > finalOpponent ? .win : .lose
@@ -73,7 +73,7 @@ nonisolated enum BattleEngine {
         against opponentAttribute: Attribute
     ) -> Double {
         if attribute.hasAdvantageOver(opponentAttribute) {
-            return basePower * 1.2
+            return basePower * TimeConstants.attributeAdvantageMultiplier
         }
         return basePower
     }

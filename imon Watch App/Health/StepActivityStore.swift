@@ -12,17 +12,15 @@ final class StepActivityStore {
     /// as the new day's — the engine's day-rollover would credit yesterday's
     /// whole total again and poison the new day's baseline and lazy-day check.
     var todaySteps: Int? {
-        guard let lastSuccess, lastSuccess.isSameDay(as: .now) else { return nil }
+        guard let lastSuccess = throttle.lastSuccess,
+              lastSuccess.isSameDay(as: .now)
+        else { return nil }
         return fetchedSteps
     }
 
     private var fetchedSteps: Int?
     private let provider: StepCountProvider
-    /// Last attempt, success or failure — throttles refreshes.
-    private var lastFetch: Date?
-    /// Last successful fetch — dates the reading's calendar day.
-    private var lastSuccess: Date?
-    private var fetchTask: Task<Void, Never>?
+    private let throttle = ThrottledFetch()
 
     init(provider: StepCountProvider = .live()) {
         self.provider = provider
@@ -32,27 +30,31 @@ final class StepActivityStore {
     /// window. Returns the spawned task (nil if skipped).
     @discardableResult
     func refreshIfStale(now: Date = .now) -> Task<Void, Never>? {
-        guard shouldRefresh(now: now) else { return nil }
-        let task = Task { [weak self] in
-            guard let self else { return }
-            await self.refresh(now: now)
-        }
-        fetchTask = task
-        return task
+        // The cache only holds within a calendar day — crossing midnight
+        // refetches immediately so the new day starts from a real reading.
+        throttle.startIfStale(
+            now: now,
+            isFresh: {
+                now.timeIntervalSince($0) < TimeConstants.stepCacheInterval
+                    && $0.isSameDay(as: now)
+            }
+        ,
+            run: { [weak self] in
+                await self?.refresh(now: now)
+            }
+        )
     }
 
     /// Fetches and stores today's steps, leaving the existing value on failure.
+    /// Failures still count toward the cache window, but never refresh the
+    /// reading's age.
     func refresh(now: Date = .now) async {
-        defer { fetchTask = nil }
         do {
             fetchedSteps = try await provider.fetchTodaySteps()
-            lastFetch = now
-            lastSuccess = now
+            throttle.record(now: now, success: true)
         } catch {
             Log.health.error("Step fetch failed: \(error, privacy: .public)")
-            // Apply the cache window to failures too, so a missing authorization
-            // doesn't spin a fetch on every wrist raise.
-            lastFetch = now
+            throttle.record(now: now, success: false)
         }
     }
 
@@ -60,15 +62,4 @@ final class StepActivityStore {
         StepActivityStore()
     }
 
-    private func shouldRefresh(now: Date) -> Bool {
-        guard fetchTask == nil else { return false }
-        // The cache only holds within a calendar day — crossing midnight
-        // refetches immediately so the new day starts from a real reading.
-        if let last = lastFetch,
-           now.timeIntervalSince(last) < TimeConstants.stepCacheInterval,
-           last.isSameDay(as: now) {
-            return false
-        }
-        return true
-    }
 }

@@ -26,7 +26,7 @@ nonisolated enum FeedAction {
 
     // MARK: - Apply
 
-    static func apply(to state: PetState, food: FoodKind, at date: Date = .now) -> PetState {
+    static func apply(to state: PetState, food: FoodKind, at now: Date = .now) -> PetState {
         guard canFeed(state) else { return state }
 
         var state = state
@@ -40,7 +40,7 @@ nonisolated enum FeedAction {
             state.weight.add(TimeConstants.vitaminWeightGain)
         }
 
-        state.timestamps.lastFedAt = date
+        state.timestamps.lastFedAt = now
         return state
     }
 }

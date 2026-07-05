@@ -6,7 +6,7 @@ nonisolated enum BattleHP {
         // Per-species base stamina; a well-exercised wearer adds +1 when active,
         // plus any HP trained through battle practice.
         let base = state.species.baseHP
-        let activeBonus = (steps.map { ActivityModel.factor(steps: $0) >= 0.5 } ?? false) ? 1 : 0
+        let activeBonus = (steps.map { ActivityModel.factor(steps: $0) >= TimeConstants.activeHPFactorThreshold } ?? false) ? 1 : 0
         return base + activeBonus + state.trainedHP
     }
 

@@ -1,0 +1,39 @@
+import Foundation
+
+/// Single-flight, cache-windowed fetch bookkeeping composed by the reading
+/// stores (weather, steps). Tracks attempts (`lastFetch`, which throttles
+/// retries) separately from successes (`lastSuccess`, which dates the
+/// reading) so a failed fetch never refreshes a reading's age.
+final class ThrottledFetch {
+
+    /// Last attempt, success or failure.
+    private(set) var lastFetch: Date?
+    /// Last successful fetch.
+    private(set) var lastSuccess: Date?
+    private var task: Task<Void, Never>?
+
+    /// Spawns `run` unless one is already in flight or the last attempt is
+    /// still fresh by `isFresh`; `run` is expected to `record` its outcome.
+    /// Returns the spawned task (nil if skipped).
+    @discardableResult
+    func startIfStale(
+        now: Date,
+        isFresh: (Date) -> Bool,
+        run: @escaping () async -> Void
+    ) -> Task<Void, Never>? {
+        guard task == nil else { return nil }
+        if let lastFetch, isFresh(lastFetch) { return nil }
+        let spawned = Task { [weak self] in
+            await run()
+            self?.task = nil
+        }
+        task = spawned
+        return spawned
+    }
+
+    /// Notes an attempt at `now`; successes also refresh the reading's age.
+    func record(now: Date, success: Bool) {
+        lastFetch = now
+        if success { lastSuccess = now }
+    }
+}
