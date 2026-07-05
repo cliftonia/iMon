@@ -13,10 +13,10 @@ final class PetPresenter {
     var state: PetState
     let store: PetStateStore
 
-    /// Schedules care reminders while the app is backgrounded (swappable in tests).
-    var notificationScheduler: NotificationScheduler = .live()
-    /// Refreshes the watch-face complication (swappable in tests).
-    var complicationReloader: ComplicationReloader = .live()
+    /// Schedules care reminders while the app is backgrounded.
+    let notificationScheduler: NotificationScheduler
+    /// Refreshes the watch-face complication.
+    let complicationReloader: ComplicationReloader
 
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
@@ -53,13 +53,17 @@ final class PetPresenter {
         store: PetStateStore,
         currentNight: @escaping () -> Bool? = { nil },
         currentSteps: @escaping () -> Int? = { nil },
-        onDeath: @escaping () -> Void = {}
+        onDeath: @escaping () -> Void = {},
+        notificationScheduler: NotificationScheduler = .live(),
+        complicationReloader: ComplicationReloader = .live()
     ) {
         self.state = state
         self.store = store
         self.currentNight = currentNight
         self.currentSteps = currentSteps
         self.onDeath = onDeath
+        self.notificationScheduler = notificationScheduler
+        self.complicationReloader = complicationReloader
         updateViewModel()
     }
 
@@ -222,6 +226,14 @@ final class PetPresenter {
 
     // MARK: - Menu Navigation
 
+    /// Crown rotation maps straight onto the menu ring (ignored mid-activity).
+    func selectMenu(crownValue: Double) {
+        guard !viewModel.isBusy else { return }
+        let all = PetViewModel.MenuAction.allCases
+        let index = Int(crownValue.rounded()) % all.count
+        viewModel.menuSelection = all[index]
+    }
+
     func selectNextMenu() {
         let all = PetViewModel.MenuAction.allCases
         let index = (viewModel.menuSelection.rawValue + 1) % all.count
@@ -232,6 +244,24 @@ final class PetPresenter {
         let all = PetViewModel.MenuAction.allCases
         let index = (viewModel.menuSelection.rawValue - 1 + all.count) % all.count
         viewModel.menuSelection = all[index]
+    }
+
+    // MARK: - Scene Phase
+
+    /// Foregrounding catches the simulation up at once (so returning hours
+    /// later doesn't flash a stale scene) and restarts the loop if stopped.
+    /// Backgrounding hands care reminders to the system — never cancels them,
+    /// since a watch flips active on every wrist raise and would wipe pending
+    /// notifications before they fire.
+    func handleScenePhase(isActive: Bool, notificationsEnabled: Bool) {
+        if isActive {
+            startGameLoop()
+            environmentDidChange()
+        } else if notificationsEnabled {
+            scheduleCareNotifications()
+        } else {
+            cancelCareNotifications()
+        }
     }
 
     // MARK: - Helpers

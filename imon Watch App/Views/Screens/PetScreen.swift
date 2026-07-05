@@ -27,10 +27,7 @@ struct PetScreen: View {
                 isContinuous: false
             )
             .onChange(of: crownValue) { _, newValue in
-                guard !presenter.viewModel.isBusy else { return }
-                let allCases = PetViewModel.MenuAction.allCases
-                let index = Int(newValue.rounded()) % allCases.count
-                presenter.viewModel.menuSelection = allCases[index]
+                presenter.selectMenu(crownValue: newValue)
             }
             .onChange(of: presenter.viewModel.menuSelection) { _, newValue in
                 crownValue = Double(newValue.rawValue)
@@ -40,21 +37,12 @@ struct PetScreen: View {
                 refreshEnabledIntegrations()
             }
             .onChange(of: scenePhase) { _, newPhase in
+                presenter.handleScenePhase(
+                    isActive: newPhase == .active,
+                    notificationsEnabled: appPresenter.settings.notificationsEnabled
+                )
                 if newPhase == .active {
-                    // Catch the simulation up to now at once, so returning hours
-                    // later doesn't briefly show the stale (e.g. night) scene
-                    // before the next tick. Restart the loop if it was stopped.
-                    presenter.startGameLoop()
-                    presenter.environmentDidChange()
-                    // Don't cancel reminders here — a watch flips active on every
-                    // wrist raise, which would wipe pending notifications before
-                    // they ever fire. The next background reschedule keeps them
-                    // current against the latest state.
                     refreshEnabledIntegrations()
-                } else if appPresenter.settings.notificationsEnabled {
-                    presenter.scheduleCareNotifications()
-                } else {
-                    presenter.cancelCareNotifications()
                 }
             }
             .onChange(of: appPresenter.weatherStore.snapshot) { _, _ in
@@ -110,12 +98,13 @@ struct PetScreen: View {
         if let species = presenter.viewModel.status?.species {
             HStack(spacing: 4) {
                 if let snapshot = appPresenter.weatherStore.displaySnapshot {
-                    WeatherIconView(
+                    SpriteView(
                         frame: WeatherIconMapper.frame(
                             for: snapshot.condition,
                             isDaylight: snapshot.isDaylight
                         ),
-                        pixelSize: 0.75
+                        pixelSize: 0.75,
+                        pixelColor: .white
                     )
                     Text("|")
                         .font(.system(size: 9, weight: .bold, design: .monospaced))

@@ -193,6 +193,61 @@ nonisolated extension SpriteCatalog {
         )
     }
 
+    /// Happy bounce: crouch, two celebration beats, land in dust.
+    static func bounceHappy(
+        idle: SpriteFrame,
+        _ happy1: SpriteFrame,
+        _ happy2: SpriteFrame
+    ) -> [SpriteFrame] {
+        [
+            idle.shiftedDown(1),
+            happy1,
+            happy2,
+            idle.overlaying(SharedSprites.landingDust)
+        ]
+    }
+
+    /// Chomp: open, clamp, open, settle back to the rest frame.
+    static func chomp(
+        _ eat1: SpriteFrame,
+        _ eat2: SpriteFrame,
+        rest: SpriteFrame
+    ) -> [SpriteFrame] {
+        [eat1, eat2, eat1, rest]
+    }
+
+    /// Strike: windup shift, two attack beats, then either an impact burst
+    /// on the final attack frame or a settle back to idle.
+    static func strike(
+        idle: SpriteFrame,
+        _ attack1: SpriteFrame,
+        _ attack2: SpriteFrame,
+        burst: Bool
+    ) -> [SpriteFrame] {
+        [
+            idle.shiftedRight(1),
+            attack1,
+            attack2,
+            burst ? attack2.overlaying(SharedSprites.impactBurst) : idle
+        ]
+    }
+
+    /// Sleep loop: two custom beats, optionally interleaved with Z's pulsing
+    /// over a base frame (pass nil to just alternate the two beats).
+    static func sleepCycle(
+        _ sleep1: SpriteFrame,
+        _ sleep2: SpriteFrame,
+        overlayingZOn base: SpriteFrame? = nil
+    ) -> [SpriteFrame] {
+        guard let base else { return [sleep1, sleep2, sleep1, sleep2] }
+        return [
+            sleep1,
+            base.overlaying(SharedSprites.sleepZ2),
+            sleep2,
+            base.overlaying(SharedSprites.sleepZ3)
+        ]
+    }
+
     /// Defeated slump: the pet sags low and heaves on the spot, head hung.
     /// Built from the first idle frame only — unlike `weakAnimation` it never
     /// cycles to the second idle, so species whose idle glances around don't

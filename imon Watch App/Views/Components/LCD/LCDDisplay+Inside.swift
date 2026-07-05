@@ -63,19 +63,15 @@ extension LCDDisplay {
         pixelHeight: CGFloat
     ) {
         func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
-            for cell in cells where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20 {
-                let rect = CGRect(
-                    x: Double(cell.x) * pixelWidth,
-                    y: Double(cell.y) * pixelHeight,
-                    width: pixelWidth + 0.5,
-                    height: pixelHeight + 0.5
-                )
-                context.fill(Path(rect), with: .color(color))
-            }
+            context.fillLCDCells(
+                cells,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+                color: color
+            )
         }
         fill(Self.furnitureCells(), basePixelColor.opacity(0.35))
         fill(Self.windowFrameCells(), basePixelColor.opacity(0.45))
-        fill(Self.lampCells(phase: phase), basePixelColor)
+        fill(Self.lampCells(), basePixelColor)
         fill(Self.lampGleamCells(phase: phase), basePixelColor.opacity(0.5))
     }
 
@@ -93,7 +89,7 @@ extension LCDDisplay {
     }
 
     /// A small light tucked up against the ceiling - tiny cord and bulb.
-    static func lampCells(phase: Int) -> [(x: Int, y: Int)] {
+    static func lampCells() -> [(x: Int, y: Int)] {
         let cx = 10
         return [
             (x: cx, y: 0),                                      // ceiling mount

@@ -52,9 +52,6 @@ struct ContentView: View {
                     if let settingsPresenter = appPresenter.settingsPresenter {
                         SettingsScreen(presenter: settingsPresenter)
                     }
-
-                case .pet, .hatch, .death:
-                    EmptyView()
                 }
             }
         }

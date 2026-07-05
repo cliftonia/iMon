@@ -1,10 +1,10 @@
 import Observation
 
 /// Drives the Settings screen. The toggles bind straight to the shared
-/// `SettingsStore`; the debug actions (DEBUG only) are injected closures onto
-/// the app's presenters, so this stays free of navigation and game knowledge.
-@MainActor
-@Observable
+/// `SettingsStore` (itself observable); the debug actions (DEBUG only) are
+/// injected closures onto the app's presenters, so this stays free of
+/// navigation and game knowledge. Holds no ViewModel — everything it exposes
+/// is immutable or already observable.
 final class SettingsPresenter {
 
     let settings: SettingsStore

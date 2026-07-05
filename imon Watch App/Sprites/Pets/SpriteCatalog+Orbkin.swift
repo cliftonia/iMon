@@ -127,12 +127,7 @@ nonisolated extension SpriteCatalog {
         case .happy, .eat, .sleep:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         case .attack:
-            return [
-                idle1.shiftedRight(1),
-                attack1,
-                attack2,
-                attack2.overlaying(SharedSprites.impactBurst)
-            ]
+            return strike(idle: idle1, attack1, attack2, burst: true)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

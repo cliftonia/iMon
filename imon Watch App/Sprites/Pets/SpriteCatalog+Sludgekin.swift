@@ -215,17 +215,12 @@ nonisolated extension SpriteCatalog {
                 idle1.overlaying(SharedSprites.landingDust)
             ]
         case .eat:
-            return [eat1, eat2, eat1, idle1]
+            return chomp(eat1, eat2, rest: idle1)
         case .sleep:
             // Melted flat on every beat while the Z's pulse.
-            return [sleep1, sleep2, sleep1, sleep2]
+            return sleepCycle(sleep1, sleep2)
         case .attack:
-            return [
-                idle1.shiftedRight(1),
-                idle2,
-                attackFling,
-                idle1
-            ]
+            return strike(idle: idle1, idle2, attackFling, burst: false)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

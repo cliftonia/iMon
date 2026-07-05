@@ -75,13 +75,11 @@ extension PetPresenter {
         for (index, stage) in foodStages.enumerated() {
             viewModel.activity = .feeding(.bite(index + 1))
             spriteAnimator.play(chomp)
-            try? await Task.sleep(for: .milliseconds(300))
-            guard !Task.isCancelled else { return }
+            guard await pause(ms: 300) else { return }
 
             feedingAnimator.play(.still(stage))
             WKInterfaceDevice.chompHaptic()
-            try? await Task.sleep(for: .milliseconds(400))
-            guard !Task.isCancelled else { return }
+            guard await pause(ms: 400) else { return }
         }
     }
 
@@ -100,8 +98,7 @@ extension PetPresenter {
         updateViewModel()
         save()
 
-        try? await Task.sleep(for: .milliseconds(1000))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 1000) else { return }
 
         endActivity()
     }
@@ -126,8 +123,7 @@ extension PetPresenter {
         feedingAnimator.play(SharedSprites.waterDrops)
         WKInterfaceDevice.cleanHaptic()
 
-        try? await Task.sleep(for: .milliseconds(1200))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 1200) else { return }
 
         state = CleanAction.apply(to: state, at: .now)
         updateViewModel()
@@ -135,8 +131,7 @@ extension PetPresenter {
 
         feedingAnimator.play(SharedSprites.cleanSparkle)
 
-        try? await Task.sleep(for: .milliseconds(800))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 800) else { return }
 
         endActivity()
     }

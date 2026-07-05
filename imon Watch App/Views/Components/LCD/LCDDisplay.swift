@@ -173,19 +173,14 @@ struct LCDDisplay: View {
         guard showCallSign, (phase / 3) % 2 == 0 else { return }
 
         // A 2px-wide exclamation mark tucked into the top-left corner.
-        let cells: [(x: Int, y: Int)] = [
-            (1, 0), (2, 0), (1, 1), (2, 1), (1, 2), (2, 2),
-            (1, 4), (2, 4)
-        ]
-        for cell in cells {
-            let rect = CGRect(
-                x: Double(cell.x) * pixelWidth,
-                y: Double(cell.y) * pixelHeight,
-                width: pixelWidth + 0.5,
-                height: pixelHeight + 0.5
-            )
-            context.fill(Path(rect), with: .color(basePixelColor))
-        }
+        context.fillLCDCells(
+            [
+                (1, 0), (2, 0), (1, 1), (2, 1), (1, 2), (2, 2),
+                (1, 4), (2, 4)
+            ],
+            pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+            color: basePixelColor
+        )
     }
 
     // MARK: - Sprites
@@ -236,13 +231,11 @@ struct LCDDisplay: View {
         // The lit body on top.
         for y in 0..<SpriteFrame.size {
             for x in 0..<SpriteFrame.size where sprite.pixel(x: x, y: y) {
-                let rect = CGRect(
-                    x: Double(x + offsetX) * pixelWidth,
-                    y: Double(y + offsetY) * pixelHeight,
-                    width: pixelWidth + 0.5,
-                    height: pixelHeight + 0.5
+                context.fillCell(
+                    x: x + offsetX, y: y + offsetY,
+                    pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+                    color: pixelColor
                 )
-                context.fill(Path(rect), with: .color(pixelColor))
             }
         }
     }
@@ -303,23 +296,13 @@ struct LCDDisplay: View {
             (0, 2), (1, 2), (2, 2)
         ]
 
-        func fillPixel(x: Int, y: Int, _ pixelColor: Color) {
-            let rect = CGRect(
-                x: Double(x) * pixelWidth,
-                y: Double(y) * pixelHeight,
-                width: pixelWidth + 0.5,
-                height: pixelHeight + 0.5
-            )
-            context.fill(Path(rect), with: .color(pixelColor))
-        }
-
         for i in 0..<min(poopCount, 4) {
             let base = bases[i]
             for p in pilePixels {
-                fillPixel(
-                    x: base.x + p.dx,
-                    y: base.y + p.dy,
-                    color
+                context.fillCell(
+                    x: base.x + p.dx, y: base.y + p.dy,
+                    pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+                    color: color
                 )
             }
         }
@@ -332,8 +315,10 @@ struct LCDDisplay: View {
         } else {
             stinkPixels = [(25, 11), (27, 12), (31, 11)]
         }
-        for p in stinkPixels {
-            fillPixel(x: p.x, y: p.y, stinkColor)
-        }
+        context.fillLCDCells(
+            stinkPixels,
+            pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+            color: stinkColor
+        )
     }
 }

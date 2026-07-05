@@ -293,24 +293,14 @@ nonisolated extension SpriteCatalog {
             return [sideWalk1, sideWalk2, sideWalk3]
         case .happy:
             // Rear up out of the water and splash back down.
-            return [
-                idle1.shiftedDown(1),
-                idle1,
-                idle2,
-                idle1.overlaying(SharedSprites.landingDust)
-            ]
+            return bounceHappy(idle: idle1, idle1, idle2)
         case .eat:
-            return [eat1, eat2, eat1, idle1]
+            return chomp(eat1, eat2, rest: idle1)
         case .sleep:
             // Eyes stay shut on every beat while the Z's pulse.
-            return [sleep1, sleep2, sleep1, sleep2]
+            return sleepCycle(sleep1, sleep2)
         case .attack:
-            return [
-                idle1.shiftedRight(1),
-                attack1,
-                attack2,
-                attack2.overlaying(SharedSprites.impactBurst)
-            ]
+            return strike(idle: idle1, attack1, attack2, burst: true)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

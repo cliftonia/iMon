@@ -28,8 +28,7 @@ extension PetPresenter {
         )
         WKInterfaceDevice.rejectHaptic()
 
-        try? await Task.sleep(for: .milliseconds(800))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 800) else { return }
 
         endActivity()
     }
@@ -41,8 +40,7 @@ extension PetPresenter {
         feedingAnimator.play(SharedSprites.needleInjection)
         WKInterfaceDevice.healHaptic()
 
-        try? await Task.sleep(for: .milliseconds(1200))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 1200) else { return }
 
         // Phase 2: Apply heal
         state = HealAction.apply(to: state, at: .now)
@@ -59,8 +57,7 @@ extension PetPresenter {
             )
         )
 
-        try? await Task.sleep(for: .milliseconds(1000))
-        guard !Task.isCancelled else { return }
+        guard await pause(ms: 1000) else { return }
 
         endActivity()
     }

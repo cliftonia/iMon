@@ -222,22 +222,12 @@ nonisolated extension SpriteCatalog {
                 wingsMid.overlaying(SharedSprites.landingDust)
             ]
         case .eat:
-            return [eat1, eat2, eat1, wingsMid]
+            return chomp(eat1, eat2, rest: wingsMid)
         case .sleep:
             // Eyes stay shut on every beat while the Z's pulse.
-            return [
-                sleep1,
-                sleep1.overlaying(SharedSprites.sleepZ2),
-                sleep1,
-                sleep1.overlaying(SharedSprites.sleepZ3)
-            ]
+            return sleepCycle(sleep1, sleep1, overlayingZOn: sleep1)
         case .attack:
-            return [
-                wingsMid.shiftedRight(1),
-                wingsDown,
-                attackRake,
-                wingsMid
-            ]
+            return strike(idle: wingsMid, wingsDown, attackRake, burst: false)
         case .refuse:
             return defaultAnimationFromIdle(wingsMid, wingsDown, kind)
         }

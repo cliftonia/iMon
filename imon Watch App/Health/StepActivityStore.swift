@@ -12,9 +12,7 @@ final class StepActivityStore {
     /// as the new day's — the engine's day-rollover would credit yesterday's
     /// whole total again and poison the new day's baseline and lazy-day check.
     var todaySteps: Int? {
-        guard let lastSuccess,
-              Calendar.current.isDate(lastSuccess, inSameDayAs: .now)
-        else { return nil }
+        guard let lastSuccess, lastSuccess.isSameDay(as: .now) else { return nil }
         return fetchedSteps
     }
 
@@ -68,7 +66,7 @@ final class StepActivityStore {
         // refetches immediately so the new day starts from a real reading.
         if let last = lastFetch,
            now.timeIntervalSince(last) < TimeConstants.stepCacheInterval,
-           Calendar.current.isDate(last, inSameDayAs: now) {
+           last.isSameDay(as: now) {
             return false
         }
         return true

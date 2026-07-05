@@ -143,9 +143,7 @@ extension PetPresenter {
         trainingPresenter?.spriteAnimator.stop()
         trainingPresenter?.targetAnimator.stop()
         trainingPresenter = nil
-        viewModel.screenMode = .normal
-        updateAnimation()
-        startWandering()
+        returnToNormalMode()
     }
 
     // MARK: - Battle Mode (Inline)
@@ -172,6 +170,12 @@ extension PetPresenter {
         battlePresenter?.petAnimator.stop()
         battlePresenter?.opponentAnimator.stop()
         battlePresenter = nil
+        returnToNormalMode()
+    }
+
+    /// Shared tail of every mode teardown: back to the home scene, refresh
+    /// the animation, and resume wandering.
+    private func returnToNormalMode() {
         viewModel.screenMode = .normal
         updateAnimation()
         startWandering()

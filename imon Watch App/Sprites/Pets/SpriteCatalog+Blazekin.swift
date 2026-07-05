@@ -342,30 +342,15 @@ nonisolated extension SpriteCatalog {
         case .sideWalk:
             return [sideWalk1, sideWalk2]
         case .happy:
-            return [
-                idle1.shiftedDown(1),
-                happy1,
-                happy2,
-                idle1.overlaying(SharedSprites.landingDust)
-            ]
+            return bounceHappy(idle: idle1, happy1, happy2)
         case .eat:
-            return [eat1, eat2, eat1, idle1]
+            return chomp(eat1, eat2, rest: idle1)
         case .sleep:
             // Overlay onto idle1 only — idle2 glances right, and a
             // sleeping pet must not whip its head about.
-            return [
-                sleep1,
-                idle1.overlaying(SharedSprites.sleepZ2),
-                sleep2,
-                idle1.overlaying(SharedSprites.sleepZ3)
-            ]
+            return sleepCycle(sleep1, sleep2, overlayingZOn: idle1)
         case .attack:
-            return [
-                idle1.shiftedRight(1),
-                attack1,
-                attack2,
-                attack2.overlaying(SharedSprites.impactBurst)
-            ]
+            return strike(idle: idle1, attack1, attack2, burst: true)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

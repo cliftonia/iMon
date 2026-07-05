@@ -12,16 +12,23 @@ struct PetNotificationsTests {
         var scheduled: [CareNotification]?
     }
 
-    private func makePresenter(_ state: PetState, _ capture: Capture) -> PetPresenter {
+    private func makePresenter(
+        _ state: PetState,
+        _ capture: Capture,
+        reloader: ComplicationReloader = ComplicationReloader(reload: {})
+    ) -> PetPresenter {
         let store = PetStateStore(save: { _ in }, load: { nil }, delete: {})
-        let presenter = PetPresenter(state: state, store: store)
-        presenter.notificationScheduler = NotificationScheduler(
-            schedule: { capture.scheduled = $0 },
-            notify: { _, _, _ in },
-            cancelAll: {},
-            requestAuthorization: { true }
+        return PetPresenter(
+            state: state,
+            store: store,
+            notificationScheduler: NotificationScheduler(
+                schedule: { capture.scheduled = $0 },
+                notify: { _, _, _ in },
+                cancelAll: {},
+                requestAuthorization: { true }
+            ),
+            complicationReloader: reloader
         )
-        return presenter
     }
 
     private func today(at hour: Int) -> Date {
@@ -47,8 +54,10 @@ struct PetNotificationsTests {
     @Test
     func `scheduling also refreshes the complication`() {
         let reloads = ReloadBox()
-        let presenter = makePresenter(makeTestState(), Capture())
-        presenter.complicationReloader = ComplicationReloader(reload: { reloads.count += 1 })
+        let presenter = makePresenter(
+            makeTestState(), Capture(),
+            reloader: ComplicationReloader(reload: { reloads.count += 1 })
+        )
 
         presenter.scheduleCareNotifications(now: .now)
 
