@@ -21,6 +21,8 @@ final class AppPresenter {
     private(set) var settingsPresenter: SettingsPresenter?
     private(set) var hatchPresenter: HatchPresenter?
     private(set) var onboardingPresenter: OnboardingPresenter?
+    /// The newborn saved at hatch, carried through the walkthrough.
+    private var hatchedState: PetState?
     private(set) var deathPresenter: DeathPresenter?
 
     let router = AppRouter()
@@ -92,6 +94,11 @@ final class AppPresenter {
     }
 
     private func onHatchComplete() {
+        // Persist the newborn at hatch — quitting during the walkthrough must
+        // not lose the pet (it would re-hatch on the next launch).
+        let state = PetState.hatched(at: .now)
+        try? store.save(state)
+        hatchedState = state
         startOnboarding()
     }
 
@@ -105,7 +112,8 @@ final class AppPresenter {
 
     private func finishOnboarding() {
         onboardingPresenter = nil
-        startAlive(state: PetState.hatched(at: .now))
+        startAlive(state: hatchedState ?? PetState.hatched(at: .now))
+        hatchedState = nil
     }
 
     private func startAlive(state: PetState) {

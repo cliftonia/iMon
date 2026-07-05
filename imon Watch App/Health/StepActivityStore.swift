@@ -7,10 +7,23 @@ import os
 @Observable
 final class StepActivityStore {
 
-    private(set) var todaySteps: Int?
+    /// Today's step reading, or nil if the last successful fetch belongs to an
+    /// earlier calendar day. A count cached before midnight must never be served
+    /// as the new day's — the engine's day-rollover would credit yesterday's
+    /// whole total again and poison the new day's baseline and lazy-day check.
+    var todaySteps: Int? {
+        guard let lastSuccess,
+              Calendar.current.isDate(lastSuccess, inSameDayAs: .now)
+        else { return nil }
+        return fetchedSteps
+    }
 
+    private var fetchedSteps: Int?
     private let provider: StepCountProvider
+    /// Last attempt, success or failure — throttles refreshes.
     private var lastFetch: Date?
+    /// Last successful fetch — dates the reading's calendar day.
+    private var lastSuccess: Date?
     private var fetchTask: Task<Void, Never>?
 
     init(provider: StepCountProvider = .live()) {
@@ -34,8 +47,9 @@ final class StepActivityStore {
     func refresh(now: Date = .now) async {
         defer { fetchTask = nil }
         do {
-            todaySteps = try await provider.fetchTodaySteps()
+            fetchedSteps = try await provider.fetchTodaySteps()
             lastFetch = now
+            lastSuccess = now
         } catch {
             Log.health.error("Step fetch failed: \(error, privacy: .public)")
             // Apply the cache window to failures too, so a missing authorization
@@ -50,8 +64,11 @@ final class StepActivityStore {
 
     private func shouldRefresh(now: Date) -> Bool {
         guard fetchTask == nil else { return false }
+        // The cache only holds within a calendar day — crossing midnight
+        // refetches immediately so the new day starts from a real reading.
         if let last = lastFetch,
-           now.timeIntervalSince(last) < TimeConstants.stepCacheInterval {
+           now.timeIntervalSince(last) < TimeConstants.stepCacheInterval,
+           Calendar.current.isDate(last, inSameDayAs: now) {
             return false
         }
         return true

@@ -11,7 +11,11 @@ final class WeatherStore {
 
     private let provider: WeatherProvider
     private let fallback: WeatherSnapshot?
+    /// Last attempt, success or failure — throttles refreshes.
     private var lastFetch: Date?
+    /// Last successful fetch — the snapshot's true age. Kept separate from
+    /// `lastFetch` so a failed refresh can't make a stale reading look fresh.
+    private var lastSuccess: Date?
     private var fetchTask: Task<Void, Never>?
 
     /// The snapshot the UI should render. In Release this is just `snapshot`;
@@ -60,8 +64,8 @@ final class WeatherStore {
     /// day) returns nil so day/night falls back to the clock instead of showing
     /// the old night until a fetch completes.
     func nightSignal(now: Date = .now) -> Bool? {
-        guard let snapshot, let lastFetch,
-              now.timeIntervalSince(lastFetch) < TimeConstants.weatherCacheInterval
+        guard let snapshot, let lastSuccess,
+              now.timeIntervalSince(lastSuccess) < TimeConstants.weatherCacheInterval
         else {
             return nil
         }
@@ -87,11 +91,12 @@ final class WeatherStore {
         do {
             snapshot = try await provider.fetchCurrent()
             lastFetch = now
+            lastSuccess = now
         } catch {
             Log.weather.error("Weather fetch failed: \(error, privacy: .public)")
             // Apply the cache window to failures too, so a missing authorization
-            // doesn't spin a fetch on every wrist raise. Leave `snapshot` nil so
-            // day/night falls back to the time window.
+            // doesn't spin a fetch on every wrist raise. `lastSuccess` is left
+            // alone so the surviving snapshot ages out honestly.
             lastFetch = now
         }
     }
