@@ -2,7 +2,7 @@ import Foundation
 
 nonisolated enum FeedAction {
 
-    enum FoodKind: Sendable {
+    nonisolated enum FoodKind: Sendable {
         case meat
         case vitamin
     }

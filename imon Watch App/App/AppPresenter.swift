@@ -71,7 +71,7 @@ final class AppPresenter {
                 isNight: weatherStore.nightSignal(),
                 steps: stepActivityStore.todaySteps
             )
-            try? store.save(advanced)
+            persist(advanced)
 
             if advanced.isDead {
                 startDeath(state: advanced)
@@ -79,8 +79,18 @@ final class AppPresenter {
                 startAlive(state: advanced)
             }
         } catch {
-            Log.presentation.error("Failed to load state: \(error)")
+            Log.presentation.error("Failed to load state: \(error, privacy: .public)")
             startHatching()
+        }
+    }
+
+    /// Saves through a logged funnel — a silent save failure here would lose
+    /// the pet (or its catch-up) with no signal.
+    private func persist(_ state: PetState) {
+        do {
+            try store.save(state)
+        } catch {
+            Log.presentation.error("Failed to save state: \(error, privacy: .public)")
         }
     }
 
@@ -97,7 +107,7 @@ final class AppPresenter {
         // Persist the newborn at hatch — quitting during the walkthrough must
         // not lose the pet (it would re-hatch on the next launch).
         let state = PetState.hatched(at: .now)
-        try? store.save(state)
+        persist(state)
         hatchedState = state
         startOnboarding()
     }
@@ -132,7 +142,6 @@ final class AppPresenter {
             onDeath: { [weak self] in self?.checkDeath() }
         )
         petPresenter = presenter
-        statsPresenter = StatsPresenter()
         hatchPresenter = nil
         onboardingPresenter = nil
         deathPresenter = nil
@@ -155,7 +164,7 @@ final class AppPresenter {
         do {
             try store.delete()
         } catch {
-            Log.presentation.error("Failed to delete state: \(error)")
+            Log.presentation.error("Failed to delete state: \(error, privacy: .public)")
         }
         startHatching()
     }
@@ -211,7 +220,7 @@ final class AppPresenter {
         if let petPresenter {
             var state = petPresenter.getCurrentState()
             state.isDead = true
-            try? store.save(state)
+            persist(state)
             petPresenter.stopGameLoop()
             self.petPresenter = nil
             startDeath(state: state)

@@ -2,12 +2,12 @@ import Foundation
 
 nonisolated enum TrainAction {
 
-    enum Guess: Sendable {
+    nonisolated enum Guess: Sendable {
         case high
         case low
     }
 
-    struct RoundResult: Sendable {
+    nonisolated struct RoundResult: Sendable {
         let won: Bool
     }
 
@@ -66,20 +66,13 @@ nonisolated enum TrainAction {
         state.trainingCount += 1
         state.timestamps.lastTrainedAt = date
         let roll = Int.random(in: 1...10)
-        switch roll {
-        case 1...6:
+        if (1...6).contains(roll) {
             state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + 1)
             state.timestamps.lastPoopAt = date
-        case 7...9:
-            break
-        case 10:
-            if !state.isInjured {
-                state.isInjured = true
-                state.timestamps.injuredAt = date
-                state.injuryCount += 1
-            }
-        default:
-            break
+        } else if roll == 10, !state.isInjured {
+            state.isInjured = true
+            state.timestamps.injuredAt = date
+            state.injuryCount += 1
         }
 
         return state

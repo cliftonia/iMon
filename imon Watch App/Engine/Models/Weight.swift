@@ -1,20 +1,25 @@
 import Foundation
 
 nonisolated struct Weight: Codable, Sendable, Hashable, Comparable {
+
+    /// The lightest and heaviest a pet can weigh (grams).
+    static let minGrams = 5
+    static let maxGrams = 99
+
     private(set) var grams: Int
 
     init(_ grams: Int) {
-        self.grams = max(5, min(99, grams))
+        self.grams = max(Self.minGrams, min(Self.maxGrams, grams))
     }
 
-    var isOverweight: Bool { grams >= 99 }
+    var isOverweight: Bool { grams >= Self.maxGrams }
 
     mutating func add(_ amount: Int) {
-        grams = min(99, grams + amount)
+        grams = min(Self.maxGrams, grams + amount)
     }
 
     mutating func subtract(_ amount: Int) {
-        grams = max(5, grams - amount)
+        grams = max(Self.minGrams, grams - amount)
     }
 
     nonisolated static func < (lhs: Self, rhs: Self) -> Bool {

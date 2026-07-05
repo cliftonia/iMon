@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// The work performed on a background wake: advance the saved pet to `now`,
 /// persist it, re-arm the next wake, and re-evaluate the care reminders against
@@ -11,8 +12,9 @@ nonisolated enum BackgroundTick {
         store: PetStateStore,
         notifications: NotificationScheduler,
         refresh: BackgroundRefreshScheduler,
+        complications: ComplicationReloader,
         steps: Int?,
-        now: Date
+        now: Date = .now
     ) {
         // A transient decode failure must not break the wake chain — re-arm and
         // bail. A genuine absence of a saved pet (hatching) is a true no-op.
@@ -20,7 +22,8 @@ nonisolated enum BackgroundTick {
         do {
             loaded = try store.load()
         } catch {
-            refresh.schedule(now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
+            Log.background.error("Background load failed: \(error, privacy: .public)")
+            refresh.scheduleNext(from: now)
             return
         }
         guard let state = loaded else { return }
@@ -36,15 +39,22 @@ nonisolated enum BackgroundTick {
             )
         }
 
-        try? store.save(advanced)
+        do {
+            try store.save(advanced)
+        } catch {
+            Log.background.error("Background save failed: \(error, privacy: .public)")
+        }
 
         // Re-arm the next wake before the caller completes the task, so the loop
         // keeps going even if the work below is later cut short.
-        refresh.schedule(
-            now.addingTimeInterval(TimeConstants.backgroundRefreshInterval)
-        )
+        refresh.scheduleNext(from: now)
 
         let plan = CareNotificationPlanner.plan(for: advanced, now: now, steps: steps)
         notifications.schedule(plan)
+
+        // Refresh the watch-face complication against the same advanced state,
+        // so the background wake and the foreground path bundle identically.
+        ComplicationStore.save(ComplicationTimeline.entries(for: advanced, from: now))
+        complications.reload()
     }
 }

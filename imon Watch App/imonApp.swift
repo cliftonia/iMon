@@ -32,9 +32,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
         Log.presentation.debug("App will resign active")
         // Always leave one refresh pending when heading to the background, so a
         // throttled or failed wake doesn't break the chain.
-        BackgroundRefreshScheduler.live().schedule(
-            Date().addingTimeInterval(TimeConstants.backgroundRefreshInterval)
-        )
+        BackgroundRefreshScheduler.live().scheduleNext(from: Date())
     }
 
     func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
@@ -58,20 +56,14 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
     private func handleRefresh(_ task: WKApplicationRefreshBackgroundTask) {
         Task { @MainActor in
             let steps = try? await StepCountProvider.live().fetchTodaySteps()
-            let store = JSONPetStateStore.live()
             BackgroundTick.perform(
-                store: store,
+                store: JSONPetStateStore.live(),
                 notifications: .live(),
                 refresh: .live(),
+                complications: .live(),
                 steps: steps,
                 now: Date()
             )
-            if let state = try? store.load() {
-                ComplicationStore.save(
-                    ComplicationTimeline.entries(for: state, from: Date())
-                )
-            }
-            ComplicationReloader.live().reload()
             task.setTaskCompletedWithSnapshot(false)
         }
     }

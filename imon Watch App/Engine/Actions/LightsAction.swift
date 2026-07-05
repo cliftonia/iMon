@@ -2,7 +2,7 @@ import Foundation
 
 nonisolated enum LightsAction {
 
-    enum ToggleResult: Sendable {
+    nonisolated enum ToggleResult: Sendable {
         case toggled
         case blocked
     }

@@ -20,10 +20,14 @@ extension PetPresenter {
             return
         }
         state = EvolutionEngine.evolve(state, to: target, at: .now)
+        #if DEBUG
+        // Debug journeys re-dirty the pet so each evolution stage's care
+        // loop can be exercised; never runs in a release build.
         if debugStepIndex > 0 {
             state.poopCount = 1
             state.isInjured = true
         }
+        #endif
         viewModel.showEvolution = false
         viewModel.evolutionTarget = nil
         updateViewModel()

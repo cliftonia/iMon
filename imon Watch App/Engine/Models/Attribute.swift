@@ -5,13 +5,18 @@ nonisolated enum Attribute: String, Codable, Sendable {
     case virus
     case data
 
-    /// Advantage triangle: vaccine > virus > data > vaccine
-    func hasAdvantageOver(_ other: Attribute) -> Bool {
-        switch (self, other) {
-        case (.vaccine, .virus), (.virus, .data), (.data, .vaccine):
-            true
-        default:
-            false
+    /// Advantage triangle: vaccine > virus > data > vaccine.
+    /// The one attribute this attribute beats — keeps the check
+    /// exhaustive without a banned `default:`.
+    var prey: Attribute {
+        switch self {
+        case .vaccine: .virus
+        case .virus: .data
+        case .data: .vaccine
         }
+    }
+
+    func hasAdvantageOver(_ other: Attribute) -> Bool {
+        prey == other
     }
 }

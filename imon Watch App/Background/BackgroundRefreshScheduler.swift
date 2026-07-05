@@ -11,6 +11,13 @@ nonisolated struct BackgroundRefreshScheduler: Sendable {
 
 extension BackgroundRefreshScheduler {
 
+    /// Re-arms the next wake one refresh interval from `now` — the single
+    /// home for the re-arm date math. `nonisolated` so the background tick
+    /// (itself nonisolated) can re-arm the chain.
+    nonisolated func scheduleNext(from now: Date) {
+        schedule(now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
+    }
+
     static func live() -> BackgroundRefreshScheduler {
         BackgroundRefreshScheduler(
             schedule: { date in
@@ -22,7 +29,7 @@ extension BackgroundRefreshScheduler {
                         withPreferredDate: date, userInfo: nil
                     ) { error in
                         if let error {
-                            Log.presentation.error(
+                            Log.background.error(
                                 "Background refresh schedule failed: \(error.localizedDescription)"
                             )
                         }

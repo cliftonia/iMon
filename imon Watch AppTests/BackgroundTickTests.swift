@@ -46,7 +46,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(NoteCapture()),
-            refresh: capturing(RefreshCapture()), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         #expect(box.saveCount == 1)
@@ -64,7 +64,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         let expected = CareNotificationPlanner.plan(
@@ -83,7 +83,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(NoteCapture()),
-            refresh: capturing(refresh), steps: nil, now: now
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         #expect(refresh.date == now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
@@ -97,7 +97,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(refresh), steps: nil, now: today(at: 9)
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: today(at: 9)
         )
 
         #expect(box.saveCount == 0)
@@ -114,7 +114,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: store, notifications: capturing(NoteCapture()),
-            refresh: capturing(refresh), steps: nil, now: now
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         // A transient decode failure must not kill the refresh chain.
@@ -132,7 +132,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         #expect(box.state?.species == .hopkin)
@@ -151,7 +151,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
         )
 
         #expect(box.state?.isInjured == true)
