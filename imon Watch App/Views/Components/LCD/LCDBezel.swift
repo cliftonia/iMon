@@ -25,8 +25,9 @@ struct LCDBezel<Content: View>: View {
     let content: Content
     /// Evolution progress (0...1) drawn as a glow filling the bezel; `nil` hides it.
     let evolutionProgress: Double?
-    /// The scene's time of day, so the progress ring can shift to a moonlit
-    /// colour once the screen goes dark at night.
+    /// The real time of day (not the resolved scene's), so the progress ring
+    /// shifts to a moonlit colour at night and holds it through the action
+    /// ceremonies, whose clean scene always reports day.
     let dayPhase: DayPhase
     /// The active LCD palette, so the ring matches the red battery-saver screen.
     @Environment(\.lcdTheme) private var theme

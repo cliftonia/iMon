@@ -184,7 +184,7 @@ struct PetScreen: View {
 
             LCDBezel(
                 evolutionProgress: presenter.viewModel.evolutionProgress,
-                dayPhase: homeScene.dayPhase
+                dayPhase: presenter.viewModel.dayPhase
             ) {
                 LCDDisplay(configuration: LCDDisplayConfiguration(
                     leftSprite: presenter.spriteAnimator.currentFrame,
