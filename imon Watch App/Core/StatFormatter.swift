@@ -13,11 +13,11 @@ nonisolated enum StatFormatter {
     }
 
     /// Win rate as a whole-number percent (0...100), or nil when there are no
-    /// battles to divide by. Rounds and clamps, so the `Int` conversion is safe
-    /// on watchOS's 32-bit `Int`.
+    /// battles to divide by. Clamps in `Double` before converting, so extreme
+    /// ratios can never trap the `Int` conversion.
     static func percent(_ part: Int, of whole: Int) -> String? {
         guard whole > 0 else { return nil }
         let ratio = Double(part) / Double(whole) * 100
-        return "\(min(100, max(0, Int(ratio.rounded()))))%"
+        return "\(Int(min(100, max(0, ratio.rounded()))))%"
     }
 }

@@ -53,14 +53,22 @@ final class AppDelegate: NSObject, WKApplicationDelegate {
     }
 
     /// Advances the pet, replans reminders, re-arms the next wake, then completes.
+    /// Reads the persisted Settings toggles so a background wake honours the same
+    /// Steps and Notifications switches the foreground does.
     private func handleRefresh(_ task: WKApplicationRefreshBackgroundTask) {
         Task { @MainActor in
-            let steps = try? await StepCountProvider.live().fetchTodaySteps()
+            let settings = SettingsStore()
+            let steps: Int? = if settings.stepsEnabled {
+                try? await StepCountProvider.live().fetchTodaySteps()
+            } else {
+                nil
+            }
             BackgroundTick.perform(
                 store: JSONPetStateStore.live(),
                 notifications: .live(),
                 refresh: .live(),
                 complications: .live(),
+                notificationsEnabled: settings.notificationsEnabled,
                 steps: steps,
                 now: Date()
             )

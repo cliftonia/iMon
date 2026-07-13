@@ -15,6 +15,7 @@ struct BackgroundTickTests {
     private final class NoteCapture: @unchecked Sendable {
         var plan: [CareNotification]?
         var evolvedTo: PetSpecies?
+        var cancelledAll = false
     }
 
     private final class RefreshCapture: @unchecked Sendable {
@@ -46,7 +47,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(NoteCapture()),
-            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         #expect(box.saveCount == 1)
@@ -64,7 +65,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         let expected = CareNotificationPlanner.plan(
@@ -83,7 +84,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(NoteCapture()),
-            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         #expect(refresh.date == now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
@@ -97,7 +98,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: today(at: 9)
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: today(at: 9)
         )
 
         #expect(box.saveCount == 0)
@@ -114,7 +115,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: store, notifications: capturing(NoteCapture()),
-            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(refresh), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         // A transient decode failure must not kill the refresh chain.
@@ -132,7 +133,7 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         #expect(box.state?.species == .hopkin)
@@ -151,11 +152,34 @@ struct BackgroundTickTests {
 
         BackgroundTick.perform(
             store: makeStore(box), notifications: capturing(note),
-            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), steps: nil, now: now
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), notificationsEnabled: true, steps: nil, now: now
         )
 
         #expect(box.state?.isInjured == true)
         #expect(note.plan?.contains { $0.kind == .injury } == true)
+    }
+
+    @Test
+    func `disabled notifications skip the announce and clear pending reminders`() {
+        let now = today(at: 9)
+        let box = StoreBox()
+        var pet = makeTestState(species: .dotkin, at: now)
+        pet.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve   // ready to grow
+        box.state = pet
+        let note = NoteCapture()
+
+        BackgroundTick.perform(
+            store: makeStore(box), notifications: capturing(note),
+            refresh: capturing(RefreshCapture()), complications: ComplicationReloader(reload: {}), notificationsEnabled: false, steps: nil, now: now
+        )
+
+        // The pet still advances, evolves, and is saved — only the user-facing
+        // notifications are suppressed, and anything pending is cleared.
+        #expect(box.state?.species == .hopkin)
+        #expect(box.saveCount == 1)
+        #expect(note.evolvedTo == nil)
+        #expect(note.plan == nil)
+        #expect(note.cancelledAll)
     }
 
     // MARK: - Scheduler builders
@@ -164,7 +188,7 @@ struct BackgroundTickTests {
         NotificationScheduler(
             schedule: { note.plan = $0 },
             notify: { _, _, species in note.evolvedTo = species },
-            cancelAll: {}, requestAuthorization: { true }
+            cancelAll: { note.cancelledAll = true }, requestAuthorization: { true }
         )
     }
 
