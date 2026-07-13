@@ -1,7 +1,7 @@
 import Foundation
 
 /// Weather conditions reduced to the small set the LCD has icons for.
-nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable {
+nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable, Identifiable {
     case clear
     case cloudy
     case rain
@@ -9,6 +9,8 @@ nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable {
     case storm
     case fog
     case wind
+
+    var id: Self { self }
 
     /// Short human-readable label for the weather header.
     var displayName: String {

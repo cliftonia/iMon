@@ -187,7 +187,10 @@ final class AppPresenter {
         // Debug actions pop back to the pet screen first, so their effect (the
         // evolution sheet, the drained pet, the grave) is visible straight away.
         let presenter = SettingsPresenter(settings: settings, debug: SettingsDebugActions(
-            cycleWeather: { [weatherStore] in weatherStore.cycleDebugCondition() },
+            setWeather: { [weak self, weatherStore] condition in
+                self?.router.popToRoot()
+                weatherStore.setDebugCondition(condition)
+            },
             forceEvolve: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugEvolve() },
             careTest: { [weak self] in self?.router.popToRoot(); self?.petPresenter?.debugCareTest() },
             killPet: { [weak self] in self?.restartPet() },

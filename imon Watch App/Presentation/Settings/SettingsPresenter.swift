@@ -27,7 +27,7 @@ final class SettingsPresenter {
 /// The developer-only actions surfaced under the Settings page's Debug section.
 @MainActor
 struct SettingsDebugActions {
-    let cycleWeather: () -> Void
+    let setWeather: (WeatherIconCondition?) -> Void
     let forceEvolve: () -> Void
     let careTest: () -> Void
     let killPet: () -> Void

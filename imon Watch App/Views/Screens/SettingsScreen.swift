@@ -27,10 +27,15 @@ struct SettingsScreen: View {
     @ViewBuilder
     private var debugSection: some View {
         Section("Debug") {
-            Button("Cycle weather") { presenter.debug.cycleWeather() }
             Button("Force evolve") { presenter.debug.forceEvolve() }
             Button("Drain + care test") { presenter.debug.careTest() }
             Button("Kill pet", role: .destructive) { presenter.debug.killPet() }
+        }
+        Section("Weather") {
+            ForEach(WeatherIconCondition.allCases) { condition in
+                Button(condition.displayName) { presenter.debug.setWeather(condition) }
+            }
+            Button("Real weather") { presenter.debug.setWeather(nil) }
         }
         Section("Morph into") {
             ForEach(PetSpecies.allCases) { species in

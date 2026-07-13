@@ -34,6 +34,11 @@ final class WeatherStore {
     /// Preview override for cycling through weather effects on-device.
     private(set) var debugCondition: WeatherIconCondition?
 
+    /// Force a specific condition, or nil to return to the real weather.
+    func setDebugCondition(_ condition: WeatherIconCondition?) {
+        debugCondition = condition
+    }
+
     /// Advance the preview: real → clear → cloudy → … → fog → wind → real.
     func cycleDebugCondition() {
         let all = WeatherIconCondition.allCases
