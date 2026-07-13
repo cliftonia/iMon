@@ -64,7 +64,7 @@ nonisolated extension SpriteCatalog {
             0x03C0, //  ......####......
             0x0FF0, //  ....########....
             0x1FF8, //  ...##########...
-            0x3498, //  ..##.#..#..##..
+            0x3398, //  ..##..###..##..  happy eyes
             0x3FF8, //  ..###########..
             0x3C78, //  ..####...####..  (smile)
             0x1FF8, //  ...##########...
@@ -79,7 +79,7 @@ nonisolated extension SpriteCatalog {
             0x03C0,
             0x0FF0,
             0x1FF8,
-            0x3498, //  eyes
+            0x3398, //  happy eyes
             0x3FF8,
             0x3C78, //  smile
             0x1FF8,
