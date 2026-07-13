@@ -184,8 +184,7 @@ nonisolated extension SpriteCatalog {
             0x0E70
         ])
 
-        // Hearts Attack — the bear leans in, arms reaching, and a
-        // heart bursts out to the right.
+        // Hearts Attack — the bear leans in, arms reaching out.
         let attack1 = SpriteFrame(rows: [
             0x7038, //  .###......###...  ears (leaning in)
             0xF87C, //  #####....#####..
@@ -203,25 +202,6 @@ nonisolated extension SpriteCatalog {
             0x1FE0, //  ...########.....
             0x0CC0, //  ....##..##......
             0x1CE0  //  ...###..###.....
-        ])
-
-        let attack2 = SpriteFrame(rows: [
-            0x7038,
-            0xF87C,
-            0x1FE5, //  ...########..#.#  heart lobes fly
-            0x3FF7, //  ..##########.###  heart body
-            0x37B2, //  ..##.####.##..#.  heart point
-            0x3FF0,
-            0x3CF0,
-            0x1FE0,
-            0x3FFE, //  arm still reaching
-            0x7FF0,
-            0x3930,
-            0x3830,
-            0x3C70,
-            0x1FE0,
-            0x0CC0,
-            0x1CE0
         ])
 
         // Side profile: waddling teddy — one ear, muzzle poking out,
@@ -278,7 +258,7 @@ nonisolated extension SpriteCatalog {
             // Eyes stay shut on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep2)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: false)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

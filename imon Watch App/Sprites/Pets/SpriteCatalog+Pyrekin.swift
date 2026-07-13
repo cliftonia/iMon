@@ -135,8 +135,7 @@ nonisolated extension SpriteCatalog {
             0x0E70  //  ....###..###....
         ])
 
-        // Burning Fist — wings sweep down for the windup, then the
-        // right arm drives a flaming punch with sparks around the fist.
+        // Burning Fist — wings sweep down for the windup tell.
         let attack1 = SpriteFrame(rows: [
             0x0280, 0x0540,
             0x07E0, 0x05A0, 0x07E0, 0x06C0,
@@ -145,21 +144,6 @@ nonisolated extension SpriteCatalog {
             0x3FFC,
             0x63C6,
             0x53CA,
-            0x03C0,
-            0x0180,
-            0x0240,
-            0x0240,
-            0x0E70
-        ])
-
-        let attack2 = SpriteFrame(rows: [
-            0x0280, 0x0540,
-            0x07E0, 0x05A0, 0x07E0, 0x06C0,
-            0x03C0,
-            0xC7E4, //  ##...######..#..  wing spans wide, spark over fist
-            0x7FFE, //  .##############.  burning punch extends
-            0x33C2, //  ..##..####....#.  spark under the fist
-            0x13C8, //  ...#..####..#...
             0x03C0,
             0x0180,
             0x0240,
@@ -234,7 +218,7 @@ nonisolated extension SpriteCatalog {
             // Eyes stay shut on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep1, overlayingZOn: sleep1)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

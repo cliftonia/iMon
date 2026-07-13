@@ -49,7 +49,8 @@ struct GameEngineTests {
     @Test
     func `an egg stays frozen across days until it hatches`() {
         let born = Date.now.addingTimeInterval(-86400 * 5)
-        var state = PetState.newEgg()
+        var state = PetState.hatched(at: .now)
+        state.isEgg = true
         state.timestamps.bornAt = born
         let original = state
 

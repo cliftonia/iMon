@@ -139,26 +139,6 @@ nonisolated extension SpriteCatalog {
             0x7FFE
         ])
 
-        // Poop Toss — squash to wind up, then stretch tall and fling
-        // a glob arcing to the right.
-        let attackFling = SpriteFrame(rows: [
-            0x0000, 0x0000,
-            0x0004, //  .............#..  glob arcs away
-            0x042E, //  .....#....#.###.  stalks + glob
-            0x0C36, //  ....##....##.##.  eyeballs + glob
-            0x0420, //  .....#....#.....
-            0x03C0, //  ......####......
-            0x0DB0, //  ....##.##.##....  eyes
-            0x1FF8, //  ...##########...
-            0x1818, //  ...##......##...  mouth open mid-fling
-            0x1FF8, //  ...##########...
-            0x3FFC, //  ..############..
-            0x3FFC, //  ..############..
-            0x7FFE, //  .##############.
-            0x3FFC, //  ..############..
-            0x4812  //  .#..#......#..#.
-        ])
-
         // Side profile: slime mound scooting — eye stalk forward, big
         // mouth, wide dripping base leaving a trail
         let sideWalk1 = SpriteFrame(rows: [
@@ -220,7 +200,7 @@ nonisolated extension SpriteCatalog {
             // Melted flat on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep2)
         case .attack:
-            return strike(idle: idle1, idle2, attackFling, burst: false)
+            return strike(idle: idle1, idle2)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

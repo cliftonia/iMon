@@ -14,7 +14,7 @@ nonisolated enum TrainAction {
     // MARK: - Query
 
     static func canTrain(_ state: PetState) -> Bool {
-        !state.isDead && !state.isEgg && !state.isSleeping
+        state.isAwakeAndAlive
     }
 
     // MARK: - Round Logic
@@ -69,10 +69,8 @@ nonisolated enum TrainAction {
         if (1...6).contains(roll) {
             state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + 1)
             state.timestamps.lastPoopAt = now
-        } else if roll == 10, !state.isInjured {
-            state.isInjured = true
-            state.timestamps.injuredAt = now
-            state.injuryCount += 1
+        } else if roll == 10 {
+            state.injure(at: now)
         }
 
         return state

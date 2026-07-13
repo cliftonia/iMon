@@ -6,7 +6,7 @@ nonisolated enum PoopSimulator {
 
     static func apply(to state: PetState, at now: Date) -> PetState {
         var state = state
-        guard !state.isDead, !state.isEgg, !state.isSleeping else { return state }
+        guard state.isAwakeAndAlive else { return state }
 
         let newPoops = TickMath.ticks(
             from: state.timestamps.lastPoopAt,

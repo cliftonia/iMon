@@ -1,6 +1,6 @@
 import Foundation
 
-nonisolated struct Weight: Codable, Sendable, Hashable, Comparable {
+nonisolated struct Weight: Codable, Sendable, Hashable {
 
     /// The lightest and heaviest a pet can weigh (grams).
     static let minGrams = 5
@@ -20,9 +20,5 @@ nonisolated struct Weight: Codable, Sendable, Hashable, Comparable {
 
     mutating func subtract(_ amount: Int) {
         grams = max(Self.minGrams, grams - amount)
-    }
-
-    nonisolated static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.grams < rhs.grams
     }
 }

@@ -9,11 +9,10 @@ struct DeathScreen: View {
         // collide with the clock) on the smaller 40/41mm screens.
         ScrollView {
             VStack(spacing: 10) {
-                LCDBezel {
-                    SpriteView(animator: presenter.spriteAnimator, pixelSize: 3)
-                        .background(Color("LCDBackground"))
-                        .padding(4)
-                }
+                AnimatedSpriteBezel(
+                    animator: presenter.spriteAnimator,
+                    pixelSize: 3
+                )
 
                 Text("R.I.P.")
                     .font(.system(

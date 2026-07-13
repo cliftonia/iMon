@@ -154,21 +154,6 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0000, 0x0000,
-            0x2008, 0x3018, 0x3C78,
-            0x1FF0, 0x1FF8,
-            0x37B8,
-            0x3FF8,
-            0x3018,
-            0x3FF8,
-            0x1FF0,
-            0x0FE0,
-            0x07C0,
-            0x4004, //  .#............#.
-            0x0000
-        ])
-
         // Side profile facing left: rounded body, one ear back, big eye.
         let sideWalk1 = SpriteFrame(rows: [
             0x0000, //  ................
@@ -226,7 +211,7 @@ nonisolated extension SpriteCatalog {
                 idle2.overlaying(SharedSprites.sleepZ3)
             ]
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: false)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

@@ -2,9 +2,10 @@ import WidgetKit
 import Foundation
 
 /// The widget's view of one timeline snapshot. A deliberate mirror of the app's
-/// `ComplicationEntry` (same Codable keys), kept here so the widget shares no
-/// source with the app — the contract is the JSON the app writes to the App
-/// Group. Keep the stored properties in lock-step with `ComplicationEntry`.
+/// `ComplicationEntry`, kept here so the widget shares no source with the app —
+/// the contract is the JSON the app writes to the App Group. Decodes only the
+/// subset of `ComplicationEntry`'s keys the views render; `JSONDecoder` ignores
+/// the extra keys the app writes.
 struct WidgetEntry: TimelineEntry, Codable {
     let date: Date
     let speciesName: String
@@ -12,9 +13,6 @@ struct WidgetEntry: TimelineEntry, Codable {
     let hungerValue: Int
     let hungerMax: Int
     let needsAttention: Bool
-    let isInjured: Bool
-    let isDead: Bool
-    let isEgg: Bool
     let statusText: String
 }
 
@@ -26,9 +24,6 @@ extension WidgetEntry {
         hungerValue: 2,
         hungerMax: 4,
         needsAttention: false,
-        isInjured: false,
-        isDead: false,
-        isEgg: false,
         statusText: "happy"
     )
 }

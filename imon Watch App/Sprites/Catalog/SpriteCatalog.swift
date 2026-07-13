@@ -4,7 +4,7 @@ import Foundation
 /// Each sprite is a 16x16 monochrome bitmap encoded as 16 UInt16 rows (MSB = left).
 nonisolated enum SpriteCatalog {
 
-    nonisolated enum AnimationKind: CaseIterable, Sendable {
+    nonisolated enum AnimationKind: Sendable {
         case idle
         case walk
         case sideWalk
@@ -67,14 +67,6 @@ nonisolated extension SpriteCatalog {
         for species: PetSpecies,
         kind: AnimationKind
     ) -> [SpriteFrame] {
-        let raw = speciesFrames(for: species, kind: kind)
-        return kind == .attack ? enhancedAttack(raw) : raw
-    }
-
-    private static func speciesFrames(
-        for species: PetSpecies,
-        kind: AnimationKind
-    ) -> [SpriteFrame] {
         return switch species {
         case .dotkin: dotkinFrames(kind)
         case .hopkin: hopkinFrames(kind)
@@ -91,18 +83,6 @@ nonisolated extension SpriteCatalog {
         case .orbkin: orbkinFrames(kind)
         case .plushkin: plushkinFrames(kind)
         }
-    }
-
-    /// The strike is a simple mouth-open tell using the species'
-    /// first attack pose. The projectile-forming pose is dropped —
-    /// the actual projectile is shown in its own phase.
-    private static func enhancedAttack(
-        _ raw: [SpriteFrame]
-    ) -> [SpriteFrame] {
-        guard raw.count >= 2 else { return raw }
-        let neutral = raw[0]
-        let openMouth = raw[1]
-        return [neutral, openMouth, openMouth, neutral]
     }
 }
 
@@ -154,13 +134,12 @@ nonisolated extension SpriteCatalog {
             ]
 
         case .attack:
-            // Strike: windup → lunge → impact burst → return
+            // Strike: windup → two lunge beats → return to windup
             return [
                 idle1.shiftedRight(1),
                 idle1.shiftedLeft(2),
-                idle1.shiftedLeft(1)
-                    .overlaying(SharedSprites.impactBurst),
-                idle1
+                idle1.shiftedLeft(2),
+                idle1.shiftedRight(1)
             ]
 
         case .refuse:
@@ -216,19 +195,19 @@ nonisolated extension SpriteCatalog {
         [eat1, eat2, eat1, rest]
     }
 
-    /// Strike: windup shift, two attack beats, then either an impact burst
-    /// on the final attack frame or a settle back to idle.
+    /// Strike: a simple mouth-open tell — windup shift, two beats of the
+    /// species' first attack pose, then back to the windup. The
+    /// projectile-forming pose is dropped; the actual projectile is
+    /// shown in its own phase.
     static func strike(
         idle: SpriteFrame,
-        _ attack1: SpriteFrame,
-        _ attack2: SpriteFrame,
-        burst: Bool
+        _ attack1: SpriteFrame
     ) -> [SpriteFrame] {
         [
             idle.shiftedRight(1),
             attack1,
-            attack2,
-            burst ? attack2.overlaying(SharedSprites.impactBurst) : idle
+            attack1,
+            idle.shiftedRight(1)
         ]
     }
 

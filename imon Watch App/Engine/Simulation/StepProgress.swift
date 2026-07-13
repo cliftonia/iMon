@@ -70,3 +70,26 @@ nonisolated enum StepProgress {
         )
     }
 }
+
+// MARK: - PetState Mapping
+
+nonisolated extension StepProgress.Progress {
+
+    /// Packs the accumulator from the pet state's four persisted fields.
+    init(of state: PetState) {
+        self.init(
+            lifetime: state.lifetimeActiveSteps,
+            creditedToday: state.stepsCreditedToday,
+            trackedDay: state.stepTrackedDay,
+            goalPenalty: state.evolutionGoalPenalty
+        )
+    }
+
+    /// Writes the accumulator back into the pet state's four persisted fields.
+    func write(to state: inout PetState) {
+        state.lifetimeActiveSteps = lifetime
+        state.stepsCreditedToday = creditedToday
+        state.stepTrackedDay = trackedDay
+        state.evolutionGoalPenalty = goalPenalty
+    }
+}

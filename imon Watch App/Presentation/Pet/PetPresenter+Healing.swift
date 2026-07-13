@@ -11,10 +11,7 @@ extension PetPresenter {
             refuse()
             return
         }
-        activityTask?.cancel()
-        activityTask = Task { [weak self] in
-            await self?.runHealingSequence()
-        }
+        startActivity { await $0.runHealingSequence() }
     }
 
     func runRefuseSequence() async {
@@ -43,7 +40,7 @@ extension PetPresenter {
         guard await pause(ms: 1200) else { return }
 
         // Phase 2: Apply heal
-        state = HealAction.apply(to: state, at: .now)
+        state = HealAction.apply(to: state)
         updateViewModel()
         save()
 

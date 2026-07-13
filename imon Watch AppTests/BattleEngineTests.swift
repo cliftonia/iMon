@@ -118,28 +118,6 @@ struct BattleEngineTests {
         #expect(outcome == .clash)
     }
 
-    // MARK: - effectivePower
-
-    @Test
-    func `effectivePower applies attribute advantage`() {
-        let power = BattleEngine.effectivePower(
-            basePower: 100,
-            attribute: .vaccine,
-            against: .virus
-        )
-        #expect(power == 120)
-    }
-
-    @Test
-    func `effectivePower no bonus without advantage`() {
-        let power = BattleEngine.effectivePower(
-            basePower: 100,
-            attribute: .vaccine,
-            against: .data
-        )
-        #expect(power == 100)
-    }
-
     // MARK: - applyResult edge cases
 
     @Test
@@ -229,7 +207,8 @@ struct BattleEngineTests {
 
     @Test
     func `battleHP increases with stage`() {
-        let stages = EvolutionStage.allCases.sorted()
+        // `allCases` is declaration order, which is ascending stage order.
+        let stages = EvolutionStage.allCases
         for i in 1..<stages.count {
             #expect(stages[i].battleHP >= stages[i - 1].battleHP)
         }

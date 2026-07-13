@@ -27,10 +27,7 @@ extension PetPresenter {
         }
         viewModel.selectedFood = food
         WKInterfaceDevice.buttonHaptic()
-        activityTask?.cancel()
-        activityTask = Task { [weak self] in
-            await self?.runFeedingSequence()
-        }
+        startActivity { await $0.runFeedingSequence() }
     }
 
     // MARK: - Feeding Sequence
@@ -111,10 +108,7 @@ extension PetPresenter {
             refuse()
             return
         }
-        activityTask?.cancel()
-        activityTask = Task { [weak self] in
-            await self?.runCleaningSequence()
-        }
+        startActivity { await $0.runCleaningSequence() }
     }
 
     func runCleaningSequence() async {

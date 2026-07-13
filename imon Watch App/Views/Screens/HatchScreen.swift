@@ -6,11 +6,10 @@ struct HatchScreen: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            LCDBezel {
-                SpriteView(animator: presenter.spriteAnimator, pixelSize: 4)
-                    .background(Color("LCDBackground"))
-                    .padding(4)
-            }
+            AnimatedSpriteBezel(
+                animator: presenter.spriteAnimator,
+                pixelSize: 4
+            )
 
             phaseLabel
         }

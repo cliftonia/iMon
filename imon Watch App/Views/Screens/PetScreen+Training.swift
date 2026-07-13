@@ -10,8 +10,7 @@ extension PetScreen {
             let phase = training.viewModel.phase
             let isMiss = phase == .miss
             let resultOnly = phase == .hit || isMiss
-            let showTarget = (resultOnly || phase == .victory)
-                && !isMiss
+            let showTarget = phase == .hit || phase == .victory
 
             LCDDisplay(configuration: LCDDisplayConfiguration(
                 leftSprite: isMiss

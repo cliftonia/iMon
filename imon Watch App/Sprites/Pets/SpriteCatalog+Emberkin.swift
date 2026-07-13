@@ -257,24 +257,6 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0000, 0x0000,
-            0x0780,
-            0x0FE0,
-            0x0DE6, //  ....##.####..##.  fireball
-            0x0F0F, //  ....####....####  fireball
-            0x0F86, //  ....#####....##.  fireball
-            0x0F80,
-            0x1FC0,
-            0x3FE0,
-            0x1FF8,
-            0x0F8C,
-            0x0D80,
-            0x0880,
-            0x0CC0, //  feet point at the foe
-            0x0000
-        ])
-
         // Side-walk: raptor profile — long snout, horizontal body,
         // upswept tail, striding digitigrade legs
         let sideWalk1 = SpriteFrame(rows: [
@@ -343,7 +325,7 @@ nonisolated extension SpriteCatalog {
             // sleeping pet must not whip its head about.
             return sleepCycle(sleep1, sleep2, overlayingZOn: idle1)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

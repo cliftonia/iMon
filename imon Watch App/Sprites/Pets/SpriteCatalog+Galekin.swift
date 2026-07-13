@@ -163,25 +163,6 @@ nonisolated extension SpriteCatalog {
             0x0000  //  ................
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0C00,
-            0x07E0,
-            0x01FF,
-            0x01BD, //  .......##.####.#  wind mark
-            0x01E6, //  .......####..##.  swirl under the beak
-            0x03C2, //  ......####....#.  wind mark
-            0x43C2,
-            0xC7E3,
-            0x7FFE,
-            0x33CC,
-            0x03C0,
-            0x01E0,
-            0x00F0,
-            0x0078,
-            0x0038,
-            0x0000
-        ])
-
         // Side-walk: standing pterosaur — beak profile with crest,
         // wing on the back, body onto a coiled tail base
         let sideWalk1 = SpriteFrame(rows: [
@@ -246,7 +227,7 @@ nonisolated extension SpriteCatalog {
             // Eyes stay shut on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep2)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             // Head-shake: the beak whips right and back while the
             // wings and tail stay anchored.

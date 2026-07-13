@@ -64,7 +64,8 @@ struct LightsActionTests {
 
     @Test
     func `cannot toggle egg`() {
-        let state = PetState.newEgg(at: .now)
+        var state = PetState.hatched(at: .now)
+        state.isEgg = true
 
         let (_, result) = LightsAction.apply(to: state, night: true, at: .now)
 

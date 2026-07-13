@@ -1,6 +1,8 @@
 import Foundation
 import WatchKit
+#if DEBUG
 import UserNotifications
+#endif
 
 // MARK: - Evolution
 
@@ -36,6 +38,8 @@ extension PetPresenter {
         WKInterfaceDevice.evolveHaptic()
     }
 }
+
+#if DEBUG
 
 // MARK: - Debug Evolution
 
@@ -145,3 +149,5 @@ extension PetPresenter {
         }
     }
 }
+
+#endif

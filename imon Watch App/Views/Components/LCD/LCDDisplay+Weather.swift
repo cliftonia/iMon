@@ -20,18 +20,16 @@ extension LCDDisplay {
         let indoor = dayPhase == .inside
         func fill(_ cells: [(x: Int, y: Int)], _ opacity: Double) {
             let paint = (indoor ? Color.white : basePixelColor).opacity(opacity)
-            for cell in cells
-            where cell.x >= 0 && cell.x < 32 && cell.y >= 0 && cell.y < 20
-                && (!indoor
-                    || (Self.windowCols.contains(cell.x) && Self.windowRows.contains(cell.y))) {
-                let rect = CGRect(
-                    x: Double(cell.x) * pixelWidth,
-                    y: Double(cell.y) * pixelHeight,
-                    width: pixelWidth + 0.5,
-                    height: pixelHeight + 0.5
-                )
-                context.fill(Path(rect), with: .color(paint))
-            }
+            let visible = indoor
+                ? cells.filter {
+                    Self.windowCols.contains($0.x) && Self.windowRows.contains($0.y)
+                }
+                : cells
+            context.fillLCDCells(
+                visible,
+                pixelWidth: pixelWidth, pixelHeight: pixelHeight,
+                color: paint
+            )
         }
 
         if indoor {
@@ -84,12 +82,18 @@ extension LCDDisplay {
         }
     }
 
+    /// Lightning wash is active: an outdoor weather storm, or the battle VS
+    /// flash. Indoors the storm shows only as rain through the window.
+    private var isLightningActive: Bool {
+        (weatherCondition == .storm && dayPhase != .inside) || stormFlash
+    }
+
     /// Whether this tick is inside a lightning white-out (storm weather or the
     /// battle storm flash), i.e. the whole screen is washed by the flash fill.
     /// The eye re-stamp is skipped on these frames so dark holes don't punch
     /// through the flash.
     func isFlashFrame(phase: Int) -> Bool {
-        guard (weatherCondition == .storm && dayPhase != .inside) || stormFlash else {
+        guard isLightningActive else {
             return false
         }
         return stormFlash
@@ -107,7 +111,7 @@ extension LCDDisplay {
         pixelHeight: CGFloat
     ) {
         // Indoors the storm shows as rain through the window, not a room-wide flash.
-        guard (weatherCondition == .storm && dayPhase != .inside) || stormFlash else {
+        guard isLightningActive else {
             return
         }
 

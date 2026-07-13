@@ -10,12 +10,11 @@ nonisolated enum HealAction {
 
     // MARK: - Apply
 
-    static func apply(to state: PetState, at now: Date = .now) -> PetState {
+    static func apply(to state: PetState) -> PetState {
         guard canHeal(state) else { return state }
 
         var state = state
-        state.isInjured = false
-        state.timestamps.injuredAt = nil
+        state.heal()
         return state
     }
 }

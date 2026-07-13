@@ -11,7 +11,7 @@ struct SpriteView: View {
 
     init(
         animator: SpriteAnimator,
-        pixelSize: CGFloat = 4,
+        pixelSize: CGFloat,
         pixelColor: Color = Color("LCDPixelOn")
     ) {
         self.animator = animator
@@ -20,6 +20,9 @@ struct SpriteView: View {
         self.pixelColor = pixelColor
     }
 
+    #if DEBUG
+    /// Static single-frame rendering — sole consumer is PetScreen's
+    /// debugNameOverlay.
     init(
         frame: SpriteFrame,
         pixelSize: CGFloat,
@@ -30,6 +33,7 @@ struct SpriteView: View {
         self.pixelSize = pixelSize
         self.pixelColor = pixelColor
     }
+    #endif
 
     var body: some View {
         Canvas { context, _ in

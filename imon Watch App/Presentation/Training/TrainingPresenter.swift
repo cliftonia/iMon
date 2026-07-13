@@ -157,13 +157,9 @@ final class TrainingPresenter {
             - TimeConstants.trainWinsNeeded
 
         if wins >= TimeConstants.trainWinsNeeded {
-            viewModel.isComplete = true
-            viewModel.didWinSession = true
             enterVictory()
             onComplete(true)
         } else if losses > maxLosses {
-            viewModel.isComplete = true
-            viewModel.didWinSession = false
             enterDefeat()
             onComplete(false)
         } else {

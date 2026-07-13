@@ -19,26 +19,6 @@ nonisolated struct SpriteAnimation: Sendable, Hashable {
 
     var frameCount: Int { frames.count }
 
-    /// Return a copy with a different frame duration.
-    func withFrameDuration(
-        _ duration: TimeInterval
-    ) -> SpriteAnimation {
-        SpriteAnimation(
-            frames: frames,
-            frameDuration: duration,
-            loops: loops
-        )
-    }
-
-    /// Return a copy with looping toggled.
-    func withLoops(_ loops: Bool) -> SpriteAnimation {
-        SpriteAnimation(
-            frames: frames,
-            frameDuration: frameDuration,
-            loops: loops
-        )
-    }
-
     /// Return a copy with every frame horizontally mirrored.
     func mirrored() -> SpriteAnimation {
         SpriteAnimation(

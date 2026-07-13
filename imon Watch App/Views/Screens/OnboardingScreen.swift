@@ -45,12 +45,10 @@ struct OnboardingScreen: View {
     }
 
     private var lcd: some View {
-        LCDBezel {
-            SpriteView(animator: presenter.spriteAnimator, pixelSize: 3)
-                .background(Color("LCDBackground"))
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-                .padding(4)
-        }
+        AnimatedSpriteBezel(
+            animator: presenter.spriteAnimator,
+            pixelSize: 3
+        )
     }
 
     private var speechBubble: some View {

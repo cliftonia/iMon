@@ -199,25 +199,6 @@ nonisolated extension SpriteCatalog {
             0x0000  //  ................
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0300,
-            0x01F0,
-            0x01FE,
-            0x01BC,
-            0x01F0,
-            0x01E0,
-            0x00F0,
-            0x00F0,
-            0x07F0,
-            0x1FC4, //  ...#######...#..  ice crystal top
-            0x3F8E, //  ..#######...###.  diamond forming
-            0x3F0E, //  ..######....###.  ice crystal wide
-            0x1FE4, //  ...########..#..  crystal bottom
-            0x07F8,
-            0x001E,
-            0x0000
-        ])
-
         // Side-walk: a snake slithering along the ground — raised
         // head at the front, a single body-hump travelling from the
         // neck back to the tail across three phases
@@ -300,7 +281,7 @@ nonisolated extension SpriteCatalog {
             // Eyes stay shut on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep2)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

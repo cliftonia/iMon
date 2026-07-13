@@ -1,8 +1,10 @@
 import Foundation
 
-/// The shared hand-off for the complication: the app writes the baked timeline to
-/// the App Group; the widget reads it. Shared between both targets (with
-/// `ComplicationEntry` and `AppGroup`), so they agree on the format and location.
+/// The app's side of the complication hand-off: writes the baked timeline to the
+/// App Group for the widget to read. The widget deliberately shares no source with
+/// the app — it reads the JSON via its own mirror (`WidgetEntry` and hardcoded
+/// constants in `SkykinComplication/ComplicationProvider.swift`), which must be
+/// kept in lock-step with `ComplicationEntry` and the key here.
 nonisolated enum ComplicationStore {
 
     private static let key = "com.cliftonia.imon.complicationTimeline"

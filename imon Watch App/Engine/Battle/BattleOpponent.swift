@@ -4,7 +4,6 @@ nonisolated struct BattleOpponent: Sendable {
 
     let species: PetSpecies
     let power: Double
-    let attribute: Attribute
 
     /// Generate an opponent matched to the player's current stage.
     /// Prefers a different species of the same evolution stage, falling
@@ -22,8 +21,7 @@ nonisolated struct BattleOpponent: Sendable {
         let power = Double(opponent.basePower) + Double.random(in: -10...10)
         return BattleOpponent(
             species: opponent,
-            power: max(1, power),
-            attribute: opponent.attribute
+            power: max(1, power)
         )
     }
 }

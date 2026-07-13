@@ -195,7 +195,8 @@ struct SleepScheduleTests {
 
     @Test
     func `egg is not affected`() {
-        var state = PetState.newEgg(at: .now)
+        var state = PetState.hatched(at: .now)
+        state.isEgg = true
         state.isSleeping = false
 
         state = SleepSchedule.apply(to: state, at: .now, night: true)

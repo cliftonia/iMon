@@ -79,26 +79,6 @@ nonisolated extension SharedSprites {
         0x3C00  //  ..####..........
     ])
 
-    // Miss whiff — arc-shaped motion lines showing an empty swing
-    static let trainingMiss = SpriteFrame(rows: [
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000, //  ................
-        0x4000, //  .#..............
-        0x2000, //  ..#.............
-        0x3000, //  ..##............
-        0x1800, //  ...##...........
-        0x0C00, //  ....##..........
-        0x0C00, //  ....##..........
-        0x1800, //  ...##...........
-        0x3000, //  ..##............
-        0x2000, //  ..#.............
-        0x4000, //  .#..............
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000  //  ................
-    ])
-
     // Victory sparkle frame 1 — stars scattered
     static let trainingStar1 = SpriteFrame(rows: [
         0x0100, //  .......#........
@@ -139,89 +119,10 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // MARK: - Projectile
-
-    // Energy ball at far left, high position (rows 2-5)
-    static let projectileHighBase = SpriteFrame(rows: [
-        0x0000, 0x0000,
-        0x6000, //  .##.............
-        0xF000, //  ####............
-        0xF000, //  ####............
-        0x6000, //  .##.............
-        0x0000, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-    ])
-
-    // Energy ball at far left, medium position (rows 6-9)
-    static let projectileMidBase = SpriteFrame(rows: [
-        0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-        0x6000, //  .##.............
-        0xF000, //  ####............
-        0xF000, //  ####............
-        0x6000, //  .##.............
-        0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-    ])
-
-    // Energy ball at far left, low position (rows 10-13)
-    static let projectileLowBase = SpriteFrame(rows: [
-        0x0000, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-        0x6000, //  .##.............
-        0xF000, //  ####............
-        0xF000, //  ####............
-        0x6000, //  .##.............
-        0x0000, 0x0000
-    ])
-
-    // AUDIT 2026-06-24: projectileHigh/Mid/Low + trainingMissSequence are drawn but
-    // never played (training shows hit/miss streaks instead). Future use or remove.
-    /// High projectile traveling left-to-right (non-looping)
-    static let projectileHigh = SpriteAnimation(
-        frames: [
-            projectileHighBase,
-            projectileHighBase.shiftedRight(4),
-            projectileHighBase.shiftedRight(8),
-            projectileHighBase.shiftedRight(12)
-        ],
-        frameDuration: 0.15,
-        loops: false
-    )
-
-    /// Medium projectile traveling left-to-right (non-looping)
-    static let projectileMid = SpriteAnimation(
-        frames: [
-            projectileMidBase,
-            projectileMidBase.shiftedRight(4),
-            projectileMidBase.shiftedRight(8),
-            projectileMidBase.shiftedRight(12)
-        ],
-        frameDuration: 0.15,
-        loops: false
-    )
-
-    /// Low projectile traveling left-to-right (non-looping)
-    static let projectileLow = SpriteAnimation(
-        frames: [
-            projectileLowBase,
-            projectileLowBase.shiftedRight(4),
-            projectileLowBase.shiftedRight(8),
-            projectileLowBase.shiftedRight(12)
-        ],
-        frameDuration: 0.15,
-        loops: false
-    )
-
     // Punching bag hit sequence: hit → recoil → settle
     static let trainingHitSequence = SpriteAnimation(
         frames: [trainingTargetHit, trainingTargetRecoil, trainingTarget],
         frameDuration: 0.2,
-        loops: false
-    )
-
-    // Miss whiff animation: lines appear then fade
-    static let trainingMissSequence = SpriteAnimation(
-        frames: [trainingMiss, .empty],
-        frameDuration: 0.35,
         loops: false
     )
 

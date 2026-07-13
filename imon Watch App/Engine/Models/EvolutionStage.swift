@@ -1,15 +1,11 @@
 import Foundation
 
-nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable, Comparable {
+nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable {
     case fresh = 0
     case inTraining
     case rookie
     case champion
     case ultimate
-
-    nonisolated static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.rawValue < rhs.rawValue
-    }
 
     var battleHP: Int {
         switch self {

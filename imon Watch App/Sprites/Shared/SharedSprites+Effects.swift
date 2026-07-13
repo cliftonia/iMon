@@ -15,21 +15,6 @@ nonisolated extension SharedSprites {
         0x0810  //  ....#......#....
     ])
 
-    /// Impact starburst on the right side of frame
-    static let impactBurst = SpriteFrame(rows: [
-        0x0000, 0x0000, 0x0000,
-        0x0010, //  ...........#....
-        0x0008, //  ............#...
-        0x0004, //  .............#..
-        0x007E, //  .........######.
-        0x00FF, //  ........########
-        0x007E, //  .........######.
-        0x0004, //  .............#..
-        0x0008, //  ............#...
-        0x0010, //  ...........#....
-        0x0000, 0x0000, 0x0000, 0x0000
-    ])
-
     /// Z overlay — position 1 (lower right)
     static let sleepZ1 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
@@ -68,14 +53,6 @@ nonisolated extension SharedSprites {
     ])
 
     // MARK: - Battle
-
-    // Battle clash — 2-frame collision burst (centered)
-    // AUDIT 2026-06-24: drawn but never played. Future battle-clash effect or remove.
-    static let battleClash = SpriteAnimation(
-        frames: [explosion1, explosion2],
-        frameDuration: 0.3,
-        loops: false
-    )
 
     // Battle miss — streaking lines whizzing past (projectile missed)
     //

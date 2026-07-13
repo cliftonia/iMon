@@ -34,8 +34,10 @@ final class PetPresenter {
     var activityTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
 
+    #if DEBUG
     /// Index into the current debug evolution journey (see `+Evolution`).
     var debugStepIndex = 0
+    #endif
 
     // MARK: - Wander State
 
@@ -112,12 +114,19 @@ final class PetPresenter {
         updateAnimation()
     }
 
-    /// Starts the head-shake refusal ceremony (e.g. can't feed / clean / heal).
-    func refuse() {
+    /// Cancels any in-flight ceremony and starts a new one. The single entry
+    /// point for starting an activity — enforces the one-in-flight invariant.
+    func startActivity(_ sequence: @escaping (PetPresenter) async -> Void) {
         activityTask?.cancel()
         activityTask = Task { [weak self] in
-            await self?.runRefuseSequence()
+            guard let self else { return }
+            await sequence(self)
         }
+    }
+
+    /// Starts the head-shake refusal ceremony (e.g. can't feed / clean / heal).
+    func refuse() {
+        startActivity { await $0.runRefuseSequence() }
     }
 
     private func tick() {
@@ -187,20 +196,12 @@ final class PetPresenter {
     private func creditSteps() {
         guard let steps = currentSteps() else { return }
         let progress = StepProgress.advance(
-            StepProgress.Progress(
-                lifetime: state.lifetimeActiveSteps,
-                creditedToday: state.stepsCreditedToday,
-                trackedDay: state.stepTrackedDay,
-                goalPenalty: state.evolutionGoalPenalty
-            ),
+            StepProgress.Progress(of: state),
             todaySteps: steps,
             now: .now,
             stagePenalty: state.species.stage.lazyDayPenalty
         )
-        state.lifetimeActiveSteps = progress.lifetime
-        state.stepsCreditedToday = progress.creditedToday
-        state.stepTrackedDay = progress.trackedDay
-        state.evolutionGoalPenalty = progress.goalPenalty
+        progress.write(to: &state)
     }
 
     // MARK: - Training & Battle Results

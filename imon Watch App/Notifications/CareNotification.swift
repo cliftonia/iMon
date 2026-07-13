@@ -5,7 +5,7 @@ import Foundation
 /// duplicates.
 nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
 
-    nonisolated enum Kind: String, Sendable, CaseIterable {
+    nonisolated enum Kind: String, Sendable {
         case hunger
         case strength
         case mess

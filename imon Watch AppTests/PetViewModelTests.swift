@@ -13,7 +13,7 @@ struct PetViewModelTests {
         let viewModel = PetViewModel()
         #expect(viewModel.isBusy == false)
         #expect(viewModel.isInActionScene == false)
-        #expect(viewModel.isInFeedingMode == false)
+        #expect(viewModel.feedingPhase == nil)
     }
 
     @Test func `feeding is a busy action scene and exposes its phase`() {
@@ -21,7 +21,6 @@ struct PetViewModelTests {
         viewModel.activity = .feeding(.selecting)
         #expect(viewModel.isBusy)
         #expect(viewModel.isInActionScene)
-        #expect(viewModel.isInFeedingMode)
         #expect(viewModel.feedingPhase == .selecting)
     }
 

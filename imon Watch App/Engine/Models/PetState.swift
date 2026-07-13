@@ -144,16 +144,6 @@ extension PetState {
 
 extension PetState {
 
-    static func newEgg(at date: Date = .now) -> PetState {
-        PetState(
-            id: Tagged(rawValue: UUID()),
-            species: .dotkin,
-            weight: Weight(5),
-            isEgg: true,
-            timestamps: Timestamps(creating: date)
-        )
-    }
-
     static func hatched(at date: Date = .now) -> PetState {
         let species = PetSpecies.dotkin
         return PetState(
@@ -172,6 +162,10 @@ extension PetState {
 nonisolated extension PetState {
     /// Whether the pet can build trained HP/POW. The Fresh runt (Dotkin) cannot.
     var canCondition: Bool { species != .dotkin }
+
+    /// Hatched, alive, and awake — the gate for interactions and the waking
+    /// simulators (hunger, strength, poop, injury).
+    var isAwakeAndAlive: Bool { !isDead && !isEgg && !isSleeping }
 
     /// Both stats are empty — the pet is languishing and the collapse countdown
     /// toward death is running. Drives the on-screen weak look and Call sign.

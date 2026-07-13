@@ -188,8 +188,8 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        // Giga Blaster — the head whips right, the chest hatch slides
-        // open tall, and a missile streaks out.
+        // Giga Blaster — the head whips right and the chest hatch
+        // slides open tall.
         let attack1 = SpriteFrame(rows: [
             0x1800, 0x0FE0, 0x0FF8, 0x0E78, 0x0FF0, 0x0FC0, //  head right
             0x1FE0,
@@ -198,20 +198,6 @@ nonisolated extension SpriteCatalog {
             0xCFF3,
             0x0C30, //  ....##....##....  hatch slides open tall
             0x0C30,
-            0x0FF0,
-            0x1C70,
-            0x1C70,
-            0x3C3C
-        ])
-
-        let attack2 = SpriteFrame(rows: [
-            0x1800, 0x0FE0, 0x0FF8, 0x0E78, 0x0FF0, 0x0FC0,
-            0x1FE0,
-            0x3FFC,
-            0x6FF6,
-            0xCFF3,
-            0x0C37, //  ....##....##.###  missile streaks out
-            0x0C32, //  ....##....##..#.  exhaust
             0x0FF0,
             0x1C70,
             0x1C70,
@@ -282,7 +268,7 @@ nonisolated extension SpriteCatalog {
             // powered-down mech must not whip its head about.
             return sleepCycle(sleep1, sleep2, overlayingZOn: idle1)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

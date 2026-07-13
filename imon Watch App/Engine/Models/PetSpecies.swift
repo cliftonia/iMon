@@ -49,24 +49,6 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
         }
     }
 
-    var attribute: Attribute {
-        switch self {
-        case .dotkin, .hopkin: .data
-        case .emberkin: .vaccine
-        case .marshkin: .virus
-        case .rexkin: .vaccine
-        case .blazekin: .data
-        case .dreadkin: .virus
-        case .pyrekin: .data
-        case .galekin: .vaccine
-        case .tidekin: .data
-        case .sludgekin: .virus
-        case .steelkin: .vaccine
-        case .orbkin: .data
-        case .plushkin: .vaccine
-        }
-    }
-
     var basePower: Int {
         switch self {
         case .dotkin: 5

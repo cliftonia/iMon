@@ -11,7 +11,12 @@ nonisolated enum CareMistakeTracker {
 
         // Light left on past bedtime keeps the pet awake — a care mistake. (Before
         // bedtime the pet is allowed to be up in a lit room, so no penalty.)
-        state = trackLightsMistake(state: state, at: now, bedtime: bedtime)
+        state.careMistakes += accrueMistakes(
+            anchor: &state.timestamps.pendingLightsMistakeAt,
+            active: bedtime && state.lightsOn,
+            window: TimeConstants.lightsMistakeWindow,
+            now: now
+        )
 
         // Hunger/strength neglect only applies while awake. Reset the pending
         // clock while asleep so the first waking tick doesn't back-fill the whole
@@ -22,58 +27,40 @@ nonisolated enum CareMistakeTracker {
         }
 
         let needsAttention = state.hungerHearts.isEmpty || state.strengthHearts.isEmpty
-
-        if needsAttention {
-            if let pendingAt = state.timestamps.pendingCareMistakeAt {
-                let mistakes = TickMath.ticks(
-                    from: pendingAt, to: now,
-                    interval: TimeConstants.careMistakeWindow
-                )
-                if mistakes > 0 {
-                    state.careMistakes += mistakes
-                    state.timestamps.pendingCareMistakeAt = pendingAt.addingTimeInterval(
-                        Double(mistakes) * TimeConstants.careMistakeWindow
-                    )
-                }
-            } else {
-                state.timestamps.pendingCareMistakeAt = now
-            }
-        } else {
-            state.timestamps.pendingCareMistakeAt = nil
-        }
+        state.careMistakes += accrueMistakes(
+            anchor: &state.timestamps.pendingCareMistakeAt,
+            active: needsAttention,
+            window: TimeConstants.careMistakeWindow,
+            now: now
+        )
 
         return state
     }
 
-    // MARK: - Lights Penalty
+    // MARK: - Accrual
 
-    private static func trackLightsMistake(
-        state: PetState,
-        at now: Date,
-        bedtime: Bool
-    ) -> PetState {
-        var state = state
-        let keptAwakePastBedtime = bedtime && state.lightsOn
-
-        if keptAwakePastBedtime {
-            if let pendingAt = state.timestamps.pendingLightsMistakeAt {
-                let mistakes = TickMath.ticks(
-                    from: pendingAt, to: now,
-                    interval: TimeConstants.lightsMistakeWindow
-                )
-                if mistakes > 0 {
-                    state.careMistakes += mistakes
-                    state.timestamps.pendingLightsMistakeAt = pendingAt.addingTimeInterval(
-                        Double(mistakes) * TimeConstants.lightsMistakeWindow
-                    )
-                }
-            } else {
-                state.timestamps.pendingLightsMistakeAt = now
-            }
-        } else {
-            state.timestamps.pendingLightsMistakeAt = nil
+    /// Counts one mistake per elapsed `window` since `anchor` while the condition
+    /// is active, seeding the anchor on the first active tick and advancing it by
+    /// the consumed span. Clears the anchor once the condition lifts.
+    private static func accrueMistakes(
+        anchor: inout Date?,
+        active: Bool,
+        window: TimeInterval,
+        now: Date
+    ) -> Int {
+        guard active else {
+            anchor = nil
+            return 0
+        }
+        guard let pendingAt = anchor else {
+            anchor = now
+            return 0
         }
 
-        return state
+        let mistakes = TickMath.ticks(from: pendingAt, to: now, interval: window)
+        if mistakes > 0 {
+            anchor = pendingAt.addingTimeInterval(Double(mistakes) * window)
+        }
+        return mistakes
     }
 }

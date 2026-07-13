@@ -263,25 +263,6 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x0540,
-            0x1FE0,
-            0x1FF0,
-            0x1DF6, //  ...##.######.##.  flame cluster
-            0x1FCF, //  ...#######..####  flame cluster
-            0x1FC6, //  ...#######...##.  flame cluster
-            0x1FC0,
-            0x3FE0,
-            0x7FF0,
-            0x3FF0,
-            0x3FFC,
-            0x1FEE,
-            0x1CE0,
-            0x1860,
-            0x1C70, //  feet point at the foe
-            0x0000
-        ])
-
         // Side-walk: stocky profile — flame crest, blunt snout, deep
         // chest, flame-tipped tail, striding legs
         let sideWalk1 = SpriteFrame(rows: [
@@ -350,7 +331,7 @@ nonisolated extension SpriteCatalog {
             // sleeping pet must not whip its head about.
             return sleepCycle(sleep1, sleep2, overlayingZOn: idle1)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

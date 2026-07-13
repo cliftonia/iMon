@@ -6,24 +6,17 @@ nonisolated enum StrengthSimulator {
 
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
-        guard !state.isDead, !state.isEgg, !state.isSleeping else { return state }
+        guard state.isAwakeAndAlive else { return state }
 
         // Strength depletes faster the less the wearer moves (more vitamins).
         let multiplier = steps.map { ActivityModel.strengthRateMultiplier(steps: $0) } ?? 1.0
-        let interval = TimeConstants.strengthDepletionInterval / multiplier
-        let ticks = TickMath.ticks(
-            from: state.timestamps.lastStrengthDecayAt,
-            to: now,
-            interval: interval
+        HeartDecay.deplete(
+            &state.strengthHearts,
+            anchor: &state.timestamps.lastStrengthDecayAt,
+            baseInterval: TimeConstants.strengthDepletionInterval,
+            multiplier: multiplier,
+            at: now
         )
-        guard ticks > 0 else { return state }
-
-        for _ in 0..<ticks {
-            state.strengthHearts.decrement()
-        }
-
-        state.timestamps.lastStrengthDecayAt = state.timestamps.lastStrengthDecayAt
-            .addingTimeInterval(Double(ticks) * interval)
         return state
     }
 }

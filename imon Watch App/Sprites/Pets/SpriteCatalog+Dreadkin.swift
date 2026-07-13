@@ -138,26 +138,6 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        // Death Claw — twin diagonal rake slashes streak down-right.
-        let attackRake = SpriteFrame(rows: [
-            0x1008,
-            0x4812,
-            0x47E2,
-            0x65A6,
-            0x67E6,
-            0x366C,
-            0x1FF8,
-            0x2FF4,
-            0x07E0,
-            0x03D4, //  ......####.#.#..  rake slash tips
-            0x03CA, //  ......####..#.#.  slashes streak down
-            0x03C5, //  ......####...#.#
-            0x0240,
-            0x0240,
-            0x0660,
-            0x0000
-        ])
-
         // Side-walk: gaunt profile — swept horns, folded cloak-wing on
         // the back, long striding legs
         let sideWalk1 = SpriteFrame(rows: [
@@ -227,7 +207,7 @@ nonisolated extension SpriteCatalog {
             // Eyes stay shut on every beat while the Z's pulse.
             return sleepCycle(sleep1, sleep1, overlayingZOn: sleep1)
         case .attack:
-            return strike(idle: wingsMid, wingsDown, attackRake, burst: false)
+            return strike(idle: wingsMid, wingsDown)
         case .refuse:
             return defaultAnimationFromIdle(wingsMid, wingsDown, kind)
         }

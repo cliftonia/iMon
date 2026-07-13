@@ -98,11 +98,6 @@ nonisolated enum TimeConstants {
     /// Wins needed in training to count as a successful session
     static let trainWinsNeeded: Int = 3
 
-    // MARK: - Battle
-
-    /// RNG variance applied to battle power calculations
-    static let battleRNGVariance: Double = 0.20
-
     // MARK: - Conditioning (trained HP / POW)
 
     /// Maximum trained bonus for HP and POW.
@@ -119,12 +114,6 @@ nonisolated enum TimeConstants {
 
     /// Overweight pets fight at half power.
     static let overweightPowerPenalty: Double = 0.5
-
-    /// Attribute advantage multiplies base power by +20%.
-    static let attributeAdvantageMultiplier: Double = 1.2
-
-    /// Rounds closer than this fraction of the stronger side's power draw.
-    static let battleDrawThreshold: Double = 0.05
 
     /// Activity factor at or above this grants the active HP bonus.
     static let activeHPFactorThreshold: Double = 0.5

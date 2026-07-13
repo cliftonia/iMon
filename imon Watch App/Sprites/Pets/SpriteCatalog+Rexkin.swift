@@ -259,25 +259,6 @@ nonisolated extension SpriteCatalog {
             0x0000
         ])
 
-        let attack2 = SpriteFrame(rows: [
-            0x1800,
-            0x0FE0,
-            0x0FF8,
-            0x0EFB, //  ....###.#####.##  nova blast
-            0x0FE7, //  ....#######..###  nova blast
-            0x0FC7, //  ....######...###  nova blast
-            0x0FC3, //  ....######....##  nova blast
-            0x1FE0,
-            0x3FF0,
-            0x3FF0,
-            0x1FFC,
-            0x0FEC,
-            0x0CC0,
-            0x0840,
-            0x0C60, //  feet point at the foe
-            0x0000
-        ])
-
         // Side-walk: T-rex profile — horn swept back, long snout,
         // thick horizontal body, upswept tail, striding legs
         let sideWalk1 = SpriteFrame(rows: [
@@ -346,7 +327,7 @@ nonisolated extension SpriteCatalog {
             // sleeping pet must not whip its head about.
             return sleepCycle(sleep1, sleep2, overlayingZOn: idle1)
         case .attack:
-            return strike(idle: idle1, attack1, attack2, burst: true)
+            return strike(idle: idle1, attack1)
         case .refuse:
             return defaultAnimationFromIdle(idle1, idle2, kind)
         }

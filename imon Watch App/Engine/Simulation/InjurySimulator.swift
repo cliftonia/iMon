@@ -6,9 +6,7 @@ nonisolated enum InjurySimulator {
 
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
-        guard !state.isDead, !state.isEgg, !state.isSleeping, !state.isInjured else {
-            return state
-        }
+        guard state.isAwakeAndAlive, !state.isInjured else { return state }
 
         // A sedentary wearer makes the pet injury-prone: poop injures one pile
         // sooner than usual.
@@ -18,9 +16,7 @@ nonisolated enum InjurySimulator {
             : TimeConstants.maxPoopPiles
 
         if state.poopCount >= threshold {
-            state.isInjured = true
-            state.timestamps.injuredAt = now
-            state.injuryCount += 1
+            state.injure(at: now)
         }
 
         return state

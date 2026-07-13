@@ -6,7 +6,7 @@ final class StatsPresenter {
 
     // MARK: - Update
 
-    func update(from state: PetState, steps: Int? = nil) {
+    func update(from state: PetState, steps: Int?) {
         let status = PetStatus(from: state)
         viewModel.speciesName = status.species.displayName
         viewModel.stageName = status.stage.displayName

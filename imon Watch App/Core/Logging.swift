@@ -8,5 +8,4 @@ nonisolated enum Log {
     static let weather = Logger(subsystem: subsystem, category: "weather")
     static let health = Logger(subsystem: subsystem, category: "health")
     static let background = Logger(subsystem: subsystem, category: "background")
-    static let complication = Logger(subsystem: subsystem, category: "complication")
 }

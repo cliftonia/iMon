@@ -10,7 +10,7 @@ nonisolated enum FeedAction {
     // MARK: - Query
 
     static func canFeed(_ state: PetState) -> Bool {
-        !state.isDead && !state.isEgg && !state.isSleeping
+        state.isAwakeAndAlive
     }
 
     /// Whether the stat this food refills is already at capacity, so eating it

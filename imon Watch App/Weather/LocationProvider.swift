@@ -15,12 +15,6 @@ nonisolated extension LocationProvider {
         }
     }
 
-    static func mock(
-        _ location: CLLocation = CLLocation(latitude: 51.5074, longitude: -0.1278)
-    ) -> LocationProvider {
-        LocationProvider { location }
-    }
-
     /// First good fix from a live updates session, or throws on timeout/denial.
     private static func firstFix(timeout: Duration) async throws -> CLLocation {
         try await withThrowingTaskGroup(of: CLLocation?.self) { group in

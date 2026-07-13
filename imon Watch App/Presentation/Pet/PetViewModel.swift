@@ -70,8 +70,6 @@ final class PetViewModel {
         return nil
     }
 
-    var isInFeedingMode: Bool { feedingPhase != nil }
-
     /// The ceremonies that play in their own clean scene (a refusal does not).
     var isInActionScene: Bool {
         switch activity {

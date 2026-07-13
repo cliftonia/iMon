@@ -6,12 +6,6 @@ struct HeartMeter: View {
     let filledCount: Int
     let maxCount: Int
 
-    init(label: String, filledCount: Int, maxCount: Int = 4) {
-        self.label = label
-        self.filledCount = filledCount
-        self.maxCount = maxCount
-    }
-
     var body: some View {
         HStack(spacing: 2) {
             Text(label)

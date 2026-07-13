@@ -20,7 +20,7 @@ final class BattlePresenter {
 
     init(
         petState: PetState,
-        steps: Int? = nil,
+        steps: Int?,
         onComplete: @escaping (BattleResult) -> Void
     ) {
         self.petState = petState

@@ -7,11 +7,7 @@ final class OnboardingViewModel {
     /// The tip currently on screen.
     var index: Int = 0
 
-    let tips: [OnboardingTip]
-
-    init(tips: [OnboardingTip] = OnboardingTip.walkthrough) {
-        self.tips = tips
-    }
+    let tips: [OnboardingTip] = OnboardingTip.walkthrough
 
     var currentTip: OnboardingTip { tips[index] }
 

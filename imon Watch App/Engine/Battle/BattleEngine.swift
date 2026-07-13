@@ -11,43 +11,7 @@ nonisolated enum BattleEngine {
     // MARK: - Query
 
     static func canBattle(_ state: PetState) -> Bool {
-        !state.isDead && !state.isEgg && !state.isSleeping
-    }
-
-    // AUDIT 2026-06-24: unused in production — live battles use the interactive
-    // `resolveRound` (height-based). This full-auto resolver (and `effectivePower`
-    // + the attribute-advantage triangle it relies on) is exercised only by tests.
-    // Keep for a future auto-battle mode, or remove with its tests.
-    /// Run a battle between pet and opponent.
-    /// Applies attribute advantages and RNG variance to determine outcome.
-    static func battle(
-        petState: PetState,
-        opponent: BattleOpponent
-    ) -> BattleResult {
-        let petPower = BattlePower.calculate(for: petState)
-        let effectivePet = effectivePower(
-            basePower: petPower,
-            attribute: petState.species.attribute,
-            against: opponent.attribute
-        )
-        let effectiveOpp = effectivePower(
-            basePower: opponent.power,
-            attribute: opponent.attribute,
-            against: petState.species.attribute
-        )
-
-        let variance = TimeConstants.battleRNGVariance
-        let petRNG = Double.random(in: (1 - variance)...(1 + variance))
-        let opponentRNG = Double.random(in: (1 - variance)...(1 + variance))
-
-        let finalPet = effectivePet * petRNG
-        let finalOpponent = effectiveOpp * opponentRNG
-
-        let difference = abs(finalPet - finalOpponent)
-        let threshold = max(finalPet, finalOpponent) * TimeConstants.battleDrawThreshold
-
-        if difference < threshold { return .draw }
-        return finalPet > finalOpponent ? .win : .lose
+        state.isAwakeAndAlive
     }
 
     /// Resolve a single interactive round based on attack heights.
@@ -63,19 +27,6 @@ nonisolated enum BattleEngine {
             return .opponentHit
         }
         return .clash
-    }
-
-    // AUDIT 2026-06-24: reachable only via the unused `battle()` above + tests.
-    /// Apply attribute modifier to base power (+20% advantage).
-    static func effectivePower(
-        basePower: Double,
-        attribute: Attribute,
-        against opponentAttribute: Attribute
-    ) -> Double {
-        if attribute.hasAdvantageOver(opponentAttribute) {
-            return basePower * TimeConstants.attributeAdvantageMultiplier
-        }
-        return basePower
     }
 
     /// Apply battle result to state, incrementing win/loss counters. Losing
@@ -100,10 +51,8 @@ nonisolated enum BattleEngine {
         case .lose:
             state.battleLosses += 1
             let weak = state.strengthHearts.value <= 1 || state.hungerHearts.value <= 1
-            if weak, !state.isInjured {
-                state.isInjured = true
-                state.timestamps.injuredAt = now
-                state.injuryCount += 1
+            if weak {
+                state.injure(at: now)
             }
         case .draw:
             break

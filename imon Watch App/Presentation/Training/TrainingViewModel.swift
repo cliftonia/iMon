@@ -8,8 +8,6 @@ final class TrainingViewModel {
     var currentRound: Int = 0
     var currentNumber: Int = 5
     var roundResults: [Bool] = []
-    var isComplete: Bool = false
-    var didWinSession: Bool = false
     var showingNumber: Bool = false
     var lastGuessHigh: Bool = true
 
