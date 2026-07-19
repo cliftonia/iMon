@@ -19,14 +19,20 @@ the steps are counted and the wrist is raised.
   to a workspace of thin app shells over local Swift packages (below).
 - **Watch launch is not gated** on the iPhone/iPad work. Ship the wrist,
   then annex the pocket.
+- **The name: Stepkin** (decided 2026-07-19, lowercase k like Skykin before
+  it). It names the differentiating mechanic — steps feed evolution — and
+  keeps the `-kin` species family. Search-clear; the nearest neighbour,
+  StepKing (a three-rating step-alert utility, different category), was
+  assessed and accepted. Bundle id root `cliftonia.stepkin`, App Group
+  `group.cliftonia.stepkin`, watch app `cliftonia.stepkin.watchkitapp`,
+  widget `cliftonia.stepkin.complication` — the root is reserved for the
+  future iOS app so Epic 6 lands as a universal purchase. Glance at
+  tmsearch.uspto.gov for "stepkin" when reserving; fallbacks if the
+  reservation surprises us: Wristkin, Hatchkin, Wanderkin (all verified
+  clear 2026-07-19).
 
 ## Decisions pending
 
-- **The name.** Front-runner: **Wristkin** (search-clear as of 2026-07-19).
-  Also clear: Bitkin. Ruled out: Pipkin (existing creature-collector game).
-  Avoid `-mon`/`-gotchi` endings — trademark adjacency. The only true claim
-  is creating the App Store Connect app record; do that the day the name is
-  chosen.
 - **The pet hand-off.** A new bundle id strands the currently saved pet
   unless a one-time App Group hand-off ships in the new app.
 - **Sync transport** (Epic 6): `NSUbiquitousKeyValueStore` (the DTO is tiny
