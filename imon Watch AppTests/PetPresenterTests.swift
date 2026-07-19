@@ -25,7 +25,9 @@ struct PetPresenterTests {
         _ state: PetState,
         _ box: SaveBox,
         onDeath: @escaping () -> Void = {},
-        scheduler: SchedulerBox = SchedulerBox()
+        scheduler: SchedulerBox = SchedulerBox(),
+        steps: Int? = nil,
+        finalSteps: Int? = nil
     ) -> PetPresenter {
         let store = PetStateStore(
             save: { box.saved.append($0) }, load: { nil }, delete: {}
@@ -33,6 +35,8 @@ struct PetPresenterTests {
         return PetPresenter(
             state: state,
             store: store,
+            currentSteps: { steps },
+            finalSteps: { _ in finalSteps },
             onDeath: onDeath,
             notificationScheduler: NotificationScheduler(
                 schedule: { scheduler.scheduled = $0 },
@@ -88,6 +92,60 @@ struct PetPresenterTests {
         // Already dead — the edge must not re-fire on the next advance.
         presenter.environmentDidChange()
         #expect(deaths.count == 1)
+    }
+
+    // MARK: - Step Credit
+
+    /// A day that ends while the app is closed must still credit the steps
+    /// taken after its last reading — HealthKit kept counting, the app did not.
+    @Test
+    func `a day that ended while closed credits its uncounted tail`() async {
+        var state = makeTestState()
+        let yesterday = Date.now.addingTimeInterval(-86_400)
+        state.stepTrackedDay = yesterday
+        state.stepsCreditedToday = 1_500
+        state.lifetimeActiveSteps = 1_500
+        let presenter = makePresenter(state, SaveBox(), steps: 200, finalSteps: 3_000)
+
+        presenter.handleScenePhase(isActive: true, notificationsEnabled: false)
+        await presenter.dayRecoveryTask?.value
+        presenter.stopGameLoop()
+
+        // 1,500 already credited + the 1,500 tail recovered + today's 200.
+        #expect(presenter.getCurrentState().lifetimeActiveSteps == 3_200)
+        #expect(presenter.getCurrentState().stepsCreditedToday == 200)
+    }
+
+    /// The recovered tail must also decide the lazy-day penalty: a day that
+    /// finished above the threshold was never lazy, whatever the app last saw.
+    @Test
+    func `a recovered day above the lazy threshold escapes the penalty`() async {
+        var state = makeTestState()
+        state.stepTrackedDay = Date.now.addingTimeInterval(-86_400)
+        state.stepsCreditedToday = 500
+        let presenter = makePresenter(state, SaveBox(), steps: 10, finalSteps: 9_000)
+
+        presenter.handleScenePhase(isActive: true, notificationsEnabled: false)
+        await presenter.dayRecoveryTask?.value
+        presenter.stopGameLoop()
+
+        #expect(presenter.getCurrentState().evolutionGoalPenalty == 0)
+    }
+
+    /// A missing tail must delay the rollover, never stall it.
+    @Test
+    func `an unavailable tail still rolls the day over`() async {
+        var state = makeTestState()
+        state.stepTrackedDay = Date.now.addingTimeInterval(-86_400)
+        state.stepsCreditedToday = 4_000
+        let presenter = makePresenter(state, SaveBox(), steps: 120, finalSteps: nil)
+
+        presenter.handleScenePhase(isActive: true, notificationsEnabled: false)
+        await presenter.dayRecoveryTask?.value
+        presenter.stopGameLoop()
+
+        #expect(presenter.getCurrentState().stepsCreditedToday == 120)
+        #expect(presenter.getCurrentState().stepTrackedDay?.isSameDay(as: .now) == true)
     }
 
     // MARK: - Scene Phase

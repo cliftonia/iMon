@@ -32,6 +32,10 @@ final class PetPresenter {
     /// Not private: the `+Wander` extension reads it when starting a battle.
     let currentSteps: () -> Int?
 
+    /// The settled total for a past day, so a day that ended while the app was
+    /// closed can be credited in full before the accumulator rolls over.
+    private let finalSteps: (Date) async -> Int?
+
     /// Called when the pet dies during play, so the app can show the grave.
     private let onDeath: () -> Void
 
@@ -40,6 +44,10 @@ final class PetPresenter {
     /// The single in-flight activity ceremony (feed / clean / heal / refuse).
     var activityTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
+    /// The in-flight settle of a day that ended while the app was closed.
+    /// Not private: the tests await it, since the rollover it performs is
+    /// asynchronous but must be observed.
+    var dayRecoveryTask: Task<Void, Never>?
 
     #if DEBUG
     /// Index into the current debug evolution journey (see `+Evolution`).
@@ -62,6 +70,7 @@ final class PetPresenter {
         store: PetStateStore,
         currentNight: @escaping () -> Bool? = { nil },
         currentSteps: @escaping () -> Int? = { nil },
+        finalSteps: @escaping (Date) async -> Int? = { _ in nil },
         onDeath: @escaping () -> Void = {},
         notificationScheduler: NotificationScheduler = .live(),
         complicationReloader: ComplicationReloader = .live()
@@ -70,6 +79,7 @@ final class PetPresenter {
         self.store = store
         self.currentNight = currentNight
         self.currentSteps = currentSteps
+        self.finalSteps = finalSteps
         self.onDeath = onDeath
         self.notificationScheduler = notificationScheduler
         self.complicationReloader = complicationReloader
@@ -197,15 +207,56 @@ final class PetPresenter {
 
     /// Folds today's live step count into the lifetime evolution accumulator,
     /// applying the lazy-day decay on a calendar rollover.
+    ///
+    /// A day that ends while the app is closed is settled asynchronously first:
+    /// HealthKit keeps counting when nothing is watching, so rolling over on
+    /// the last figure the app happened to see would both lose that evening's
+    /// steps and risk charging a lazy-day penalty to a day that was not lazy.
     private func creditSteps() {
         guard let steps = currentSteps() else { return }
-        let progress = StepProgress.advance(
-            StepProgress.Progress(of: state),
-            todaySteps: steps,
+        let progress = StepProgress.Progress(of: state)
+
+        guard let trackedDay = progress.trackedDay,
+              !trackedDay.isSameDay(as: .now)
+        else {
+            rollOver(progress, todaySteps: steps)
+            return
+        }
+
+        guard dayRecoveryTask == nil else { return }
+        dayRecoveryTask = Task { [weak self] in
+            await self?.settleAndRollOver(trackedDay: trackedDay, fallbackSteps: steps)
+        }
+    }
+
+    /// Credits the closed day's true total, then rolls the accumulator over.
+    /// Runs even when the tail is unavailable, so a failed lookup delays the
+    /// rollover by one fetch rather than stalling it forever.
+    private func settleAndRollOver(trackedDay: Date, fallbackSteps: Int) async {
+        var progress = StepProgress.Progress(of: state)
+        // Settle the closed day *as that day* first: the same-day branch credits
+        // the uncounted tail and leaves the true total for the lazy-day verdict.
+        if let tail = await finalSteps(trackedDay) {
+            progress = StepProgress.advance(
+                progress,
+                todaySteps: tail,
+                now: trackedDay,
+                stagePenalty: state.species.stage.lazyDayPenalty
+            )
+        }
+        rollOver(progress, todaySteps: currentSteps() ?? fallbackSteps)
+        save()
+        dayRecoveryTask = nil
+    }
+
+    private func rollOver(_ progress: StepProgress.Progress, todaySteps: Int) {
+        StepProgress.advance(
+            progress,
+            todaySteps: todaySteps,
             now: .now,
             stagePenalty: state.species.stage.lazyDayPenalty
         )
-        progress.write(to: &state)
+        .write(to: &state)
     }
 
     // MARK: - Training & Battle Results

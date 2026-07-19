@@ -141,6 +141,9 @@ final class AppPresenter {
                 // Steps off -> no reading, so no step bonuses accrue.
                 settings.stepsEnabled ? stepActivityStore.todaySteps : nil
             },
+            finalSteps: { [stepActivityStore, settings] day in
+                settings.stepsEnabled ? await stepActivityStore.finalSteps(for: day) : nil
+            },
             onDeath: { [weak self] in self?.checkDeath() }
         )
         petPresenter = presenter

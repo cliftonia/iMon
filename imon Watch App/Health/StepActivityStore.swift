@@ -44,6 +44,14 @@ final class StepActivityStore {
         )
     }
 
+    /// The settled total for a past day, used to credit a day that ended while
+    /// the app was closed. Deliberately bypasses the cache — it asks about a
+    /// named day, not "now" — and reports nil rather than throwing, since a
+    /// missing tail must not block the day rolling over.
+    func finalSteps(for day: Date) async -> Int? {
+        try? await provider.fetchStepsForDay(day)
+    }
+
     /// Fetches and stores today's steps, leaving the existing value on failure.
     /// Failures still count toward the cache window, but never refresh the
     /// reading's age.
