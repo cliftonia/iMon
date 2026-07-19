@@ -29,10 +29,10 @@ the steps are counted and the wrist is raised.
   prefixed by their container). The root id belongs to the app record and
   the future iOS app: the established watch-first path is an iOS stub owning
   the root, later replaced by the real iPhone/iPad target in the **same app
-  record** — ids never change. Glance at
-  tmsearch.uspto.gov for "stepkin" when reserving; fallbacks if the
-  reservation surprises us: Wristkin, Hatchkin, Wanderkin (all verified
-  clear 2026-07-19).
+  record** — ids never change. USPTO checked 2026-07-19: zero filings for
+  "stepkin", live or dead. Fallbacks if the App Store Connect reservation
+  surprises us: Wristkin, Hatchkin, Wanderkin (all verified clear
+  2026-07-19).
 
 ## Decisions pending
 
