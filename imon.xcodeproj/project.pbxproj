@@ -306,7 +306,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2650;
-				LastUpgradeCheck = 2660;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					1CAA702F2FE9429000377A61 = {
 						CreatedOnToolsVersion = 26.5;
@@ -712,6 +712,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
 				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cliftonia.imon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -729,6 +730,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SRT47ZQ7D8;
 				INFOPLIST_KEY_CFBundleDisplayName = Skykin;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cliftonia.imon;
 				PRODUCT_NAME = "$(TARGET_NAME)";

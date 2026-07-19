@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2660"
+   LastUpgradeVersion = "2700"
    wasCreatedForAppExtension = "YES"
    version = "2.0">
    <BuildAction
@@ -78,7 +78,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CAA702F2FE9429000377A61"
             BuildableName = "SkykinComplicationExtension.appex"
-            BlueprintName = "SkykinComplicationExtension"
             ReferencedContainer = "container:imon.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -121,7 +120,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CAA702F2FE9429000377A61"
             BuildableName = "SkykinComplicationExtension.appex"
-            BlueprintName = "SkykinComplicationExtension"
             ReferencedContainer = "container:imon.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
