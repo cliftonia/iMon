@@ -25,11 +25,14 @@ the steps are counted and the wrist is raised.
   StepKing (a three-rating step-alert utility, different category), was
   assessed and accepted. Bundle id root `cliftonia.stepkin`, App Group
   `group.cliftonia.stepkin`, watch app `cliftonia.stepkin.watchkitapp`,
-  complication `cliftonia.stepkin.watchkitapp.complication` (extensions are
-  prefixed by their container). The root id belongs to the app record and
-  the future iOS app: the established watch-first path is an iOS stub owning
-  the root, later replaced by the real iPhone/iPad target in the **same app
-  record** — ids never change. USPTO checked 2026-07-19: zero filings for
+  complication `cliftonia.stepkin.watchkitapp.StepkinComplication` (the
+  extension's suffix is its **target name** — today's is
+  `…watchkitapp.SkykinComplication`). Verified against the current project:
+  the root id belongs to the `watchapp2-container` stub, which carries no
+  entitlements and is the id the App Store Connect record uses; the watch
+  app holds HealthKit + WeatherKit + App Groups; the complication holds App
+  Groups only. Epic 6 replaces that stub with the real iPhone/iPad target in
+  the **same app record** — ids never change. USPTO checked 2026-07-19: zero filings for
   "stepkin", live or dead. Fallbacks if the App Store Connect reservation
   surprises us: Wristkin, Hatchkin, Wanderkin (all verified clear
   2026-07-19).
