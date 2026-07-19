@@ -52,14 +52,20 @@ pet intact under the new name before proceeding.
 
 New bundle ids mean a new App Group container: the pet currently on the wrist
 will not be found by the renamed app. If the hand-off is wanted, it ships
-here — the new app reads the old group
-(`group.cliftonia.skykin`) once at first launch, adopts any save it finds,
-writes it to the new group, and never looks again. It requires the *old* App
-Group to remain listed in the new app's entitlements, so decide before the
-provisioning profile is cut.
+here — the new app reads the old group (`group.cliftonia.skykin`) once at
+first launch, adopts any save it finds, writes it to the new group, and never
+looks again. It requires the *old* App Group to stay listed in the new app's
+entitlements (and ticked on the new App ID), which can be added later if
+forgotten.
+
+**The point of no return is deleting the old app from the watch** — that
+destroys the old container, and no entitlement recovers it. Keep the old app
+installed until the hand-off has run.
 
 If declined, the wearer's creature dies with the old bundle id and Stepkin
-hatches a fresh egg. Say so plainly rather than discovering it on launch day.
+hatches a fresh egg — which has its own merit, since a virgin install is the
+only way to test hatching, onboarding and the first evolution before
+submitting. Decide deliberately rather than discovering it on launch day.
 
 ### 4. Package extraction
 
