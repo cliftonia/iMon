@@ -4,7 +4,6 @@ import Observation
 @Observable
 final class OnboardingViewModel {
 
-    /// The tip currently on screen.
     var index: Int = 0
 
     let tips: [OnboardingTip] = OnboardingTip.walkthrough

@@ -34,12 +34,12 @@ final class WeatherStore {
     /// Preview override for cycling through weather effects on-device.
     private(set) var debugCondition: WeatherIconCondition?
 
-    /// Force a specific condition, or nil to return to the real weather.
+    /// Forces a specific condition, or nil to return to the real weather.
     func setDebugCondition(_ condition: WeatherIconCondition?) {
         debugCondition = condition
     }
 
-    /// Advance the preview: real → clear → cloudy → … → fog → wind → real.
+    /// Advances the preview: real → clear → cloudy → … → fog → wind → real.
     func cycleDebugCondition() {
         let all = WeatherIconCondition.allCases
         switch debugCondition {
@@ -52,8 +52,8 @@ final class WeatherStore {
     }
     #endif
 
-    /// - Parameter fallback: shown only when a fetch fails and no real reading
-    ///   exists yet. Left nil in Release so the overlay simply hides.
+    /// `fallback` is shown only when a fetch fails and no real reading exists
+    /// yet; left nil in Release so the overlay simply hides.
     init(provider: WeatherProvider = .live(), fallback: WeatherSnapshot? = nil) {
         self.provider = provider
         self.fallback = fallback

@@ -45,7 +45,7 @@ nonisolated extension SpriteCatalog {
         )
     }
 
-    /// Place the projectile in one of three clearly-separated vertical bands —
+    /// Places the projectile in one of three clearly-separated vertical bands —
     /// high near the top, medium centred, low near the bottom — normalised from
     /// the sprite's own lit rows so every species reads the same way and nothing
     /// clips. A fixed ±3 nudge left high and medium near-indistinguishable.
@@ -77,7 +77,7 @@ nonisolated extension SpriteCatalog {
         frame.rows.lastIndex { $0 != 0 }
     }
 
-    /// Shift a sprite so its leftmost lit column sits at column 0.
+    /// Shifts a sprite so its leftmost lit column sits at column 0.
     private static func flushedLeft(
         _ frame: SpriteFrame
     ) -> SpriteFrame {

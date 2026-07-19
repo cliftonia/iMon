@@ -76,14 +76,14 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000
     ])
 
-    /// Falling water drops for shower cleaning (looping)
+    /// Falling water drops for shower cleaning (looping).
     static let waterDrops = SpriteAnimation(
         frames: [waterDrops1, waterDrops2],
         frameDuration: 0.2,
         loops: true
     )
 
-    /// Clean sparkles after washing (looping)
+    /// Clean sparkles after washing (looping).
     static let cleanSparkle = SpriteAnimation(
         frames: [cleanSparkle1, cleanSparkle2],
         frameDuration: 0.3,

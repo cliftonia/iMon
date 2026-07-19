@@ -4,7 +4,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Animation Effects
 
-    /// Landing dust puffs at bottom of frame
+    /// Landing dust puffs at bottom of frame.
     static let landingDust = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000, 0x0000,
         0x0000, 0x0000, 0x0000, 0x0000,
@@ -15,7 +15,7 @@ nonisolated extension SharedSprites {
         0x0810  //  ....#......#....
     ])
 
-    /// Z overlay — position 1 (lower right)
+    /// Z overlay — position 1 (lower right).
     static let sleepZ1 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
         0x003C, //  ..........####..
@@ -26,7 +26,7 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000, 0x0000
     ])
 
-    /// Z overlay — position 2 (mid right)
+    /// Z overlay — position 2 (mid right).
     static let sleepZ2 = SpriteFrame(rows: [
         0x0000,
         0x001E, //  ...........####.
@@ -38,7 +38,7 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000
     ])
 
-    /// Z overlay — position 3 (two Z's, high + low)
+    /// Z overlay — position 3 (two Z's, high + low).
     static let sleepZ3 = SpriteFrame(rows: [
         0x001E, //  ...........####.
         0x0004, //  .............#..
@@ -111,7 +111,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    /// Miss — streaks whizzing past (non-looping)
+    /// Miss — streaks whizzing past (non-looping).
     static let missStreaks = SpriteAnimation(
         frames: [missStreaks1, missStreaks2, .empty],
         frameDuration: 0.25,

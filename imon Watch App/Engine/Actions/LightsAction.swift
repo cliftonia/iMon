@@ -33,7 +33,6 @@ nonisolated enum LightsAction {
         var state = state
         state.lightsOn.toggle()
         if state.lightsOn {
-            // Turned on — wake immediately.
             state.isSleeping = false
             state.timestamps.lightsOffAt = nil
         } else {

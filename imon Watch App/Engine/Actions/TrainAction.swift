@@ -43,7 +43,7 @@ nonisolated enum TrainAction {
 
     // MARK: - Apply
 
-    /// Apply the training session result to state.
+    /// Applies the training session result to state.
     /// A winning session (>= 3/5 rounds won) grants +1 strength, -2G weight, and
     /// +1 trained HP (except for Dotkin). Training count increments regardless.
     static func applyResult(

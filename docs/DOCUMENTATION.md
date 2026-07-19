@@ -24,9 +24,12 @@ Open with a single-sentence summary fragment ending in a period — a verb
 phrase for functions ("Requests the next background wake-up…"), a noun phrase
 for types and properties ("Safe whole-interval arithmetic for the time-based
 simulators."). Describe what a function *does*, what an initializer *creates*,
-and what everything else *is*; omit `Void` returns. Continue in complete
-present-tense sentences for the contract and the why. Name related types in
-backticks so the connection is searchable.
+and what everything else *is*; omit `Void` returns. An operation namespace —
+a caseless enum bundling functions, like the simulators — may open with a
+verb phrase, since such a type *is* its behaviour. Summaries describe in the
+third person ("Applies…"), never command ("Apply…"), and always end with a
+period. Continue in complete present-tense sentences for the contract and the
+why. Name related types in backticks so the connection is searchable.
 
 ```swift
 // ✅ Explains the contract and the reason for the shape

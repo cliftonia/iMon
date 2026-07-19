@@ -65,7 +65,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    /// Needle injection — plunger up/down loop (0.3s per frame)
+    /// Needle injection — plunger up/down loop (0.3s per frame).
     static let needleInjection = SpriteAnimation(
         frames: [needleUp, needleDown],
         frameDuration: 0.3,

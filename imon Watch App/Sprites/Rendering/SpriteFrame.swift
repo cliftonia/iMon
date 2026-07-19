@@ -22,7 +22,6 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return (rows[y] >> (15 - x)) & 1 == 1
     }
 
-    /// Horizontally mirror the sprite (flip left-right).
     func mirrored() -> SpriteFrame {
         let mirroredRows = rows.map { row -> UInt16 in
             var result: UInt16 = 0
@@ -34,7 +33,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: mirroredRows)
     }
 
-    /// Shift all pixels up by N rows (bottom fills with empty).
+    /// Shifts all pixels up by N rows (bottom fills with empty).
     func shiftedUp(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = Array(rows.suffix(Self.size - n))
@@ -42,7 +41,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: shifted)
     }
 
-    /// Shift all pixels down by N rows (top fills with empty).
+    /// Shifts all pixels down by N rows (top fills with empty).
     func shiftedDown(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = [UInt16](repeating: 0, count: n)
@@ -50,19 +49,17 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: shifted)
     }
 
-    /// Shift all pixels left by N columns.
     func shiftedLeft(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         return SpriteFrame(rows: rows.map { $0 << n })
     }
 
-    /// Shift all pixels right by N columns.
     func shiftedRight(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         return SpriteFrame(rows: rows.map { $0 >> n })
     }
 
-    /// Overlay another frame using bitwise OR.
+    /// Overlays another frame using bitwise OR.
     func overlaying(_ other: SpriteFrame) -> SpriteFrame {
         SpriteFrame(rows: zip(rows, other.rows).map { $0 | $1 })
     }

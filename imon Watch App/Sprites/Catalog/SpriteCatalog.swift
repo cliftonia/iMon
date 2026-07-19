@@ -96,7 +96,7 @@ nonisolated extension SpriteCatalog {
 
 nonisolated extension SpriteCatalog {
 
-    /// Generates 4-frame animations from idle frames for species
+    /// Generates derived animations from the two idle frames for species
     /// without dedicated animation data, using sprite transformations.
     static func defaultAnimationFromIdle(
         _ idle1: SpriteFrame,

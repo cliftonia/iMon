@@ -33,7 +33,7 @@ nonisolated enum BattleEngine {
         return .clash
     }
 
-    /// Apply battle result to state, incrementing win/loss counters. Losing
+    /// Applies the battle result to state, incrementing win/loss counters. Losing
     /// while already weak (low strength or hunger) leaves the pet injured —
     /// a beaten, run-down creature needs medication. Every battle (win or lose)
     /// counts as activity and a win grants +1 trained POW (except for Dotkin).

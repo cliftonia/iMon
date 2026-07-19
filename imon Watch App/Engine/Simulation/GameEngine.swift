@@ -5,7 +5,7 @@ import os
 /// given point in time. Called on app wake, timer tick, and user actions.
 nonisolated enum GameEngine {
 
-    /// Advance the full game state to the supplied date, running every
+    /// Advances the full game state to the supplied date, running every
     /// simulator in the correct order and checking death conditions.
     ///
     /// `isNight` is the weather's daylight reading; `nil` falls back to the

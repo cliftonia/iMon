@@ -1,8 +1,9 @@
 import Foundation
 
-/// Tracks care mistakes when hunger or strength is empty for longer
-/// than `careMistakeWindow` (20 min). Uses `pendingCareMistakeAt` to
-/// record when the neglect period began.
+/// Tracks care mistakes from two neglect paths: hunger or strength left
+/// empty for longer than `careMistakeWindow` (20 min, paused while asleep),
+/// and the light left on past bedtime for longer than `lightsMistakeWindow`
+/// (3 h). Pending timestamps record when each neglect period began.
 nonisolated enum CareMistakeTracker {
 
     static func apply(to state: PetState, at now: Date, bedtime: Bool) -> PetState {

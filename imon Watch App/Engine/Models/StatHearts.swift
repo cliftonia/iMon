@@ -12,7 +12,7 @@ nonisolated struct StatHearts: Codable, Sendable, Hashable {
 
     var isEmpty: Bool { value == 0 }
 
-    /// Raise by one, not exceeding the supplied per-species capacity.
+    /// Raises by one, not exceeding the supplied per-species capacity.
     mutating func increment(upTo max: Int) {
         value = min(max, value + 1)
     }

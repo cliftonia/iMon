@@ -288,14 +288,14 @@ nonisolated extension SharedSprites {
 
     // MARK: - Feeding Animations
 
-    /// Steaming meat — steam wisps alternate (looping)
+    /// Steaming meat — steam wisps alternate (looping).
     static let meatServing = SpriteAnimation(
         frames: [meatSteaming1, meatSteaming2],
         frameDuration: 0.4,
         loops: true
     )
 
-    /// Gleaming vitamin — sparkle alternates position (looping)
+    /// Gleaming vitamin — sparkle alternates position (looping).
     static let vitaminServing = SpriteAnimation(
         frames: [vitaminGleaming1, vitaminGleaming2],
         frameDuration: 0.5,

@@ -62,7 +62,7 @@ nonisolated struct PetStateDTO: Codable, Sendable {
 // MARK: - Mapping
 
 nonisolated extension PetStateDTO {
-    /// Flatten a domain `PetState` into its storable form.
+    /// Flattens a domain `PetState` into its storable form.
     init(from state: PetState) {
         let times = state.timestamps
         schemaVersion = Self.currentVersion
@@ -108,7 +108,7 @@ nonisolated extension PetStateDTO {
 }
 
 nonisolated extension PetState {
-    /// Rebuild a domain `PetState` from its stored form.
+    /// Rebuilds a domain `PetState` from its stored form.
     init(from dto: PetStateDTO) {
         self.init(
             id: dto.id,

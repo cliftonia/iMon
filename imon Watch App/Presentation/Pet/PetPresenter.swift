@@ -255,9 +255,10 @@ final class PetPresenter {
 
     /// Foregrounding catches the simulation up at once (so returning hours
     /// later doesn't flash a stale scene) and restarts the loop if stopped.
-    /// Backgrounding hands care reminders to the system — never cancels them,
-    /// since a watch flips active on every wrist raise and would wipe pending
-    /// notifications before they fire.
+    /// Backgrounding hands care reminders to the system; activation never
+    /// cancels them, since a watch flips active on every wrist raise and would
+    /// wipe pending notifications before they fire. With the notifications
+    /// toggle off, backgrounding instead clears any pending reminders.
     func handleScenePhase(isActive: Bool, notificationsEnabled: Bool) {
         if isActive {
             startGameLoop()

@@ -7,7 +7,7 @@ nonisolated struct BattleOpponent: Sendable {
     let species: PetSpecies
     let power: Double
 
-    /// Generate an opponent matched to the player's current stage.
+    /// Generates an opponent matched to the player's current stage.
     /// Prefers a different species of the same evolution stage, falling
     /// back to any other species so the pet never battles itself.
     static func generate(matching state: PetState) -> BattleOpponent {

@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Catalog Convenience
 
 extension SpriteAnimator {
-    /// Play the catalog animation for a species and kind.
+    /// Plays the catalog animation for a species and kind.
     ///
     /// Shared by every presenter so call sites read
     /// `animator.play(.idle, for: species)` instead of repeating

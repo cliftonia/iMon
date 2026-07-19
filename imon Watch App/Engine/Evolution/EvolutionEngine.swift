@@ -24,7 +24,7 @@ nonisolated enum EvolutionEngine {
         return defaults.first?.to
     }
 
-    /// Apply evolution to state, resetting stage-specific counters.
+    /// Applies evolution to state, resetting stage-specific counters.
     static func evolve(
         _ state: PetState,
         to species: PetSpecies,

@@ -216,7 +216,7 @@ final class AppPresenter {
         }
     }
 
-    /// Reset the current pet back to a fresh egg (the ⚠️ menu button).
+    /// Resets the current pet back to a fresh egg (the ⚠️ menu button).
     func restartPet() {
         #if DEBUG
         // Kill instead of reset in DEBUG so the Death screen is verifiable on demand.

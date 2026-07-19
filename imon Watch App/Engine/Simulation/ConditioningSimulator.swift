@@ -23,7 +23,7 @@ nonisolated enum ConditioningSimulator {
         return state
     }
 
-    /// Reduce `bonus` by one per elapsed interval since `anchor`, advancing the
+    /// Reduces `bonus` by one per elapsed interval since `anchor`, advancing the
     /// anchor only by the points actually consumed (so it never jumps past now).
     private static func decay(
         bonus: Int,

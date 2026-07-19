@@ -36,7 +36,7 @@ nonisolated extension WeatherProvider {
 
 nonisolated extension WeatherIconCondition {
 
-    /// Reduce WeatherKit's many conditions to the LCD's icon set.
+    /// Reduces WeatherKit's many conditions to the LCD's icon set.
     init(_ condition: WeatherCondition) {
         switch condition {
         case .clear, .mostlyClear, .hot:
