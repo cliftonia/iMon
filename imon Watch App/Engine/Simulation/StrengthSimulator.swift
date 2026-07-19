@@ -4,6 +4,8 @@ import Foundation
 /// One heart lost per `strengthDepletionInterval` (60 min).
 nonisolated enum StrengthSimulator {
 
+    /// `steps` (today's running count) speeds depletion via
+    /// `ActivityModel.strengthRateMultiplier`; `nil` keeps the base rate.
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
         guard state.isAwakeAndAlive else { return state }

@@ -5,6 +5,8 @@ import Foundation
 /// draining over the next few hours without a live refresh.
 nonisolated enum ComplicationTimeline {
 
+    /// `count` is clamped so at least one entry (at `now` itself) is always
+    /// produced; each subsequent entry lands `stride` seconds after the last.
     static func entries(
         for state: PetState,
         from now: Date,

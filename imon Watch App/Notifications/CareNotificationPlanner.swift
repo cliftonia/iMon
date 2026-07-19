@@ -7,6 +7,9 @@ import Foundation
 /// are dropped, so the owner is never buzzed at 2am.
 nonisolated enum CareNotificationPlanner {
 
+    /// `steps` is today's running step count and scales the hunger/strength
+    /// estimates exactly as the simulators do; `nil` (steps disabled or
+    /// unavailable) estimates at the base rates and skips the exercise nudge.
     static func plan(
         for state: PetState,
         now: Date,

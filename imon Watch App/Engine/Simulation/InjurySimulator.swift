@@ -4,6 +4,8 @@ import Foundation
 /// A pet gets injured when poop reaches the maximum pile count.
 nonisolated enum InjurySimulator {
 
+    /// `steps` (today's running count) lowers the injuring pile threshold by
+    /// one for a sedentary wearer; `nil` is treated as not sedentary.
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
         guard state.isAwakeAndAlive, !state.isInjured else { return state }

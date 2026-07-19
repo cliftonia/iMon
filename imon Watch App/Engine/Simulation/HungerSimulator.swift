@@ -4,6 +4,8 @@ import Foundation
 /// One heart lost per `hungerDepletionInterval` (70 min).
 nonisolated enum HungerSimulator {
 
+    /// `steps` (today's running count) speeds depletion via
+    /// `ActivityModel.hungerRateMultiplier`; `nil` keeps the base rate.
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
         guard state.isAwakeAndAlive else { return state }

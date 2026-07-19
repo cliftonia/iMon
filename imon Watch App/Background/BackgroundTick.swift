@@ -7,7 +7,9 @@ import os
 /// it runs on a bare background launch with no SwiftUI scene. Reuses the existing
 /// engine and the care-notification planner; it introduces no new game logic.
 /// Honours the Settings toggle via `notificationsEnabled`, matching the
-/// foreground contract in `PetPresenter.handleScenePhase`.
+/// foreground contract in `PetPresenter.handleScenePhase`. `steps` is today's
+/// HealthKit total, `nil` when the Steps toggle is off or the read failed —
+/// the engine and planner then skip activity scaling.
 nonisolated enum BackgroundTick {
 
     // No defaulted witnesses — a new call site must decide notifications explicitly.

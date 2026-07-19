@@ -7,6 +7,11 @@ nonisolated enum GameEngine {
 
     /// Advance the full game state to the supplied date, running every
     /// simulator in the correct order and checking death conditions.
+    ///
+    /// `isNight` is the weather's daylight reading; `nil` falls back to the
+    /// fixed clock window in `SleepSchedule.isNight`. `steps` is today's
+    /// running step count; `nil` (steps disabled or unavailable) leaves every
+    /// simulator at its base, activity-unscaled rate.
     static func advance(
         _ state: PetState,
         to now: Date,
