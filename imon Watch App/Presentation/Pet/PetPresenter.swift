@@ -44,6 +44,9 @@ final class PetPresenter {
     /// The single in-flight activity ceremony (feed / clean / heal / refuse).
     var activityTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
+    /// How many missed days a single catch-up will settle with HealthKit.
+    private static let maxCatchUpDays = 7
+
     /// The in-flight settle of a day that ended while the app was closed.
     /// Not private: the tests await it, since the rollover it performs is
     /// asynchronous but must be observed.
@@ -110,6 +113,9 @@ final class PetPresenter {
         cancelActivity()
         sleepToggleTask?.cancel()
         sleepToggleTask = nil
+        // Left running, it would save a pet the app has already discarded.
+        dayRecoveryTask?.cancel()
+        dayRecoveryTask = nil
         dismissTraining()
         dismissBattle()
     }
@@ -232,21 +238,48 @@ final class PetPresenter {
     /// Credits the closed day's true total, then rolls the accumulator over.
     /// Runs even when the tail is unavailable, so a failed lookup delays the
     /// rollover by one fetch rather than stalling it forever.
+    /// Every whole day missed is fetched before any state is touched, so the
+    /// accumulator is advanced in one synchronous stretch. Splitting it this
+    /// way keeps an evolution accepted mid-fetch from being overwritten.
     private func settleAndRollOver(trackedDay: Date, fallbackSteps: Int) async {
+        let totals = await missedDayTotals(from: trackedDay)
+        defer { dayRecoveryTask = nil }
+        guard !Task.isCancelled else { return }
+
         var progress = StepProgress.Progress(of: state)
-        // Settle the closed day *as that day* first: the same-day branch credits
-        // the uncounted tail and leaves the true total for the lazy-day verdict.
-        if let tail = await finalSteps(trackedDay) {
+        guard progress.trackedDay?.isSameDay(as: trackedDay) == true else { return }
+
+        // Each entry settles its own day: the first credits the tracked day's
+        // uncounted tail, and every later one rolls the previous day over with
+        // that day's true total deciding the lazy-day verdict.
+        for entry in totals {
             progress = StepProgress.advance(
                 progress,
-                todaySteps: tail,
-                now: trackedDay,
+                todaySteps: entry.total,
+                now: entry.day,
                 stagePenalty: state.species.stage.lazyDayPenalty
             )
         }
         rollOver(progress, todaySteps: currentSteps() ?? fallbackSteps)
         save()
-        dayRecoveryTask = nil
+    }
+
+    /// Settled totals for the tracked day and each whole day missed since,
+    /// oldest first. Bounded so a long absence cannot fan out into dozens of
+    /// HealthKit queries — days beyond the bound go uncredited and unpenalised.
+    private func missedDayTotals(from trackedDay: Date) async -> [(day: Date, total: Int)] {
+        let calendar = Calendar.current
+        var totals: [(day: Date, total: Int)] = []
+        var cursor = trackedDay
+
+        while totals.count < Self.maxCatchUpDays, !calendar.isDateInToday(cursor) {
+            if let total = await finalSteps(cursor) {
+                totals.append((cursor, total))
+            }
+            guard let next = calendar.date(byAdding: .day, value: 1, to: cursor) else { break }
+            cursor = next
+        }
+        return totals
     }
 
     private func rollOver(_ progress: StepProgress.Progress, todaySteps: Int) {

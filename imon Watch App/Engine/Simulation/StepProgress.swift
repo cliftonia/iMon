@@ -54,7 +54,9 @@ nonisolated enum StepProgress {
             )
         }
 
-        // Multi-day gaps charge a single lazy-day penalty (approximate).
+        // One rollover charges one lazy day. A multi-day absence is settled by
+        // the caller replaying each missed day through here, so every one gets
+        // its own verdict rather than a single approximate charge.
         let penalty = progress.creditedToday < lazyThreshold ? stagePenalty : 0
         return Progress(
             lifetime: progress.lifetime + today,

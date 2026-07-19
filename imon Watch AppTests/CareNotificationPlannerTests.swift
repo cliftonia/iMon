@@ -123,28 +123,54 @@ struct CareNotificationPlannerTests {
         #expect(fading?.fireDate == expected)
     }
 
-    /// A night-bound reminder is held until morning, not discarded — the pet
-    /// still needs care when the owner wakes.
+    /// A need that survives the night is held until the owner wakes rather
+    /// than dropped — the pet is just as hungry at 6am.
     @Test
-    func `ordinary events that would land at night are deferred to morning`() throws {
-        let state = makeTestState(at: today(at: 7))
-        let afterDark = today(at: 18)   // 6pm + lead → lands after dark
-        let nudge = notification(
-            CareNotificationPlanner.plan(for: state, now: afterDark, steps: 0), .exercise
-        )
-        let calendar = Calendar.current
-        #expect(nudge != nil)
-        #expect(calendar.component(.hour, from: try #require(nudge).fireDate)
-            == TimeConstants.nightEndHour)
-        #expect(try #require(nudge).fireDate > afterDark)
+    func `a night-bound hunger call is held until morning`() throws {
+        // One heart left at 5pm empties after dark.
+        let now = today(at: 17)
+        let state = makeTestState(species: .emberkin, hunger: 1, at: now)
 
-        // A daytime reminder keeps its own hour.
+        let hunger = try #require(
+            notification(CareNotificationPlanner.plan(for: state, now: now, steps: nil), .hunger)
+        )
+
+        #expect(Calendar.current.component(.hour, from: hunger.fireDate)
+            == TimeConstants.nightEndHour)
+        #expect(hunger.fireDate > now)
+    }
+
+    /// The exercise nudge is about a step total the owner can no longer
+    /// influence by morning, so it is dropped rather than held.
+    @Test
+    func `a night-bound exercise nudge is dropped, not deferred`() {
+        let state = makeTestState(at: today(at: 7))
+        let afterDark = today(at: 18)
+
+        #expect(notification(
+            CareNotificationPlanner.plan(for: state, now: afterDark, steps: 0), .exercise
+        ) == nil)
+
+        // Daytime keeps its own hour.
         let daytime = today(at: 16)
         let kept = notification(
             CareNotificationPlanner.plan(for: state, now: daytime, steps: 0), .exercise
         )
-        #expect(calendar.component(.hour, from: try #require(kept).fireDate)
-            != TimeConstants.nightEndHour)
+        #expect(kept?.fireDate == daytime.addingTimeInterval(TimeConstants.exerciseNudgeLead))
+    }
+
+    /// An injury reminder held past the untreated-injury death window would
+    /// arrive after the grave, so it is dropped instead.
+    @Test
+    func `an injury reminder is dropped when morning falls past the death window`() {
+        let now = today(at: 16)
+        var state = makeTestState(at: now)
+        state.isInjured = true
+        state.timestamps.injuredAt = now   // dies at 22:00; reminder due 19:00
+
+        #expect(notification(
+            CareNotificationPlanner.plan(for: state, now: now, steps: nil), .injury
+        ) == nil)
     }
 
     @Test

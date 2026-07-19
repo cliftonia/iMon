@@ -68,37 +68,79 @@ nonisolated enum CareNotificationPlanner {
 
         return candidates
             .filter { $0.fireDate > now }
-            .map { deferredPastNight($0, calendar: calendar) }
+            .compactMap { nightAdjusted($0, times: times, calendar: calendar) }
             .sorted { $0.fireDate < $1.fireDate }
     }
 
-    /// Moves a reminder that would land in the night window to the following
-    /// morning rather than dropping it — the pet still needs care, and a buzz
-    /// at 2am serves nobody. A death warning is exempt: it must fire when the
-    /// pet is actually dying.
-    private static func deferredPastNight(
+    /// The night policy. A death warning fires whenever it is due. A reminder
+    /// whose need survives the night is held to the wake hour rather than
+    /// dropped. Everything else is dropped, because a reminder that has
+    /// outlived its meaning is worse than silence.
+    private static func nightAdjusted(
         _ notification: CareNotification,
+        times: PetState.Timestamps,
         calendar: Calendar
-    ) -> CareNotification {
+    ) -> CareNotification? {
         guard notification.kind != .fading,
               SleepSchedule.isNight(weatherNight: nil, at: notification.fireDate)
         else { return notification }
 
+        guard let morning = nextMorning(after: notification.fireDate, calendar: calendar),
+              stillMeaningful(notification.kind, at: morning, times: times)
+        else { return nil }
+
         return CareNotification(
             kind: notification.kind,
-            fireDate: nextMorning(after: notification.fireDate, calendar: calendar),
+            // Stagger by kind so several held reminders do not all buzz at once.
+            fireDate: morning.addingTimeInterval(morningOffset(for: notification.kind)),
             species: notification.species
         )
     }
 
-    /// The next `nightEndHour` strictly after `date`.
-    private static func nextMorning(after date: Date, calendar: Calendar) -> Date {
+    /// Whether a reminder held until `morning` still says something true.
+    private static func stillMeaningful(
+        _ kind: CareNotification.Kind,
+        at morning: Date,
+        times: PetState.Timestamps
+    ) -> Bool {
+        switch kind {
+        case .hunger, .strength, .mess:
+            // The pet is just as hungry, weak or filthy when the owner wakes.
+            true
+        case .injury:
+            // Pointless past the untreated-injury death window — by then the
+            // pet is already in its grave.
+            times.injuredAt.map {
+                morning < $0.addingTimeInterval(TimeConstants.untreatedInjuryDeathTime)
+            } ?? false
+        case .exercise:
+            // A nudge about a step total the owner can no longer influence.
+            false
+        case .fading:
+            true
+        }
+    }
+
+    private static func morningOffset(for kind: CareNotification.Kind) -> TimeInterval {
+        switch kind {
+        case .hunger: 0
+        case .strength: 120
+        case .mess: 240
+        case .injury: 360
+        case .exercise, .fading: 0
+        }
+    }
+
+    /// The next `nightEndHour` strictly after `date`, or nil if the calendar
+    /// cannot name that instant — dropping beats buzzing at 2am.
+    private static func nextMorning(after date: Date, calendar: Calendar) -> Date? {
         let isBeforeDawn = calendar.component(.hour, from: date) < TimeConstants.nightEndHour
-        let day = isBeforeDawn
+        guard let day = isBeforeDawn
             ? date
-            : calendar.date(byAdding: .day, value: 1, to: date) ?? date
+            : calendar.date(byAdding: .day, value: 1, to: date)
+        else { return nil }
         return calendar.date(
             bySettingHour: TimeConstants.nightEndHour, minute: 0, second: 0, of: day
-        ) ?? date
+        )
     }
 }
