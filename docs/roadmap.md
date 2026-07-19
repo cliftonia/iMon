@@ -32,7 +32,11 @@ the steps are counted and the wrist is raised.
   entitlements and is the id the App Store Connect record uses; the watch
   app holds HealthKit + WeatherKit + App Groups; the complication holds App
   Groups only. Epic 6 replaces that stub with the real iPhone/iPad target in
-  the **same app record** — ids never change. USPTO checked 2026-07-19: zero filings for
+  the **same app record** — ids never change. Note App Store Connect offers
+  no watchOS platform: a watch-only app is created as an **iOS** record
+  against the container id, and the store lists it under Apple Watch apps by
+  virtue of `WKWatchOnly`. That makes Epic 6 a target swap inside the
+  existing record rather than a new listing. USPTO checked 2026-07-19: zero filings for
   "stepkin", live or dead. Fallbacks if the App Store Connect reservation
   surprises us: Wristkin, Hatchkin, Wanderkin (all verified clear
   2026-07-19).
