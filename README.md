@@ -126,6 +126,11 @@ Author sprites with the round-trip pipeline in [`Tools/`](Tools/README.md):
 `swift2png.py` exports frames to PNGs for a pixel editor, `sprite2swift.py`
 converts them back into ready-to-paste Swift.
 
+## Documentation
+
+Doc-comment voice, markdown-doc placement, and the commit-message format are
+codified in [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md).
+
 ## Testing
 
 Swift Testing (`@Test`, `#expect`) for engine and store logic — simulators,
