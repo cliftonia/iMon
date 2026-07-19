@@ -19,6 +19,7 @@ nonisolated enum CareNotificationPlanner {
 
         var candidates: [CareNotification] = []
         let times = state.timestamps
+        let calendar = Calendar.current
 
         // Scale by activity as the simulators do — a fast-draining pet is flagged late otherwise.
         let hungerInterval = TimeConstants.hungerDepletionInterval
@@ -59,7 +60,7 @@ nonisolated enum CareNotificationPlanner {
         }
 
         // Exercise — nudge a lazy wearer to get moving once the afternoon is gone.
-        let hour = Calendar.current.component(.hour, from: now)
+        let hour = calendar.component(.hour, from: now)
         if let steps, hour >= TimeConstants.exerciseHour, steps < TimeConstants.exerciseStepTarget {
             let fire = now.addingTimeInterval(TimeConstants.exerciseNudgeLead)
             candidates.append(CareNotification(kind: .exercise, fireDate: fire, species: state.species))
@@ -67,11 +68,37 @@ nonisolated enum CareNotificationPlanner {
 
         return candidates
             .filter { $0.fireDate > now }
-            // Dropped at night so the owner isn't buzzed at 2am — except a death warning.
-            .filter {
-                $0.kind == .fading
-                    || !SleepSchedule.isNight(weatherNight: nil, at: $0.fireDate)
-            }
+            .map { deferredPastNight($0, calendar: calendar) }
             .sorted { $0.fireDate < $1.fireDate }
+    }
+
+    /// Moves a reminder that would land in the night window to the following
+    /// morning rather than dropping it — the pet still needs care, and a buzz
+    /// at 2am serves nobody. A death warning is exempt: it must fire when the
+    /// pet is actually dying.
+    private static func deferredPastNight(
+        _ notification: CareNotification,
+        calendar: Calendar
+    ) -> CareNotification {
+        guard notification.kind != .fading,
+              SleepSchedule.isNight(weatherNight: nil, at: notification.fireDate)
+        else { return notification }
+
+        return CareNotification(
+            kind: notification.kind,
+            fireDate: nextMorning(after: notification.fireDate, calendar: calendar),
+            species: notification.species
+        )
+    }
+
+    /// The next `nightEndHour` strictly after `date`.
+    private static func nextMorning(after date: Date, calendar: Calendar) -> Date {
+        let isBeforeDawn = calendar.component(.hour, from: date) < TimeConstants.nightEndHour
+        let day = isBeforeDawn
+            ? date
+            : calendar.date(byAdding: .day, value: 1, to: date) ?? date
+        return calendar.date(
+            bySettingHour: TimeConstants.nightEndHour, minute: 0, second: 0, of: day
+        ) ?? date
     }
 }

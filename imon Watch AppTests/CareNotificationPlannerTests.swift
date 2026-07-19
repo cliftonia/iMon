@@ -123,18 +123,28 @@ struct CareNotificationPlannerTests {
         #expect(fading?.fireDate == expected)
     }
 
+    /// A night-bound reminder is held until morning, not discarded — the pet
+    /// still needs care when the owner wakes.
     @Test
-    func `ordinary events that would land at night are dropped`() {
-        // An exercise nudge that would fire after dark is suppressed.
+    func `ordinary events that would land at night are deferred to morning`() throws {
         let state = makeTestState(at: today(at: 7))
-        let afterDark = today(at: 18)   // 6pm + lead → still dark → dropped
-        #expect(notification(
+        let afterDark = today(at: 18)   // 6pm + lead → lands after dark
+        let nudge = notification(
             CareNotificationPlanner.plan(for: state, now: afterDark, steps: 0), .exercise
-        ) == nil)
-        let daytime = today(at: 16)     // 4pm + lead → daytime → kept
-        #expect(notification(
+        )
+        let calendar = Calendar.current
+        #expect(nudge != nil)
+        #expect(calendar.component(.hour, from: try #require(nudge).fireDate)
+            == TimeConstants.nightEndHour)
+        #expect(try #require(nudge).fireDate > afterDark)
+
+        // A daytime reminder keeps its own hour.
+        let daytime = today(at: 16)
+        let kept = notification(
             CareNotificationPlanner.plan(for: state, now: daytime, steps: 0), .exercise
-        ) != nil)
+        )
+        #expect(calendar.component(.hour, from: try #require(kept).fireDate)
+            != TimeConstants.nightEndHour)
     }
 
     @Test
