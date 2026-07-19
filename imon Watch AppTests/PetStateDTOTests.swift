@@ -189,6 +189,29 @@ struct PetStateDTOTests {
         #expect(decoded.timestamps.collapsingAt == nil)
     }
 
+    /// A v2 save predates the emptied-at stamps; a languishing pet restored
+    /// from one must not lose its countdown — `CollapseTracker` keeps the
+    /// already-persisted `collapsingAt` and only the precision is unavailable.
+    @Test
+    func `a v2 save without the emptied-at stamps decodes safely`() throws {
+        var state = PetState.hatched(at: Self.base)
+        state.timestamps.collapsingAt = Self.base
+        let data = try JSONEncoder().encode(PetStateDTO(from: state))
+        var json = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        json["schemaVersion"] = 2
+        json.removeValue(forKey: "hungerEmptiedAt")
+        json.removeValue(forKey: "strengthEmptiedAt")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+
+        let decoded = PetState(from: try JSONDecoder().decode(PetStateDTO.self, from: stripped))
+
+        #expect(decoded.timestamps.hungerEmptiedAt == nil)
+        #expect(decoded.timestamps.strengthEmptiedAt == nil)
+        #expect(decoded.timestamps.collapsingAt == Self.base)
+    }
+
     @Test
     func `legacy save without a schema version still decodes`() throws {
         var dto = PetStateDTO(from: .hatched(at: Date(timeIntervalSince1970: 0)))
