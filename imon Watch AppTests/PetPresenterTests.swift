@@ -95,7 +95,12 @@ struct PetPresenterTests {
     @Test
     func `backgrounding with notifications on schedules care reminders`() {
         let scheduler = SchedulerBox()
-        let presenter = makePresenter(makeTestState(), SaveBox(), scheduler: scheduler)
+        // A fading pet — the planner drops reminders that land in the night
+        // window, so a healthy pet's list is empty when the suite runs in the
+        // evening; the fading warning is the one kind that always survives.
+        var state = makeTestState()
+        state.timestamps.collapsingAt = .now
+        let presenter = makePresenter(state, SaveBox(), scheduler: scheduler)
 
         presenter.handleScenePhase(isActive: false, notificationsEnabled: true)
 
