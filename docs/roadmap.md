@@ -91,7 +91,7 @@ data arrives via iCloud Health sync, so the loop works there too.
 | # | Epic | Where | Why this position |
 |---|------|-------|-------------------|
 | 0 | ✅ **Done 2026-07-19** — name locked, USPTO clear, ids + App Group registered, ASC record created (iOS record, *Prepare for Submission*, no build) | — | Blocks package naming; the name can be taken while we wait |
-| 1 | Heal the state: step-count bug (5k vs 75), step-rollover loss, collapse-timing precision, DTO migration fields | old repo | These change the persisted schema — settle it **before** the migration so the save format moves once |
+| 1 | ✅ **Done 2026-07-19** — rollover tail recovered, collapse countdown dated from the true emptying (schema v3), v2-save migration proved, night reminders deferred not dropped, STEPS row relabelled TODAY. The "5k vs 75" report resolved as a label misreading: the app's own arithmetic checks out (today 4,015 − lifetime 2,537 = the 1,478 baseline at first credit); pending a Health-app cross-check | old repo | These change the persisted schema — settle it **before** the migration so the save format moves once |
 | 2 | The founding: fresh repo, workspace + packages, watch shell, hand-off if granted | new repo | Everything after lands in the new home |
 | 3 | Deferred polish: defer-night-notifications, lifecycle items, debug-only items | new repo | No schema impact; benefits from the fast package test loop |
 | 4 | Sprite treatment for Hopkin, Dotkin, Orbkin, Marshkin | new repo | Zero dependencies — runs parallel to Epic 3 |
