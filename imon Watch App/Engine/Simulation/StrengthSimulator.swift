@@ -12,13 +12,16 @@ nonisolated enum StrengthSimulator {
 
         // Strength depletes faster the less the wearer moves (more vitamins).
         let multiplier = steps.map { ActivityModel.strengthRateMultiplier(steps: $0) } ?? 1.0
-        HeartDecay.deplete(
+        let emptiedAt = HeartDecay.deplete(
             &state.strengthHearts,
             anchor: &state.timestamps.lastStrengthDecayAt,
             baseInterval: TimeConstants.strengthDepletionInterval,
             multiplier: multiplier,
             at: now
         )
+        state.timestamps.strengthEmptiedAt = state.strengthHearts.isEmpty
+            ? (state.timestamps.strengthEmptiedAt ?? emptiedAt ?? now)
+            : nil
         return state
     }
 }

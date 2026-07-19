@@ -89,6 +89,12 @@ extension PetState {
         /// When the pet's hunger and strength both emptied — starts the collapse
         /// countdown toward death; cleared on recovery.
         var collapsingAt: Date?
+        /// The moment each stat ran out, non-nil only while it is empty. The
+        /// decay anchors keep advancing past empty, so the emptying moment
+        /// cannot be recovered later — it is recorded as it happens, and gives
+        /// `collapsingAt` its true start.
+        var hungerEmptiedAt: Date?
+        var strengthEmptiedAt: Date?
 
         /// A freshly created pet: every elapsed timer starts at `date`, with no
         /// pending events outstanding.
@@ -107,6 +113,8 @@ extension PetState {
             pendingLightsMistakeAt = nil
             lightsOffAt = nil
             collapsingAt = nil
+            hungerEmptiedAt = nil
+            strengthEmptiedAt = nil
         }
 
         // Full memberwise init (a custom init above suppresses the synthesised one).
@@ -124,7 +132,9 @@ extension PetState {
             pendingCareMistakeAt: Date?,
             pendingLightsMistakeAt: Date?,
             lightsOffAt: Date?,
-            collapsingAt: Date?
+            collapsingAt: Date?,
+            hungerEmptiedAt: Date? = nil,
+            strengthEmptiedAt: Date? = nil
         ) {
             self.bornAt = bornAt
             self.lastFedAt = lastFedAt
@@ -140,6 +150,8 @@ extension PetState {
             self.pendingLightsMistakeAt = pendingLightsMistakeAt
             self.lightsOffAt = lightsOffAt
             self.collapsingAt = collapsingAt
+            self.hungerEmptiedAt = hungerEmptiedAt
+            self.strengthEmptiedAt = strengthEmptiedAt
         }
     }
 }

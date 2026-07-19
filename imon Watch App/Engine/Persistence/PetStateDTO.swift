@@ -8,7 +8,7 @@ import Foundation
 /// and is the hook for future migrations.
 nonisolated struct PetStateDTO: Codable, Sendable {
 
-    static let currentVersion = 2
+    static let currentVersion = 3
 
     var schemaVersion: Int?
 
@@ -55,6 +55,8 @@ nonisolated struct PetStateDTO: Codable, Sendable {
     var pendingLightsMistakeAt: Date?
     var lightsOffAt: Date?
     var collapsingAt: Date?
+    var hungerEmptiedAt: Date?
+    var strengthEmptiedAt: Date?
     var lastAdvancedAt: Date
     var lastBattledAt: Date?
 }
@@ -102,6 +104,8 @@ nonisolated extension PetStateDTO {
         pendingLightsMistakeAt = times.pendingLightsMistakeAt
         lightsOffAt = times.lightsOffAt
         collapsingAt = times.collapsingAt
+        hungerEmptiedAt = times.hungerEmptiedAt
+        strengthEmptiedAt = times.strengthEmptiedAt
         lastAdvancedAt = times.lastAdvancedAt
         lastBattledAt = times.lastBattledAt
     }
@@ -149,7 +153,9 @@ nonisolated extension PetState {
                 pendingCareMistakeAt: dto.pendingCareMistakeAt,
                 pendingLightsMistakeAt: dto.pendingLightsMistakeAt,
                 lightsOffAt: dto.lightsOffAt,
-                collapsingAt: dto.collapsingAt
+                collapsingAt: dto.collapsingAt,
+                hungerEmptiedAt: dto.hungerEmptiedAt,
+                strengthEmptiedAt: dto.strengthEmptiedAt
             )
         )
     }

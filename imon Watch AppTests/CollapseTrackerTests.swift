@@ -21,6 +21,50 @@ struct CollapseTrackerTests {
         #expect(result.timestamps.collapsingAt == now)
     }
 
+    /// The app may only notice hours after the fact — the countdown must date
+    /// from the moment the pet actually ran out, not from the sighting.
+    @Test
+    func `the countdown starts when the stats emptied, not when the app looked`() {
+        let now = Date.now
+        let strengthWent = now.addingTimeInterval(-6 * 3_600)
+        var state = makeTestState(hunger: 0, strength: 0, at: now)
+        state.timestamps.hungerEmptiedAt = now.addingTimeInterval(-9 * 3_600)
+        state.timestamps.strengthEmptiedAt = strengthWent
+
+        let result = CollapseTracker.apply(to: state, at: now)
+
+        // Languishing begins only once *both* are gone — the later moment.
+        #expect(result.timestamps.collapsingAt == strengthWent)
+    }
+
+    @Test
+    func `heart decay reports the moment the last heart was spent`() {
+        let start = Date.now.addingTimeInterval(-10_000)
+        var hearts = StatHearts(2)
+        var anchor = start
+
+        let emptiedAt = HeartDecay.deplete(
+            &hearts, anchor: &anchor,
+            baseInterval: 3_600, multiplier: 1, at: .now
+        )
+
+        #expect(hearts.isEmpty)
+        #expect(emptiedAt == start.addingTimeInterval(2 * 3_600))
+    }
+
+    @Test
+    func `heart decay reports nothing when the stat was already empty`() {
+        var hearts = StatHearts(0)
+        var anchor = Date.now.addingTimeInterval(-10_000)
+
+        let emptiedAt = HeartDecay.deplete(
+            &hearts, anchor: &anchor,
+            baseInterval: 3_600, multiplier: 1, at: .now
+        )
+
+        #expect(emptiedAt == nil)
+    }
+
     @Test
     func `an existing countdown is not reset while still languishing`() {
         let started = Date.now

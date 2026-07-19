@@ -71,6 +71,8 @@ struct PetStateDTOTests {
         state.timestamps.pendingLightsMistakeAt = Self.base.addingTimeInterval(10)
         state.timestamps.lightsOffAt = Self.base.addingTimeInterval(11)
         state.timestamps.collapsingAt = Self.base.addingTimeInterval(14)
+        state.timestamps.hungerEmptiedAt = Self.base.addingTimeInterval(15)
+        state.timestamps.strengthEmptiedAt = Self.base.addingTimeInterval(16)
         return state
     }
 
@@ -166,6 +168,8 @@ struct PetStateDTOTests {
         #expect(t.pendingLightsMistakeAt == s.pendingLightsMistakeAt)
         #expect(t.lightsOffAt == s.lightsOffAt)
         #expect(t.collapsingAt == s.collapsingAt)
+        #expect(t.hungerEmptiedAt == s.hungerEmptiedAt)
+        #expect(t.strengthEmptiedAt == s.strengthEmptiedAt)
     }
 
     @Test

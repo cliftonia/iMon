@@ -12,13 +12,16 @@ nonisolated enum HungerSimulator {
 
         // Hunger depletes faster the more the wearer moves.
         let multiplier = steps.map { ActivityModel.hungerRateMultiplier(steps: $0) } ?? 1.0
-        HeartDecay.deplete(
+        let emptiedAt = HeartDecay.deplete(
             &state.hungerHearts,
             anchor: &state.timestamps.lastHungerDecayAt,
             baseInterval: TimeConstants.hungerDepletionInterval,
             multiplier: multiplier,
             at: now
         )
+        state.timestamps.hungerEmptiedAt = state.hungerHearts.isEmpty
+            ? (state.timestamps.hungerEmptiedAt ?? emptiedAt ?? now)
+            : nil
         return state
     }
 }
