@@ -25,8 +25,11 @@ the steps are counted and the wrist is raised.
   StepKing (a three-rating step-alert utility, different category), was
   assessed and accepted. Bundle id root `cliftonia.stepkin`, App Group
   `group.cliftonia.stepkin`, watch app `cliftonia.stepkin.watchkitapp`,
-  widget `cliftonia.stepkin.complication` — the root is reserved for the
-  future iOS app so Epic 6 lands as a universal purchase. Glance at
+  complication `cliftonia.stepkin.watchkitapp.complication` (extensions are
+  prefixed by their container). The root id belongs to the app record and
+  the future iOS app: the established watch-first path is an iOS stub owning
+  the root, later replaced by the real iPhone/iPad target in the **same app
+  record** — ids never change. Glance at
   tmsearch.uspto.gov for "stepkin" when reserving; fallbacks if the
   reservation surprises us: Wristkin, Hatchkin, Wanderkin (all verified
   clear 2026-07-19).
