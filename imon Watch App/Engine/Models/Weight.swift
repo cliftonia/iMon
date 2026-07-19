@@ -1,5 +1,8 @@
 import Foundation
 
+/// The pet's weight in grams, kept inside the original device's two-digit
+/// range. Every mutation saturates at the bounds, so no sequence of feeds or
+/// training can push the value out of displayable range.
 nonisolated struct Weight: Codable, Sendable, Hashable {
 
     /// The lightest and heaviest a pet can weigh (grams).

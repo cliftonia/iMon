@@ -39,7 +39,6 @@ nonisolated enum DeathEvaluator {
 
     // MARK: - Apply
 
-    /// Marks the pet as dead.
     static func applyDeath(to state: PetState) -> PetState {
         var state = state
         state.isDead = true

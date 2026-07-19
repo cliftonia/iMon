@@ -1,6 +1,10 @@
 import Foundation
 import WatchKit
 
+/// Drives the post-hatch walkthrough: steps Dotkin through the fixed
+/// `OnboardingTip.walkthrough` list, playing each tip's animation, and hands
+/// off through `onComplete` when finished or skipped. The newborn is already
+/// persisted before this shows, so quitting mid-walkthrough cannot lose it.
 final class OnboardingPresenter {
 
     private(set) var viewModel = OnboardingViewModel()

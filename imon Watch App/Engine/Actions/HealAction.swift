@@ -1,5 +1,8 @@
 import Foundation
 
+/// Medicine: clears the current injury. The lifetime `injuryCount` stays, so
+/// repeated injuries still count toward `maxInjuriesBeforeDeath` — healing
+/// treats the wound, it does not erase the history.
 nonisolated enum HealAction {
 
     // MARK: - Query

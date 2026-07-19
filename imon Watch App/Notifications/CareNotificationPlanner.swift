@@ -17,9 +17,7 @@ nonisolated enum CareNotificationPlanner {
         var candidates: [CareNotification] = []
         let times = state.timestamps
 
-        // Hunger / strength reach empty. Scale by activity exactly as the
-        // simulators do, or an active wearer's faster-draining pet would be
-        // flagged late (it's already starving by the time the alert fires).
+        // Scale by activity as the simulators do — a fast-draining pet is flagged late otherwise.
         let hungerInterval = TimeConstants.hungerDepletionInterval
             / (steps.map { ActivityModel.hungerRateMultiplier(steps: $0) } ?? 1.0)
         let strengthInterval = TimeConstants.strengthDepletionInterval
@@ -38,7 +36,6 @@ nonisolated enum CareNotificationPlanner {
             candidates.append(CareNotification(kind: .strength, fireDate: fire, species: state.species))
         }
 
-        // Next mess, until the pile cap is reached.
         if state.poopCount < TimeConstants.maxPoopPiles {
             let fire = times.lastPoopAt.addingTimeInterval(TimeConstants.poopInterval)
             candidates.append(CareNotification(kind: .mess, fireDate: fire, species: state.species))
@@ -67,8 +64,7 @@ nonisolated enum CareNotificationPlanner {
 
         return candidates
             .filter { $0.fireDate > now }
-            // Night-time events are dropped so the owner isn't buzzed at 2am — but
-            // a death warning is important enough to fire whenever it's due.
+            // Dropped at night so the owner isn't buzzed at 2am — except a death warning.
             .filter {
                 $0.kind == .fading
                     || !SleepSchedule.isNight(weatherNight: nil, at: $0.fireDate)

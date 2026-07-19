@@ -30,8 +30,7 @@ final class StepActivityStore {
     /// window. Returns the spawned task (nil if skipped).
     @discardableResult
     func refreshIfStale(now: Date = .now) -> Task<Void, Never>? {
-        // The cache only holds within a calendar day — crossing midnight
-        // refetches immediately so the new day starts from a real reading.
+        // The cache never spans midnight — the new day starts from a real reading.
         throttle.startIfStale(
             now: now,
             isFresh: {

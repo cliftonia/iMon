@@ -26,8 +26,7 @@ nonisolated enum NotificationSpriteRenderer {
         let b: CGFloat
     }
 
-    // Daytime: black pixels on the signature green. Night (light off): white
-    // pixels on a near-black screen, mirroring the LCD's classic palette.
+    // Day: black on signature green; night: white on near-black — the classic LCD palette.
     private static let dayBackground = RGB(r: CGFloat(0x8B) / 255, g: CGFloat(0xAC) / 255, b: CGFloat(0x6E) / 255)
     private static let dayPixel = RGB(r: 0, g: 0, b: 0)
     private static let nightBackground = RGB(r: 0.07, g: 0.07, b: 0.07)
@@ -51,8 +50,7 @@ nonisolated enum NotificationSpriteRenderer {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return nil }
 
-        // Draw top-down (as the LCD does) by flipping CoreGraphics' bottom-left
-        // origin, so a grid cell (x, y) maps straight through with no per-cell flip.
+        // Flip the bottom-left origin so cell (x, y) maps top-down with no per-cell flip.
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1, y: -1)
 
@@ -62,8 +60,7 @@ nonisolated enum NotificationSpriteRenderer {
 
     private static func finalize(_ context: CGContext) -> URL? {
         guard let image = context.makeImage() else { return nil }
-        // A unique file per render: the system moves the attachment into its own
-        // store, so reusing one path would strand later notifications of the same pet.
+        // Unique file per render — the system moves attachments; a reused path strands later ones.
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("skykin-\(UUID().uuidString).png")
         guard let destination = CGImageDestinationCreateWithURL(

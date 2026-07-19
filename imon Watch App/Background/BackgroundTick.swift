@@ -10,8 +10,7 @@ import os
 /// foreground contract in `PetPresenter.handleScenePhase`.
 nonisolated enum BackgroundTick {
 
-    // One parameter per injected witness/flag — no silent defaults, so a new
-    // call site must decide the notifications behaviour explicitly.
+    // No defaulted witnesses — a new call site must decide notifications explicitly.
     // swiftlint:disable:next function_parameter_count
     static func perform(
         store: PetStateStore,
@@ -22,8 +21,7 @@ nonisolated enum BackgroundTick {
         steps: Int?,
         now: Date = .now
     ) {
-        // A transient decode failure must not break the wake chain — re-arm and
-        // bail. A genuine absence of a saved pet (hatching) is a true no-op.
+        // A load failure re-arms and bails (keep the chain); a missing pet is a true no-op.
         let loaded: PetState?
         do {
             loaded = try store.load()
@@ -36,8 +34,7 @@ nonisolated enum BackgroundTick {
 
         var advanced = GameEngine.advance(state, to: now, isNight: nil, steps: steps)
 
-        // Evolution otherwise only happens in the foreground; evaluate it here so a
-        // pet can grow while the owner is away, and announce it with a notification.
+        // Evolution otherwise runs only foregrounded — evaluate so pets grow while away.
         if let target = EvolutionEngine.checkEvolution(for: advanced) {
             advanced = EvolutionEngine.evolve(advanced, to: target, at: now)
             if notificationsEnabled {
@@ -53,12 +50,10 @@ nonisolated enum BackgroundTick {
             Log.background.error("Background save failed: \(error, privacy: .public)")
         }
 
-        // Re-arm the next wake before the caller completes the task, so the loop
-        // keeps going even if the work below is later cut short.
+        // Re-arm before the task completes — the chain survives if work below is cut short.
         refresh.scheduleNext(from: now)
 
-        // When the toggle is off a wake must not re-arm reminders — clear any
-        // left pending from before the switch instead.
+        // Toggle off: a wake must not re-arm reminders — clear any left pending instead.
         if notificationsEnabled {
             let plan = CareNotificationPlanner.plan(for: advanced, now: now, steps: steps)
             notifications.schedule(plan)
@@ -66,8 +61,7 @@ nonisolated enum BackgroundTick {
             notifications.cancelAll()
         }
 
-        // Refresh the watch-face complication against the same advanced state,
-        // so the background wake and the foreground path bundle identically.
+        // Rebuild against the same advanced state — background and foreground must match.
         ComplicationStore.save(ComplicationTimeline.entries(for: advanced, from: now))
         complications.reload()
     }

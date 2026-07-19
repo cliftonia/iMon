@@ -1,5 +1,6 @@
 import os
 
+/// One `os.Logger` per layer so Console filtering follows the architecture.
 nonisolated enum Log {
     private static let subsystem = "com.cliftonia.imon"
 

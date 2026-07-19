@@ -2,6 +2,11 @@ import Foundation
 import os
 import Observation
 
+/// The app's lifecycle phase machine. Resolves the saved pet into a
+/// `LifecyclePhase` on launch and owns the presenter for whichever phase is
+/// showing. Phases replace one another (hatch → onboarding → alive → dead →
+/// hatch) rather than stacking, which is why lifecycle screens are not
+/// `AppRoute`s — only stats and settings push onto the `NavigationStack`.
 @Observable
 final class AppPresenter {
 
@@ -63,9 +68,7 @@ final class AppPresenter {
                 return
             }
 
-            // Catch the saved pet up to now *before* the first render, so the
-            // scene (day/night, sleep) is current immediately - no stale-night
-            // flash - and a death that happened while away is surfaced at once.
+            // Advance before first render — no stale-night flash; away deaths surface at once.
             let advanced = GameEngine.advance(
                 saved, to: .now,
                 isNight: weatherStore.nightSignal(),
@@ -104,8 +107,7 @@ final class AppPresenter {
     }
 
     private func onHatchComplete() {
-        // Persist the newborn at hatch — quitting during the walkthrough must
-        // not lose the pet (it would re-hatch on the next launch).
+        // Persist before onboarding — quitting mid-walkthrough must not lose the pet.
         let state = PetState.hatched(at: .now)
         persist(state)
         hatchedState = state
@@ -149,8 +151,7 @@ final class AppPresenter {
     }
 
     private func startDeath(state: PetState) {
-        // Pop any pushed screen (e.g. Stats) first, or the grave would appear
-        // underneath it when the pet dies mid-navigation.
+        // Pop first — the grave must not appear beneath a pushed screen (e.g. Stats).
         router.popToRoot()
         phase = .dead
         deathPresenter = DeathPresenter(state: state, onRestart: { [weak self] in
@@ -184,8 +185,7 @@ final class AppPresenter {
 
     func navigateToSettings() {
         #if DEBUG
-        // Debug actions pop back to the pet screen first, so their effect (the
-        // evolution sheet, the drained pet, the grave) is visible straight away.
+        // Debug actions pop to the pet screen first so their effect is visible at once.
         let presenter = SettingsPresenter(settings: settings, debug: SettingsDebugActions(
             setWeather: { [weak self, weatherStore] condition in
                 self?.router.popToRoot()
@@ -206,7 +206,8 @@ final class AppPresenter {
         router.navigate(to: .settings)
     }
 
-    /// Check if pet has died after a debug evolution cycle.
+    /// The `onDeath` hook from `PetPresenter` — re-reads the live state and
+    /// flips to the death phase if the pet has died.
     func checkDeath() {
         guard let petPresenter else { return }
         let state = petPresenter.getCurrentState()
@@ -218,8 +219,7 @@ final class AppPresenter {
     /// Reset the current pet back to a fresh egg (the ⚠️ menu button).
     func restartPet() {
         #if DEBUG
-        // Debug: kill the pet instead of resetting, so the Death screen can be
-        // verified on demand. "New Egg" there still starts a fresh pet.
+        // Kill instead of reset in DEBUG so the Death screen is verifiable on demand.
         if let petPresenter {
             var state = petPresenter.getCurrentState()
             state.isDead = true

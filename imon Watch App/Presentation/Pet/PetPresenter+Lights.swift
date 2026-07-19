@@ -9,8 +9,7 @@ extension PetPresenter {
             to: state, night: currentlyNight, at: .now
         )
         guard result == .toggled else {
-            // Refused: by day the light is forced on, so play the head-shake
-            // (which also fires the reject haptic) like every other refusal.
+            // By day the light is forced on — refuse like every other blocked action.
             refuse()
             return
         }

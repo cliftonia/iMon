@@ -1,6 +1,13 @@
 import Foundation
 import os
 
+/// Drives the home screen: owns the live `PetState`, the game-tick loop, and
+/// the sprite animators, fanning out to the feeding / healing / lights /
+/// wander / evolution extensions. Each tick advances the simulation, offers
+/// evolutions, and saves; death is edge-triggered inside a tick so `onDeath`
+/// fires during play, not on the next launch. Foregrounding restarts the loop
+/// and catches the simulation up; backgrounding hands care reminders and the
+/// complication timeline to the system (see `handleScenePhase`).
 final class PetPresenter {
 
     private(set) var viewModel = PetViewModel()
@@ -72,8 +79,7 @@ final class PetPresenter {
     // MARK: - Game Loop
 
     func startGameLoop() {
-        // Idempotent — `.task` can re-fire (Stats navigation, foregrounding);
-        // a second timer would double-tick and double-save.
+        // Idempotent — a re-fired `.task` would otherwise double-tick and double-save.
         guard gameTimer == nil else { return }
         advanceState()
         gameTimer = Timer.scheduledTimer(
@@ -151,8 +157,7 @@ final class PetPresenter {
             for: state, now: now, steps: currentSteps()
         )
         notificationScheduler.schedule(plan)
-        // The pet just changed hands to the background — bake a fresh timeline
-        // for the complication and ask WidgetKit to reload it.
+        // Bake a fresh complication timeline — backgrounding is its last chance.
         ComplicationStore.save(ComplicationTimeline.entries(for: state, from: now))
         complicationReloader.reload()
     }
@@ -176,8 +181,7 @@ final class PetPresenter {
         )
         creditSteps()
 
-        // Stay awake during an activity, but don't flip the persistent light —
-        // otherwise training/battling at night leaves the pet "inside".
+        // Don't flip the persistent light — night training would leave the pet "inside".
         if !wasSleeping, state.isSleeping, viewModel.isBusy {
             state.isSleeping = false
         }
@@ -277,13 +281,11 @@ final class PetPresenter {
 
     func updateAnimation() {
         guard viewModel.screenMode == .normal else { return }
-        // Only idle and the food-selection menu drive the resting animation;
-        // every other activity plays its own ceremony animation.
+        // Every other activity plays its own ceremony animation — never override it.
         switch viewModel.activity {
         case .idle, .feeding(.selecting):
             if state.isLanguishing, !state.isSleeping {
-                // Both stats empty: a weak, drooping loop (the Call sign blinks
-                // alongside it). Asleep at night it still rests, like the toy.
+                // Languishing droops only awake — asleep it still rests, like the toy.
                 spriteAnimator.play(SpriteCatalog.weakAnimation(for: state.species))
             } else {
                 let kind: SpriteCatalog.AnimationKind =

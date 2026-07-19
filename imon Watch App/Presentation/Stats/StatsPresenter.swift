@@ -1,5 +1,8 @@
 import Foundation
 
+/// Drives the read-only stats screen. `update(from:steps:)` formats a one-shot
+/// snapshot of the live `PetState` into display strings — the screen does not
+/// tick, so its figures are frozen at the moment Stats was opened.
 final class StatsPresenter {
 
     private(set) var viewModel = StatsViewModel()

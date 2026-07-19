@@ -4,10 +4,7 @@ import Foundation
 
 extension BattlePresenter {
 
-    // Canonical battle layout:
-    //   Pet   — left side,  faces right, fires left→right.
-    //   Enemy — right side, faces left,  fires right→left.
-    // Sprites are drawn facing LEFT natively (per the wander convention).
+    // Pet fights from the left, enemy from the right; sprites natively face left.
 
     private static let petOffsetX = 1
     private static let opponentOffsetX = 15
@@ -48,16 +45,13 @@ extension BattlePresenter {
     var activeFrame: SpriteFrame {
         switch viewModel.phase {
         case .introPet:
-            // Scene 1: our monster, facing the foe.
             return petFrame
         case .introVS:
-            // Scene 2: the flashing "VS" is drawn by the LCD flash layer.
+            // The flashing "VS" is drawn by the LCD flash layer, not a sprite.
             return .empty
         case .introEnemy:
-            // Scene 3: the opponent, facing us.
             return opponentFrame
         case .choosing, .attacking:
-            // Pet faces the enemy on the right.
             return petFrame
         case .projectile:
             // Raw frame — projectile already travels left→right.

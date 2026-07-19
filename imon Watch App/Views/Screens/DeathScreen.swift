@@ -5,8 +5,7 @@ struct DeathScreen: View {
     let presenter: DeathPresenter
 
     var body: some View {
-        // Scroll-bounded so the grave + labels + button can't overflow (and
-        // collide with the clock) on the smaller 40/41mm screens.
+        // Scroll-bounded so content can't collide with the clock on 40/41mm.
         ScrollView {
             VStack(spacing: 10) {
                 AnimatedSpriteBezel(

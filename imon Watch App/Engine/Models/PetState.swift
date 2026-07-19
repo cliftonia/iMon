@@ -1,5 +1,9 @@
 import Foundation
 
+/// The complete simulated state of one pet — the single value the engine's
+/// pure `(PetState, Date) -> PetState` simulators advance. Deliberately not
+/// `Codable`: saves go through the flat, versioned `PetStateDTO`, so this
+/// model can be regrouped or extended without breaking stored pets.
 nonisolated struct PetState: Sendable {
 
     // MARK: - Identity

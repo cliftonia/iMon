@@ -1,6 +1,11 @@
 import Foundation
 import WatchKit
 
+/// Runs one battle ceremony from intro to outcome: owns the phase state, both
+/// sprite animators, and the async round loop. Spawned fresh per battle by
+/// `PetPresenter.startBattleMode` and reports the result once via `onComplete`;
+/// `cancelBattle` must run on dismissal so a pending pick continuation is
+/// resumed rather than leaked.
 final class BattlePresenter {
 
     private(set) var viewModel = BattleViewModel()
@@ -79,17 +84,16 @@ final class BattlePresenter {
 
     /// Opening beats: our monster, a "VS" flash, then the opponent.
     private func runIntro() async {
-        // Scene 1: our monster (already shown by `startBattle`).
+        // Our monster is already on screen from `startBattle` — just hold the beat.
         try? await Task.sleep(for: .seconds(Self.introSceneDuration))
         guard !Task.isCancelled, let opp = opponent else { return }
 
-        // Scene 2: a flashing "VS" with a lightning strobe (LCD draws it).
+        // The LCD flash layer draws the strobing "VS" — nothing to animate here.
         viewModel.phase = .introVS
         WKInterfaceDevice.battleHaptic()
         try? await Task.sleep(for: .seconds(Self.introVSDuration))
         guard !Task.isCancelled else { return }
 
-        // Scene 3: the opponent.
         viewModel.phase = .introEnemy
         opponentAnimator.play(.idle, for: opp.species)
         try? await Task.sleep(for: .seconds(Self.introSceneDuration))

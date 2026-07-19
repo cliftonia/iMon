@@ -1,5 +1,6 @@
 import Foundation
 
+/// Cleaning flushes every poop pile in one go; there is no per-pile scoop.
 nonisolated enum CleanAction {
 
     // MARK: - Query
@@ -15,8 +16,7 @@ nonisolated enum CleanAction {
 
         var state = state
         state.poopCount = 0
-        // Reset the poop timer so cleaning grants a fresh interval — otherwise a
-        // pile nearly due could reappear minutes after the owner just tidied up.
+        // Reset the timer — a pile nearly due must not reappear right after cleaning.
         state.timestamps.lastPoopAt = now
         return state
     }

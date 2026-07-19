@@ -1,5 +1,8 @@
 import Foundation
 
+/// The player's light switch. Turning it off at night starts the settle
+/// countdown that `SleepSchedule` turns into sleep; turning it on wakes the
+/// pet immediately. Day toggles are refused — daylight forces the light on.
 nonisolated enum LightsAction {
 
     nonisolated enum ToggleResult: Sendable {

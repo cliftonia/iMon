@@ -1,5 +1,8 @@
 import Foundation
 
+/// A heart-meter value that can never go negative. Capacity varies per
+/// species and grows on evolution, so the cap is supplied at each
+/// `increment(upTo:)` call instead of being frozen into the stored value.
 nonisolated struct StatHearts: Codable, Sendable, Hashable {
     private(set) var value: Int
 

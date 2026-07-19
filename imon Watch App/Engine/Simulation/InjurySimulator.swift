@@ -8,8 +8,7 @@ nonisolated enum InjurySimulator {
         var state = state
         guard state.isAwakeAndAlive, !state.isInjured else { return state }
 
-        // A sedentary wearer makes the pet injury-prone: poop injures one pile
-        // sooner than usual.
+        // A sedentary wearer is injury-prone: poop injures one pile sooner.
         let sedentary = steps.map { ActivityModel.isSedentary(steps: $0) } ?? false
         let threshold = sedentary
             ? TimeConstants.maxPoopPiles - 1

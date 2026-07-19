@@ -1,6 +1,10 @@
 import Foundation
 
-/// A 16x16 1-bit monochrome bitmap. Each UInt16 is one row, MSB = leftmost pixel.
+/// A 16x16 1-bit monochrome bitmap. Each UInt16 is one row, MSB = leftmost
+/// pixel — the same encoding the Tools/ pipeline round-trips, so frames stay
+/// diffable against their ASCII-art comments. Immutable: every transform
+/// (mirror, shift, overlay) returns a new frame. Shifts discard pixels pushed
+/// past an edge, and shift amounts outside 1..<16 are a no-op.
 nonisolated struct SpriteFrame: Sendable, Hashable {
 
     let rows: [UInt16]
@@ -10,7 +14,9 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         self.rows = rows
     }
 
-    /// Check if pixel at (x, y) is on. x=0 is leftmost, y=0 is topmost.
+    /// Whether the pixel at (x, y) is lit. x=0 is leftmost, y=0 is topmost;
+    /// out-of-bounds coordinates read as off rather than trapping, so callers
+    /// can probe neighbours without bounds checks.
     func pixel(x: Int, y: Int) -> Bool {
         guard x >= 0, x < Self.size, y >= 0, y < Self.size else { return false }
         return (rows[y] >> (15 - x)) & 1 == 1

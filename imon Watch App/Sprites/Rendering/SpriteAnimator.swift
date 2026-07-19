@@ -2,6 +2,8 @@ import Foundation
 import Observation
 
 /// Drives sprite animation playback on the main thread for SwiftUI display.
+/// `@Observable` so a view reading `currentFrame` re-renders on every frame
+/// advance without any explicit publisher wiring.
 @MainActor
 @Observable
 final class SpriteAnimator {
@@ -19,6 +21,8 @@ final class SpriteAnimator {
         timer?.invalidate()
     }
 
+    /// Replaces whatever is playing and starts from frame 0. Single-frame
+    /// animations just display their frame — no timer is scheduled.
     func play(_ animation: SpriteAnimation) {
         stop()
         self.animation = animation
@@ -37,6 +41,9 @@ final class SpriteAnimator {
         }
     }
 
+    /// Halts playback but deliberately leaves `currentFrame` showing the last
+    /// frame, so a finished non-looping animation holds its final pose instead
+    /// of blinking to empty.
     func stop() {
         timer?.invalidate()
         timer = nil

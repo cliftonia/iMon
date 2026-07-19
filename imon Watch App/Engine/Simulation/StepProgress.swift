@@ -34,11 +34,7 @@ nonisolated enum StepProgress {
     ) -> Progress {
         let today = max(0, todaySteps)
 
-        // First credit ever - baseline today's running total and start tracking,
-        // without crediting it. Folding `today` into the lifetime here would
-        // retroactively award steps taken before this pet existed: a pet hatched
-        // mid-day, or a fresh pet after a death/reset, would inherit the day's
-        // earlier count. From here on, only the post-baseline delta is credited.
+        // Baseline only — a fresh pet must not inherit steps taken before it existed.
         guard let trackedDay = progress.trackedDay else {
             return Progress(
                 lifetime: max(0, progress.lifetime),
@@ -48,7 +44,6 @@ nonisolated enum StepProgress {
             )
         }
 
-        // Same day - credit only the increase since we last looked.
         if calendar.isDate(now, inSameDayAs: trackedDay) {
             let delta = max(0, today - progress.creditedToday)
             return Progress(
@@ -59,8 +54,7 @@ nonisolated enum StepProgress {
             )
         }
 
-        // New day - a lazy finished day raises the goal, then credit today afresh.
-        // Multi-day gaps apply a single penalty (approximate).
+        // Multi-day gaps charge a single lazy-day penalty (approximate).
         let penalty = progress.creditedToday < lazyThreshold ? stagePenalty : 0
         return Progress(
             lifetime: progress.lifetime + today,

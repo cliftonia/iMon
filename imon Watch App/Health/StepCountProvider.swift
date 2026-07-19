@@ -1,6 +1,9 @@
 import Foundation
 import HealthKit
 
+/// Fetches today's step total, injected as a protocol witness so everything
+/// built on steps can be tested without HealthKit. "Today" is anchored to the
+/// local midnight — a count never carries across days.
 nonisolated struct StepCountProvider: Sendable {
     let fetchTodaySteps: @Sendable () async throws -> Int
 }
@@ -18,9 +21,7 @@ extension StepCountProvider {
                     end: .now,
                     options: .strictStartDate
                 )
-                // HKStatisticsQueryDescriptor + .cumulativeSum already merges and
-                // deduplicates across sources (watch + synced iPhone), matching
-                // the system Health app's daily total. No source filtering needed.
+                // .cumulativeSum already dedupes watch + iPhone sources — no source filter.
                 let samplePredicate = HKSamplePredicate.quantitySample(
                     type: stepType,
                     predicate: predicate

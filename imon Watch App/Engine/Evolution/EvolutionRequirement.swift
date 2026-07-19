@@ -1,5 +1,8 @@
 import Foundation
 
+/// One row of the `EvolutionChart`: a from→to edge plus the care gates that
+/// select it. A `nil` gate is unconstrained; `isDefault` marks the fallback
+/// row taken only when no specific row matches.
 nonisolated struct EvolutionRequirement: Sendable {
 
     let from: PetSpecies

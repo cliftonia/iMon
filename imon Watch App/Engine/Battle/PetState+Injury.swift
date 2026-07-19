@@ -1,9 +1,9 @@
 import Foundation
 
-// The injury invariant: flag, timestamp, and lifetime count must move
-// together — DeathEvaluator reads all three for the death/heal economy.
-// Every production injury routes through `injure(at:)` so a new trigger
-// cannot silently forget one of the fields.
+/// The injury invariant: flag, timestamp, and lifetime count must move
+/// together — `DeathEvaluator` reads all three for the death/heal economy.
+/// Every production injury routes through `injure(at:)` so a new trigger
+/// cannot silently forget one of the fields.
 nonisolated extension PetState {
 
     /// Marks the pet injured, stamping the injury time and bumping the

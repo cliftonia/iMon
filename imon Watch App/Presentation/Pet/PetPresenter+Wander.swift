@@ -42,7 +42,6 @@ extension PetPresenter {
             return
         }
 
-        // 60% chance to walk, 40% stay idle
         guard Double.random(in: 0...1) < 0.6 else {
             scheduleNextWander()
             return

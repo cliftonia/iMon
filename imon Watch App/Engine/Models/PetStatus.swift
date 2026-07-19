@@ -1,5 +1,8 @@
 import Foundation
 
+/// A read-only snapshot of `PetState` for presentation: values flattened to
+/// display units and attention flags precomputed at construction, so views
+/// render from a frozen moment rather than reaching into live engine state.
 nonisolated struct PetStatus: Sendable {
     let species: PetSpecies
     let stage: EvolutionStage

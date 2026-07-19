@@ -8,10 +8,8 @@ struct WeatherOverlay: View {
     @Environment(\.lcdTheme) private var theme
 
     var body: some View {
-        // Largest layout that fits wins: Ultra shows temp · humidity · condition;
-        // narrow 40/42mm screens drop humidity, then condition — longest-first —
-        // so the temperature never truncates. Humidity goes before condition,
-        // since the condition is the only weather cue in a release build.
+        // Longest row that fits wins; humidity drops before condition (the only
+        // release-build weather cue), so the temperature never truncates.
         ViewThatFits(in: .horizontal) {
             row(showHumidity: true, showCondition: true)
             row(showHumidity: false, showCondition: true)

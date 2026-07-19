@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// The LCD screen: a SwiftUI `Canvas` painting a 32×20 grid of 1-bit cells.
+/// Every layer — sprites, weather, room, poop, call sign — is a list of lit
+/// cells filled per frame, and a `TimelineView` drives redraws only while
+/// something on screen actually animates.
 struct LCDDisplay: View {
 
     let configuration: LCDDisplayConfiguration
@@ -107,7 +111,6 @@ struct LCDDisplay: View {
         let pixelWidth = size.width / 32
         let pixelHeight = size.height / 20
 
-        // Dim room with a bright pool under the lamp (indoors only).
         if isIndoor {
             drawRoomGlow(
                 in: context, size: size,
@@ -139,11 +142,7 @@ struct LCDDisplay: View {
                 phase: weatherPhase, in: context, size: size,
                 pixelWidth: pixelWidth, pixelHeight: pixelHeight
             )
-            // Outdoors the sky/weather plays in front of the pet, so re-stamp the
-            // creature's eyes on top - otherwise a walking pet's eyes sweep across
-            // the animated layer and flicker as sun, stars or rain pass behind.
-            // Skipped while a lightning flash washes the screen: the flash covers
-            // the body too, and dark eye holes would punch through the white-out.
+            // Re-stamp the eyes over the front weather; skipped on flash frames.
             if !isFlashFrame(phase: weatherPhase) {
                 fillInteriorHoles(
                     leftSprite, in: context,
@@ -228,7 +227,6 @@ struct LCDDisplay: View {
             pixelWidth: pixelWidth, pixelHeight: pixelHeight
         )
 
-        // The lit body on top.
         for y in 0..<SpriteFrame.size {
             for x in 0..<SpriteFrame.size where sprite.pixel(x: x, y: y) {
                 context.fillCell(

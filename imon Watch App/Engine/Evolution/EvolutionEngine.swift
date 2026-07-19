@@ -1,16 +1,16 @@
 import Foundation
 import os
 
+/// Chooses the pet's next species from the `EvolutionChart`: any satisfied
+/// specific row beats the default row, and chart order breaks ties between
+/// specific rows.
 nonisolated enum EvolutionEngine {
 
-    /// Check if the pet is ready to evolve and return the target species.
-    /// Returns `nil` if no evolution is available.
     static func checkEvolution(for state: PetState) -> PetSpecies? {
         guard !state.isEgg, state.species.stage != .ultimate else { return nil }
 
         let candidates = EvolutionChart.evolutions(for: state.species)
 
-        // Try non-default requirements first (specific paths)
         let specific = candidates.filter {
             !$0.isDefault && $0.isSatisfied(by: state)
         }
@@ -18,7 +18,6 @@ nonisolated enum EvolutionEngine {
             return best.to
         }
 
-        // Fall back to default path
         let defaults = candidates.filter {
             $0.isDefault && $0.isSatisfied(by: state)
         }
@@ -43,10 +42,7 @@ nonisolated enum EvolutionEngine {
         state.trainingCount = 0
         // Fresh stage, fresh goal — lazy penalties don't follow the pet across stages.
         state.evolutionGoalPenalty = 0
-        // A clean slate: stats refill and the mess is gone, so the pet is neither
-        // languishing nor hurt. Crucially the lifetime injury count resets too —
-        // otherwise ~0.5 training injuries/day would condemn a well-cared pet in
-        // ~40 days, undoing the "care mistakes don't kill" rebalance.
+        // injuryCount resets too — carried over, training injuries kill in ~40 days.
         state.timestamps.collapsingAt = nil
         state.isInjured = false
         state.timestamps.injuredAt = nil

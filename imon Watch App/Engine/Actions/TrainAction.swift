@@ -1,5 +1,9 @@
 import Foundation
 
+/// The training mini-game: guess whether a hidden number (1–9, never 5, so a
+/// guess always has a true answer) lands high or low. A winning session builds
+/// strength, sheds weight and adds trained HP; win or lose, the exertion risks
+/// a poop (60%) or an injury (10%).
 nonisolated enum TrainAction {
 
     nonisolated enum Guess: Sendable {
@@ -19,7 +23,6 @@ nonisolated enum TrainAction {
 
     // MARK: - Round Logic
 
-    /// Generate a training number in range 1-9, excluding 5.
     static func generateNumber() -> Int {
         var number = Int.random(in: 1...9)
         while number == 5 {
@@ -28,7 +31,6 @@ nonisolated enum TrainAction {
         return number
     }
 
-    /// Evaluate a single round against the player's guess.
     static func evaluateRound(number: Int, guess: Guess) -> RoundResult {
         let won: Bool = {
             switch guess {

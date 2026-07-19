@@ -1,5 +1,7 @@
 import WatchKit
 
+/// Named haptic cues, one per game event, so the `WKHapticType` mapping and
+/// the master switch live in one place.
 extension WKInterfaceDevice {
 
     /// Master switch for every haptic, mirrored from the Settings toggle. When

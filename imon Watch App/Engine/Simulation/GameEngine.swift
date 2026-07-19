@@ -20,15 +20,13 @@ nonisolated enum GameEngine {
             return state
         }
 
-        // Update age (whole days since birth) — clamped so a backward clock
-        // can't produce a negative age.
+        // Clamped so a backward clock can't produce a negative age.
         let days = Calendar.current.dateComponents(
             [.day], from: state.timestamps.bornAt, to: now
         ).day ?? state.age
         state.age = max(0, days)
 
-        // Resolve day/night once (weather, or fixed hours as fallback), plus the
-        // fixed bedtime window that drives sleep and the lights-on penalty.
+        // Resolve day/night and bedtime once so every simulator sees the same signal.
         let night = SleepSchedule.isNight(weatherNight: isNight, at: now)
         let bedtime = SleepSchedule.isBedtime(at: now)
 
@@ -42,7 +40,6 @@ nonisolated enum GameEngine {
         state = CareMistakeTracker.apply(to: state, at: now, bedtime: bedtime)
         state = CollapseTracker.apply(to: state, at: now)
 
-        // Evaluate death
         if let cause = DeathEvaluator.evaluate(state, at: now) {
             Log.engine.info("Pet died from \(String(describing: cause))")
             state = DeathEvaluator.applyDeath(to: state)

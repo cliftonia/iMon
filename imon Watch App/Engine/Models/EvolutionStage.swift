@@ -1,5 +1,8 @@
 import Foundation
 
+/// The five growth stages of the V1 lifecycle, always derived from
+/// `PetSpecies` (never persisted) so a pet's stage can never disagree with its
+/// species. Per-stage tuning lives here in one switch per knob.
 nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable {
     case fresh = 0
     case inTraining
@@ -7,6 +10,8 @@ nonisolated enum EvolutionStage: Int, Codable, Sendable, CaseIterable {
     case champion
     case ultimate
 
+    /// Battle HP for stage-generated opponents only; the player's pet fights
+    /// on `PetSpecies.baseHP` plus its trained bonus (see `BattleHP`).
     var battleHP: Int {
         switch self {
         case .fresh: 1

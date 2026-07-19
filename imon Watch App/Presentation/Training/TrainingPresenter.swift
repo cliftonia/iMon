@@ -1,6 +1,11 @@
 import Foundation
 import WatchKit
 
+/// Runs the higher-or-lower training mini-game: owns the phase machine, both
+/// sprite animators, and the round tally, reporting win or lose once through
+/// `onComplete`. Every phase advance goes through a single replaceable task —
+/// `cancel()` must run on dismissal so a pending advance cannot fire into a
+/// torn-down presenter.
 final class TrainingPresenter {
 
     private(set) var viewModel = TrainingViewModel()
@@ -164,7 +169,6 @@ final class TrainingPresenter {
             onComplete(false)
         } else {
             viewModel.currentRound = roundsPlayed
-            // Auto-advance to next round
             viewModel.showingNumber = false
             viewModel.currentNumber = TrainAction.generateNumber()
             enterReady()

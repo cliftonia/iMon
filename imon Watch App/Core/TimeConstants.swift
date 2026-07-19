@@ -2,6 +2,8 @@ import Foundation
 
 // MARK: - Timing & Gameplay Constants
 
+/// The gameplay timing table — every interval, threshold, and weight in one
+/// place, so tuning against the original 1997 V1 device is a single-file diff.
 nonisolated enum TimeConstants {
 
     // MARK: - Stat Depletion

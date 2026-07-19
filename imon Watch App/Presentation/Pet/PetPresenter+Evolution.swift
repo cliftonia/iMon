@@ -23,8 +23,7 @@ extension PetPresenter {
         }
         state = EvolutionEngine.evolve(state, to: target, at: .now)
         #if DEBUG
-        // Debug journeys re-dirty the pet so each evolution stage's care
-        // loop can be exercised; never runs in a release build.
+        // Debug journeys re-dirty the pet so each stage's care loop can be exercised.
         if debugStepIndex > 0 {
             state.poopCount = 1
             state.isInjured = true
@@ -104,8 +103,7 @@ extension PetPresenter {
     /// can appear (foreground notifications are suppressed).
     func debugCareTest() {
         guard !viewModel.isBusy else { return }
-        // Empty both stats so the languishing state shows at once (weak body +
-        // blinking Call sign), then fire the care notification test.
+        // Empty both stats so the languishing state shows at once.
         state.hungerHearts = StatHearts(0)
         state.strengthHearts = StatHearts(0)
         updateViewModel()
@@ -116,16 +114,13 @@ extension PetPresenter {
             guard let self else { return }
             let center = UNUserNotificationCenter.current()
             var settings = await center.notificationSettings()
-            // If permission was never answered, prompt for it now (the launch
-            // request can be missed) so the test can actually deliver.
+            // Prompt now if permission was never answered — the launch request can be missed.
             if settings.authorizationStatus == .notDetermined {
                 _ = try? await center.requestAuthorization(options: [.alert, .sound])
                 settings = await center.notificationSettings()
             }
             self.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
-            // Use a unique id per press so each test shows a fresh banner — the
-            // real care reminders keep stable per-kind ids on purpose (a repeat
-            // of the same id silently updates the delivered one, no new alert).
+            // Unique id per press — a repeated id silently updates, showing no new banner.
             let content = UNMutableNotificationContent()
             content.title = "Skykin"
             content.body = "Your Skykin is hungry!"

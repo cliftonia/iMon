@@ -6,20 +6,24 @@ import Foundation
 /// facing `left`; `right` mirrors it. Frame data is NEVER pre-mirrored — each
 /// context (wander, feed, train, battle) states its facing explicitly via
 /// `.facing(_:)`, so changing one context can't silently flip another.
+///
+/// Front frames and side profiles are drawn facing opposite ways, so the
+/// context facings deliberately differ: eating shows `.left`, training and
+/// battle show `.right`. Do not "unify" them.
 nonisolated enum Facing: Sendable {
     case left
     case right
 }
 
 nonisolated extension SpriteFrame {
-    /// Returns the frame oriented to face the given direction.
+    /// `.left` is the authored orientation and returns `self` unchanged.
     func facing(_ facing: Facing) -> SpriteFrame {
         facing == .right ? mirrored() : self
     }
 }
 
 nonisolated extension SpriteAnimation {
-    /// Returns the animation oriented to face the given direction.
+    /// `.left` is the authored orientation and returns `self` unchanged.
     func facing(_ facing: Facing) -> SpriteAnimation {
         facing == .right ? mirrored() : self
     }

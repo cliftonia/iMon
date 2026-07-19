@@ -1,5 +1,9 @@
 import Foundation
 
+/// A raw value branded with a phantom type, so identifiers that share a
+/// representation (two `String` IDs, say) cannot be mixed at compile time.
+/// `Codable` passes the bare raw value through, so the brand never appears
+/// in persisted JSON.
 nonisolated struct Tagged<Phantom, RawValue>: Sendable where RawValue: Sendable {
     let rawValue: RawValue
 }

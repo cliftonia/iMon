@@ -1,5 +1,8 @@
 import Foundation
 
+/// The fourteen creatures of the V1 evolution tree. All per-species balance
+/// numbers live here as one switch per knob so the whole roster can be read
+/// and tuned side by side instead of being scattered across the engine.
 nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiable {
     // rawValues are the persisted tokens (also the case names). Never user-visible.
     case dotkin

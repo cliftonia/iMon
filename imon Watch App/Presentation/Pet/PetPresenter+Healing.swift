@@ -17,7 +17,6 @@ extension PetPresenter {
     func runRefuseSequence() async {
         viewModel.activity = .refusing
 
-        // Head shake only
         spriteAnimator.play(
             SpriteCatalog.animation(
                 for: state.species, kind: .refuse
@@ -33,18 +32,15 @@ extension PetPresenter {
     func runHealingSequence() async {
         viewModel.activity = .healing
 
-        // Phase 1: Needle injection (1200ms)
         feedingAnimator.play(SharedSprites.needleInjection)
         WKInterfaceDevice.healHaptic()
 
         guard await pause(ms: 1200) else { return }
 
-        // Phase 2: Apply heal
         state = HealAction.apply(to: state)
         updateViewModel()
         save()
 
-        // Phase 3: Satisfaction heart + happy bounce (1000ms)
         feedingAnimator.play(
             .still(SharedSprites.satisfactionHeart)
         )

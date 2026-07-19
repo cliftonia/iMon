@@ -1,5 +1,7 @@
 import Foundation
 
+/// A sparring partner drawn for a single battle: a species plus a power roll
+/// jittered around the species base so repeat fights are not identical.
 nonisolated struct BattleOpponent: Sendable {
 
     let species: PetSpecies

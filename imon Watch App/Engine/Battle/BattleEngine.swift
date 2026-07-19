@@ -6,6 +6,9 @@ nonisolated enum RoundOutcome: Equatable, Sendable {
     case clash
 }
 
+/// The arena rules: each round is an attack-height duel resolved by the
+/// `AttackHeight` triangle, and the session outcome feeds the win/loss record
+/// and conditioning that the evolution gates read.
 nonisolated enum BattleEngine {
 
     // MARK: - Query
@@ -14,8 +17,9 @@ nonisolated enum BattleEngine {
         state.isAwakeAndAlive
     }
 
-    /// Resolve a single interactive round based on attack heights.
-    /// Height advantage wins; same height uses power tiebreak.
+    /// Resolves one round by the height triangle. Matching heights are a
+    /// `.clash` — nobody is hit; a level session ends in the presenter's
+    /// HP tiebreaker instead.
     static func resolveRound(
         playerHeight: AttackHeight,
         opponentHeight: AttackHeight

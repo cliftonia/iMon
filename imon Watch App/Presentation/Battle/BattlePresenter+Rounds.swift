@@ -5,6 +5,9 @@ import WatchKit
 
 extension BattlePresenter {
 
+    /// Plays one full round: pick, both attack ceremonies, then the impact.
+    /// Returns false when the battle task was cancelled mid-round so
+    /// `runRoundLoop` bails out without judging HP.
     func runSingleRound() async -> Bool {
         enterChoosing()
         let playerHeight = await waitForPick()

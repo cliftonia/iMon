@@ -7,7 +7,6 @@ struct OnboardingScreen: View {
     var body: some View {
         VStack(spacing: 6) {
             content
-            // Dots + skip pinned to the bottom.
             footer
                 .frame(maxWidth: .infinity)
         }
@@ -21,14 +20,10 @@ struct OnboardingScreen: View {
 
     private var content: some View {
         VStack(spacing: 6) {
-            // Fixed LCD pinned to the top.
             lcd
                 .frame(maxWidth: .infinity)
 
-            // The tip lives in a scroll view that eats the remaining space
-            // (pinning the LCD above and footer below) and guarantees the full
-            // text is reachable - scrolling rather than truncating on small
-            // screens. Tips are kept short so scrolling is rarely needed.
+            // The greedy ScrollView pins the LCD and footer; long tips scroll.
             ScrollView {
                 speechBubble
             }

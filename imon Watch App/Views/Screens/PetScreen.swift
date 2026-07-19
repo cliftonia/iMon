@@ -63,7 +63,6 @@ struct PetScreen: View {
 
     // MARK: - Weather
 
-    /// Refreshes only the integrations the player has left switched on.
     private func refreshEnabledIntegrations() {
         if appPresenter.settings.weatherEnabled {
             appPresenter.weatherStore.refreshIfStale()

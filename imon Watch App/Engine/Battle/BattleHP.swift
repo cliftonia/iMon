@@ -1,10 +1,10 @@
 import Foundation
 
+/// Battle stamina: species base HP, +1 while the wearer's step count clears
+/// the active threshold, plus any HP earned through training.
 nonisolated enum BattleHP {
 
     static func calculate(for state: PetState, steps: Int? = nil) -> Int {
-        // Per-species base stamina; a well-exercised wearer adds +1 when active,
-        // plus any HP trained through battle practice.
         let base = state.species.baseHP
         let activeBonus = (steps.map { ActivityModel.factor(steps: $0) >= TimeConstants.activeHPFactorThreshold } ?? false) ? 1 : 0
         return base + activeBonus + state.trainedHP

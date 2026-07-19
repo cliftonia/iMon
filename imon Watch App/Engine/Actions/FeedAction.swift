@@ -1,5 +1,8 @@
 import Foundation
 
+/// Feeding: meat refills one hunger heart, a vitamin one strength heart, and
+/// either adds weight — the gain is what makes overfeeding a real evolution
+/// path (the chart's `minWeight` gates) rather than a free top-up.
 nonisolated enum FeedAction {
 
     nonisolated enum FoodKind: Sendable {

@@ -9,8 +9,7 @@ nonisolated enum CareMistakeTracker {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        // Light left on past bedtime keeps the pet awake — a care mistake. (Before
-        // bedtime the pet is allowed to be up in a lit room, so no penalty.)
+        // Lights on past bedtime is a care mistake; before bedtime a lit room is fine.
         state.careMistakes += accrueMistakes(
             anchor: &state.timestamps.pendingLightsMistakeAt,
             active: bedtime && state.lightsOn,
@@ -18,9 +17,7 @@ nonisolated enum CareMistakeTracker {
             now: now
         )
 
-        // Hunger/strength neglect only applies while awake. Reset the pending
-        // clock while asleep so the first waking tick doesn't back-fill the whole
-        // night at once (a sparse background wake would otherwise count hours).
+        // Reset while asleep — a sparse wake must not back-fill the whole night.
         guard !state.isSleeping else {
             state.timestamps.pendingCareMistakeAt = nil
             return state

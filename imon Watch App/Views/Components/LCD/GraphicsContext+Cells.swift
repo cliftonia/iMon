@@ -7,7 +7,6 @@ import SwiftUI
 
 extension GraphicsContext {
 
-    /// Fills one grid cell at the given cell coordinates.
     func fillCell(
         x: Int,
         y: Int,

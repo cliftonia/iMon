@@ -15,8 +15,7 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        // Inside (lit at night): the weather is confined to the window and
-        // reads as the bright night sky on the dark pane.
+        // Indoors the weather is clipped to the window, white on the dark pane.
         let indoor = dayPhase == .inside
         func fill(_ cells: [(x: Int, y: Int)], _ opacity: Double) {
             let paint = (indoor ? Color.white : basePixelColor).opacity(opacity)
@@ -52,8 +51,7 @@ extension LCDDisplay {
     ) {
         switch weatherCondition {
         case .rain, .storm:
-            // Two-layer depth: dim distant drops, bright near streaks. Storm
-            // adds the lightning flash (drawn over the scene afterwards).
+            // Storm's lightning flash is drawn over the whole scene afterwards.
             fill(Self.rainBackCells(phase: phase), 0.4)
             fill(Self.rainFrontCells(phase: phase), 1)
         case .snow:
@@ -69,7 +67,6 @@ extension LCDDisplay {
             if dayPhase == .day {
                 fill(Self.sunCells(phase: phase), 0.4)
             } else {
-                // Full moon disc dim, with the lit fraction bright on top.
                 fill(Self.moonDiscCells(), 0.3)
                 fill(Self.moonLitCells(moonPhase), 1)
                 fill(Self.starCells(phase: phase), 1)
@@ -110,7 +107,6 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
-        // Indoors the storm shows as rain through the window, not a room-wide flash.
         guard isLightningActive else {
             return
         }
@@ -131,7 +127,6 @@ extension LCDDisplay {
 
         guard isFlashFrame(phase: phase) else { return }
 
-        // Flash in the active palette: bright green when lit, dim grey at night.
         let flashColor = lightsOn ? Self.lightningFlashColor : Color(white: 0.35)
         context.fill(
             Path(CGRect(origin: .zero, size: size)),
