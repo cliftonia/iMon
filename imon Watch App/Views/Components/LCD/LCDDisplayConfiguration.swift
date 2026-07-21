@@ -15,6 +15,8 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
     let moonPhase: MoonPhase
     let dayPhase: DayPhase
     let stormFlash: Bool
+    /// The evolution strobe — a full-screen white-out flash with no VS text.
+    let evolveFlash: Bool
     /// Blinks a Call sign (the toy's attention alert) while the pet languishes.
     let showCallSign: Bool
 
@@ -31,6 +33,7 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
         moonPhase: MoonPhase = .full,
         dayPhase: DayPhase = .day,
         stormFlash: Bool = false,
+        evolveFlash: Bool = false,
         showCallSign: Bool = false
     ) {
         self.leftSprite = leftSprite
@@ -45,6 +48,7 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
         self.moonPhase = moonPhase
         self.dayPhase = dayPhase
         self.stormFlash = stormFlash
+        self.evolveFlash = evolveFlash
         self.showCallSign = showCallSign
     }
 }

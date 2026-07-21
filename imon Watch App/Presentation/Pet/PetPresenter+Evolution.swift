@@ -8,19 +8,35 @@ import UserNotifications
 
 extension PetPresenter {
 
-    /// Offers a step-gated evolution when the lifetime accumulator has crossed
-    /// the stage threshold and the pet is idle. Care state picks the branch.
+    /// How long the evolution strobe plays before the new creature is revealed.
+    static let evolveFlashMilliseconds = 1_600
+
+    /// Starts the evolution flash when the lifetime accumulator has crossed the
+    /// stage threshold and the pet is idle. The ceremony is automatic — there
+    /// is nothing to tap — matching the original toy.
     func checkEvolution() {
-        guard !viewModel.isBusy, !viewModel.showEvolution else { return }
+        guard !viewModel.isBusy else { return }
         guard let target = EvolutionEngine.checkEvolution(for: state) else { return }
-        viewModel.showEvolution = true
-        viewModel.evolutionTarget = target
+        beginEvolution(to: target)
     }
 
-    func applyEvolution() {
-        guard let target = viewModel.evolutionTarget else {
-            return
-        }
+    /// Plays the strobe, then reveals the evolved creature. Runs through the
+    /// shared activity machinery so it blocks input and is cancelled cleanly if
+    /// the screen goes away mid-flash (the pet simply re-offers next tick).
+    func beginEvolution(to target: PetSpecies) {
+        viewModel.activity = .evolving
+        WKInterfaceDevice.evolveHaptic()
+        startActivity { await $0.runEvolutionFlash(to: target) }
+    }
+
+    private func runEvolutionFlash(to target: PetSpecies) async {
+        guard await pause(ms: Self.evolveFlashMilliseconds) else { return }
+        performEvolution(to: target)
+    }
+
+    /// Applies the evolution and reveals the new creature with a happy bounce.
+    /// Split out from the flash so it can be exercised without the strobe delay.
+    func performEvolution(to target: PetSpecies) {
         state = EvolutionEngine.evolve(state, to: target, at: .now)
         #if DEBUG
         // Debug journeys re-dirty the pet so each stage's care loop can be exercised.
@@ -29,10 +45,9 @@ extension PetPresenter {
             state.isInjured = true
         }
         #endif
-        viewModel.showEvolution = false
-        viewModel.evolutionTarget = nil
+        viewModel.activity = .idle
         updateViewModel()
-        updateAnimation()
+        spriteAnimator.play(.happy, for: state.species)
         save()
         WKInterfaceDevice.evolveHaptic()
     }
@@ -80,8 +95,7 @@ extension PetPresenter {
         } else {
             let target = journey[nextStep]
             debugStepIndex = nextStep
-            viewModel.showEvolution = true
-            viewModel.evolutionTarget = target
+            beginEvolution(to: target)
         }
     }
 

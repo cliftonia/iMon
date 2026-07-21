@@ -378,7 +378,9 @@ final class PetPresenter {
                 spriteAnimator.play(kind, for: state.species)
             }
         case .feeding(.serving), .feeding(.bite), .feeding(.satisfied),
-             .cleaning, .healing, .refusing:
+             .cleaning, .healing, .refusing, .evolving:
+            // The evolution flash keeps whatever sprite is on screen; the strobe
+            // washes it, and the reveal plays its own happy bounce.
             break
         }
     }

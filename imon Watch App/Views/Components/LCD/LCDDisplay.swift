@@ -25,12 +25,13 @@ struct LCDDisplay: View {
     var moonPhase: MoonPhase { configuration.moonPhase }
     var dayPhase: DayPhase { configuration.dayPhase }
     var stormFlash: Bool { configuration.stormFlash }
+    var evolveFlash: Bool { configuration.evolveFlash }
     var showCallSign: Bool { configuration.showCallSign }
 
-    /// Whether the LCD has an animated overlay (weather, storm flash, or the
-    /// blinking Call sign) and so needs the periodic timeline to drive it.
+    /// Whether the LCD has an animated overlay (weather, storm or evolution
+    /// flash, or the blinking Call sign) and so needs the periodic timeline.
     private var isAnimated: Bool {
-        weatherCondition != nil || stormFlash || showCallSign
+        weatherCondition != nil || stormFlash || evolveFlash || showCallSign
     }
 
     /// Lit at night - the weather plays in a window inside a room.

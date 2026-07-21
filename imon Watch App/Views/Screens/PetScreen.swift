@@ -51,12 +51,6 @@ struct PetScreen: View {
             .onDisappear {
                 presenter.stopGameLoop()
             }
-            .sheet(
-                isPresented: Bindable(presenter.viewModel)
-                    .showEvolution
-            ) {
-                evolutionSheet
-            }
             .accessibilityElement(children: .contain)
             .accessibilityLabel("Creature virtual pet")
     }
@@ -197,6 +191,7 @@ struct PetScreen: View {
                     weatherCondition: homeScene.weather,
                     moonPhase: MoonPhase.current(date: .now),
                     dayPhase: homeScene.dayPhase,
+                    evolveFlash: presenter.viewModel.isEvolving,
                     showCallSign: !presenter.viewModel.isInActionScene
                         && presenter.viewModel.status?.isLanguishing == true
                         && presenter.viewModel.status?.isSleeping == false

@@ -87,25 +87,6 @@ extension PetScreen {
         }
     }
 
-    // MARK: - Evolution Sheet
-
-    var evolutionSheet: some View {
-        VStack(spacing: 12) {
-            Text("Evolving!")
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
-
-            if let target = presenter.viewModel.evolutionTarget {
-                Text(target.displayName)
-                    .font(.system(size: 12, design: .monospaced))
-            }
-
-            Button("OK") {
-                presenter.applyEvolution()
-            }
-            .accessibilityLabel("Confirm evolution")
-        }
-    }
-
     // MARK: - Menu Action
 
     func executeMenuAction() {

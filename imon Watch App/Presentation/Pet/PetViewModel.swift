@@ -59,6 +59,9 @@ final class PetViewModel {
         case cleaning
         case healing
         case refusing
+        /// The evolution flash — a strobe that plays in the normal scene, then
+        /// reveals the new creature. Automatic: there is nothing to tap.
+        case evolving
     }
 
     var activity: Activity = .idle
@@ -74,20 +77,18 @@ final class PetViewModel {
     var isInActionScene: Bool {
         switch activity {
         case .feeding, .cleaning, .healing: return true
-        case .idle, .refusing: return false
+        case .idle, .refusing, .evolving: return false
         }
     }
+
+    /// The evolution flash is playing.
+    var isEvolving: Bool { activity == .evolving }
 
     /// True when any activity or mode is active (blocks input).
     var isBusy: Bool {
         activity != .idle
             || screenMode == .training || screenMode == .battle
     }
-
-    // MARK: - Evolution
-
-    var showEvolution: Bool = false
-    var evolutionTarget: PetSpecies?
 
     // MARK: - Debug
 

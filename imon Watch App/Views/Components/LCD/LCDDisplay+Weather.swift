@@ -82,7 +82,7 @@ extension LCDDisplay {
     /// Lightning wash is active: an outdoor weather storm, or the battle VS
     /// flash. Indoors the storm shows only as rain through the window.
     private var isLightningActive: Bool {
-        (weatherCondition == .storm && dayPhase != .inside) || stormFlash
+        (weatherCondition == .storm && dayPhase != .inside) || stormFlash || evolveFlash
     }
 
     /// Whether this tick is inside a lightning white-out (storm weather or the
@@ -93,7 +93,9 @@ extension LCDDisplay {
         guard isLightningActive else {
             return false
         }
-        return stormFlash
+        // Storm and evolution both strobe on the steady VS cadence; weather
+        // lightning uses its own irregular timing.
+        return stormFlash || evolveFlash
             ? Self.isVSFlash(phase)
             : Self.isLightningFlash(phase)
     }
@@ -132,6 +134,8 @@ extension LCDDisplay {
             Path(CGRect(origin: .zero, size: size)),
             with: .color(flashColor.opacity(0.9))
         )
+        // The evolution flash is a clean white-out; only storms throw bolts.
+        guard !evolveFlash else { return }
         // Bolts in the LCD pixel colour, dark against the lit screen.
         fillCells(Self.lightningBoltCells(), basePixelColor)
     }

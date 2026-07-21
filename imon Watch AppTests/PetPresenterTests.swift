@@ -236,7 +236,7 @@ struct PetPresenterTests {
         #expect(presenter.viewModel.menuSelection == .train)
     }
 
-    // MARK: - Evolution Offer Guards
+    // MARK: - Evolution Flash
 
     /// A pet whose lifetime steps have crossed the current stage's gate.
     private func makeEvolvableState() -> PetState {
@@ -246,34 +246,48 @@ struct PetPresenterTests {
     }
 
     @Test
-    func `an idle pet past the step gate is offered evolution`() {
+    func `an idle pet past the step gate starts the evolution flash`() {
         let presenter = makePresenter(makeEvolvableState(), SaveBox())
 
         presenter.checkEvolution()
 
-        #expect(presenter.viewModel.showEvolution)
-        #expect(presenter.viewModel.evolutionTarget == .hopkin)
+        #expect(presenter.viewModel.isEvolving)
+        #expect(presenter.viewModel.isBusy)
     }
 
     @Test
-    func `evolution is not offered mid-activity`() {
+    func `evolution is not started mid-activity`() {
         let presenter = makePresenter(makeEvolvableState(), SaveBox())
         presenter.viewModel.activity = .cleaning
 
         presenter.checkEvolution()
 
-        #expect(presenter.viewModel.showEvolution == false)
-        #expect(presenter.viewModel.evolutionTarget == nil)
+        // The busy guard leaves the existing activity untouched.
+        #expect(presenter.viewModel.activity == .cleaning)
     }
 
     @Test
-    func `an evolution offer already on screen is not overwritten`() {
+    func `an evolution already flashing is not restarted`() {
         let presenter = makePresenter(makeEvolvableState(), SaveBox())
-        presenter.viewModel.showEvolution = true
+        presenter.viewModel.activity = .evolving
 
         presenter.checkEvolution()
 
-        // The guard must bail before resolving a new target.
-        #expect(presenter.viewModel.evolutionTarget == nil)
+        #expect(presenter.viewModel.isEvolving)
+    }
+
+    /// The flash's reveal step — split from the strobe delay so it is testable
+    /// without waiting on the ceremony's real sleep.
+    @Test
+    func `the reveal evolves the pet, returns to idle and persists it`() {
+        let box = SaveBox()
+        let presenter = makePresenter(makeEvolvableState(), box)
+        presenter.viewModel.activity = .evolving
+
+        presenter.performEvolution(to: .hopkin)
+
+        #expect(presenter.getCurrentState().species == .hopkin)
+        #expect(presenter.viewModel.activity == .idle)
+        #expect(box.saved.last?.species == .hopkin)
     }
 }
