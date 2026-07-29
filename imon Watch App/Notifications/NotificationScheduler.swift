@@ -1,8 +1,8 @@
 import Foundation
 import UserNotifications
 
-/// Side-effecting wrapper around the user-notification centre, injected as a
-/// protocol witness so presenters can be tested with a capturing mock.
+/// Side-effecting wrapper around the user-notification centre, injected as
+/// a closure-based witness so presenters are testable without UserNotifications.
 nonisolated struct NotificationScheduler: Sendable {
     /// Replaces every pending care reminder with the supplied set.
     let schedule: @Sendable ([CareNotification]) -> Void
@@ -71,11 +71,4 @@ nonisolated extension NotificationScheduler {
         )
     }
 
-    // AUDIT 2026-06-24: unused — tests build witnesses inline. Kept as DI scaffolding.
-    static let mock = NotificationScheduler(
-        schedule: { _ in },
-        notify: { _, _, _ in },
-        cancelAll: {},
-        requestAuthorization: { true }
-    )
 }
