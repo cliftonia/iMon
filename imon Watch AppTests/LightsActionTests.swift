@@ -50,6 +50,10 @@ struct LightsActionTests {
         #expect(newState.lightsOn == true)
         #expect(newState.isSleeping == false)
         #expect(newState.timestamps.lightsOffAt == nil)
+        // The sleep was a pause — depletion restarts from the wake, not from bedtime.
+        #expect(newState.timestamps.lastHungerDecayAt == now)
+        #expect(newState.timestamps.lastStrengthDecayAt == now)
+        #expect(newState.timestamps.lastPoopAt == now)
     }
 
     @Test

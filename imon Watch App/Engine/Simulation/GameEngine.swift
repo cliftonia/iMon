@@ -25,6 +25,30 @@ nonisolated enum GameEngine {
             return state
         }
 
+        // Replay the clock's dusk, bedtime, settle and dawn inside the span, so a
+        // night the app never saw is slept through rather than charged as waking
+        // hours. Those moments predate the weather reading, so they use the clock;
+        // only the final step sees the live signal.
+        let boundaries = SleepSchedule.replayBoundaries(
+            from: state.timestamps.lastAdvancedAt, to: now
+        )
+        for boundary in boundaries {
+            state = step(state, to: boundary, isNight: nil, steps: steps)
+            if state.isDead { return state }
+        }
+        return step(state, to: now, isNight: isNight, steps: steps)
+    }
+
+    /// One simulation step from `lastAdvancedAt` to `now`, every simulator in
+    /// dependency order, then the death check.
+    private static func step(
+        _ state: PetState,
+        to now: Date,
+        isNight: Bool?,
+        steps: Int?
+    ) -> PetState {
+        var state = state
+
         // Clamped so a backward clock can't produce a negative age.
         let days = Calendar.current.dateComponents(
             [.day], from: state.timestamps.bornAt, to: now

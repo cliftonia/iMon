@@ -15,7 +15,9 @@ nonisolated enum PoopSimulator {
         )
         guard newPoops > 0 else { return state }
 
-        state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + newPoops)
+        // Clamp the addend first — `newPoops` may be the overflow sentinel.
+        let added = min(newPoops, TimeConstants.maxPoopPiles)
+        state.poopCount = min(TimeConstants.maxPoopPiles, state.poopCount + added)
         state.timestamps.lastPoopAt = state.timestamps.lastPoopAt.addingTimeInterval(
             Double(newPoops) * TimeConstants.poopInterval
         )

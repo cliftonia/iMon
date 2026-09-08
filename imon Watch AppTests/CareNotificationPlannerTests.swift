@@ -140,6 +140,39 @@ struct CareNotificationPlannerTests {
         #expect(hunger.fireDate > now)
     }
 
+    /// A sleeping pet's clocks are frozen and restart at dawn, so its hunger
+    /// call is projected from the wake hour with every heart intact.
+    @Test
+    func `a sleeping pet's hunger call counts from dawn`() throws {
+        let bedtime = today(at: 21)
+        var state = makeTestState(species: .emberkin, hunger: 4, at: bedtime)
+        state.isSleeping = true
+        let now = today(at: 23)
+
+        let hunger = try #require(
+            notification(CareNotificationPlanner.plan(for: state, now: now, steps: nil), .hunger)
+        )
+
+        let dawn = today(at: TimeConstants.nightEndHour + 24)
+        #expect(hunger.fireDate == dawn.addingTimeInterval(4 * TimeConstants.hungerDepletionInterval))
+    }
+
+    /// Decay that would straddle bedtime pauses at the settle and resumes at
+    /// dawn — the reminder lands in the morning, not at a night-held 6am sharp.
+    @Test
+    func `an evening projection pauses at bedtime and resumes at dawn`() throws {
+        let now = today(at: 19)
+        let state = makeTestState(species: .emberkin, hunger: 2, at: now)
+
+        let hunger = try #require(
+            notification(CareNotificationPlanner.plan(for: state, now: now, steps: nil), .hunger)
+        )
+
+        // 19:00 → 21:02 spends 122 of the 140 minutes; the last 18 run from 06:00.
+        let dawn = today(at: TimeConstants.nightEndHour + 24)
+        #expect(hunger.fireDate == dawn.addingTimeInterval(18 * 60))
+    }
+
     /// The exercise nudge is about a step total the owner can no longer
     /// influence by morning, so it is dropped rather than held.
     @Test

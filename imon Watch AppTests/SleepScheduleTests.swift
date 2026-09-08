@@ -183,6 +183,28 @@ struct SleepScheduleTests {
     // MARK: - Guards
 
     @Test
+    func `replay boundaries name dawn, dusk, bedtime and the settle in order`() {
+        let calendar = Calendar.current
+        let start = calendar.date(bySettingHour: 17, minute: 0, second: 0, of: .now) ?? .now
+        let end = calendar.date(byAdding: .hour, value: 14, to: start) ?? start
+
+        let hours = SleepSchedule.replayBoundaries(from: start, to: end)
+            .map { calendar.component(.hour, from: $0) * 100 + calendar.component(.minute, from: $0) }
+
+        #expect(hours == [1800, 2100, 2102, 600])
+    }
+
+    @Test
+    func `replay boundaries are empty within a single waking stretch`() {
+        let calendar = Calendar.current
+        let start = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: .now) ?? .now
+        let end = calendar.date(byAdding: .hour, value: 5, to: start) ?? start
+
+        #expect(SleepSchedule.replayBoundaries(from: start, to: end).isEmpty)
+        #expect(SleepSchedule.replayBoundaries(from: end, to: start).isEmpty)
+    }
+
+    @Test
     func `dead pet is not affected`() {
         var state = makeTestState(at: .now)
         state.isDead = true

@@ -24,7 +24,8 @@ nonisolated enum HeartDecay {
 
         let start = anchor
         let ticksToEmpty = hearts.value
-        for _ in 0..<ticks {
+        // Only the hearts actually held can be spent — `ticks` may be the clamp value.
+        for _ in 0..<min(ticks, ticksToEmpty) {
             hearts.decrement()
         }
 

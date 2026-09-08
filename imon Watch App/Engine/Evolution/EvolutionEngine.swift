@@ -7,7 +7,7 @@ import os
 nonisolated enum EvolutionEngine {
 
     static func checkEvolution(for state: PetState) -> PetSpecies? {
-        guard !state.isEgg, state.species.stage != .ultimate else { return nil }
+        guard !state.isEgg, !state.isDead, state.species.stage != .ultimate else { return nil }
 
         let candidates = EvolutionChart.evolutions(for: state.species)
 

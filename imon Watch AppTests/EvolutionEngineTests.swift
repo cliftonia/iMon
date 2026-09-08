@@ -13,6 +13,14 @@ struct EvolutionEngineTests {
     }
 
     @Test
+    func `a dead pet never evolves, however many steps it has`() {
+        var state = makeTestState(species: .dotkin)
+        state.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve
+        state.isDead = true
+        #expect(EvolutionEngine.checkEvolution(for: state) == nil)
+    }
+
+    @Test
     func `dotkin does not evolve below the step gate`() {
         var state = makeTestState(species: .dotkin)
         state.lifetimeActiveSteps = EvolutionStage.fresh.stepsToEvolve - 1

@@ -2,9 +2,11 @@ import Foundation
 
 /// Computes the care reminders to schedule for a backgrounded pet. Pure and
 /// deterministic: each event's fire time comes from its anchor timestamp plus a
-/// base interval (future activity is unknown, so the estimate is approximate).
+/// base interval of *waking* time (future activity is unknown, so the estimate
+/// is approximate). Hunger, strength and mess pause overnight exactly as the
+/// engine pauses them, so a projection that crosses bedtime resumes at dawn.
 /// Past events and any that would land while the pet sleeps (the night window)
-/// are dropped, so the owner is never buzzed at 2am.
+/// are held to morning or dropped, so the owner is never buzzed at 2am.
 nonisolated enum CareNotificationPlanner {
 
     /// `steps` is today's running step count and scales the hunger/strength
@@ -27,21 +29,22 @@ nonisolated enum CareNotificationPlanner {
         let strengthInterval = TimeConstants.strengthDepletionInterval
             / (steps.map { ActivityModel.strengthRateMultiplier(steps: $0) } ?? 1.0)
 
-        if state.hungerHearts.value > 0 {
-            let fire = times.lastHungerDecayAt.addingTimeInterval(
-                Double(state.hungerHearts.value) * hungerInterval
-            )
+        if state.hungerHearts.value > 0, let fire = wakingProjection(
+            from: times.lastHungerDecayAt, ticks: state.hungerHearts.value,
+            interval: hungerInterval, calendar: calendar
+        ) {
             candidates.append(CareNotification(kind: .hunger, fireDate: fire, species: state.species))
         }
-        if state.strengthHearts.value > 0 {
-            let fire = times.lastStrengthDecayAt.addingTimeInterval(
-                Double(state.strengthHearts.value) * strengthInterval
-            )
+        if state.strengthHearts.value > 0, let fire = wakingProjection(
+            from: times.lastStrengthDecayAt, ticks: state.strengthHearts.value,
+            interval: strengthInterval, calendar: calendar
+        ) {
             candidates.append(CareNotification(kind: .strength, fireDate: fire, species: state.species))
         }
 
-        if state.poopCount < TimeConstants.maxPoopPiles {
-            let fire = times.lastPoopAt.addingTimeInterval(TimeConstants.poopInterval)
+        if state.poopCount < TimeConstants.maxPoopPiles, let fire = wakingProjection(
+            from: times.lastPoopAt, ticks: 1, interval: TimeConstants.poopInterval, calendar: calendar
+        ) {
             candidates.append(CareNotification(kind: .mess, fireDate: fire, species: state.species))
         }
 
@@ -129,6 +132,44 @@ nonisolated enum CareNotificationPlanner {
         case .injury: 360
         case .exercise, .fading: 0
         }
+    }
+
+    /// When `ticks` intervals of waking time complete, counting from `anchor`.
+    /// The bedtime window (`SleepSchedule.isBedtime`) is skipped, mirroring the
+    /// engine: a sleeping pet's clocks freeze and restart at dawn. An anchor
+    /// already inside the window jumps to the morning first, since waking
+    /// re-anchors there. Nil when the calendar cannot name a morning.
+    private static func wakingProjection(
+        from anchor: Date,
+        ticks: Int,
+        interval: TimeInterval,
+        calendar: Calendar
+    ) -> Date? {
+        var moment = anchor
+        var remaining = Double(ticks) * interval
+        for _ in 0..<SleepSchedule.maxReplayDays {
+            if SleepSchedule.isBedtime(at: moment, calendar: calendar) {
+                guard let morning = nextMorning(after: moment, calendar: calendar) else { return nil }
+                moment = morning
+            }
+            guard let settle = nextSettle(after: moment, calendar: calendar) else { return nil }
+            let awake = settle.timeIntervalSince(moment)
+            if remaining <= awake { return moment.addingTimeInterval(remaining) }
+            remaining -= awake
+            moment = settle
+        }
+        return nil
+    }
+
+    /// The next moment the pet settles to sleep (bedtime plus the settle delay)
+    /// strictly after `date`.
+    private static func nextSettle(after date: Date, calendar: Calendar) -> Date? {
+        guard let bedtime = calendar.date(
+            bySettingHour: TimeConstants.sleepHour, minute: 0, second: 0, of: date
+        ) else { return nil }
+        let settle = bedtime.addingTimeInterval(TimeConstants.sleepDelay)
+        if settle > date { return settle }
+        return calendar.date(byAdding: .day, value: 1, to: settle)
     }
 
     /// The next `nightEndHour` strictly after `date`, or nil if the calendar

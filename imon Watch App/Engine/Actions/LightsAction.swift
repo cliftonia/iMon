@@ -33,8 +33,7 @@ nonisolated enum LightsAction {
         var state = state
         state.lightsOn.toggle()
         if state.lightsOn {
-            state.isSleeping = false
-            state.timestamps.lightsOffAt = nil
+            state.wake(at: now)
         } else {
             // Turned off — start the settle countdown; stay awake for now.
             state.timestamps.lightsOffAt = now
