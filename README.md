@@ -93,7 +93,7 @@ View (SwiftUI)  →  Presenter (@MainActor, owns ViewModel)  →  Engine (pure, 
 
 ```
 imon Watch App/
-├── App/            imonApp, AppPresenter (phase machine), Navigation
+├── App/            imonApp, ContentView, AppPresenter (phase machine), Navigation
 ├── Core/           TimeConstants, Tagged IDs, logging, small extensions
 ├── Engine/
 │   ├── Models/     PetState, PetSpecies, EvolutionStage, StatHearts, …
@@ -102,16 +102,20 @@ imon Watch App/
 │   ├── Evolution/  Requirements and the species evolution chart
 │   ├── Battle/     Power, opponents, round resolution
 │   └── Persistence/ PetStateStore witness + JSON implementation
-├── Presentation/   One folder per screen: Presenter + ViewModel
+├── Presentation/   One folder per screen: Presenter + ViewModel; Scene/ holds
+│                   the LCD scene resolver shared by the home and arena views
 ├── Views/
 │   ├── Screens/    SwiftUI screens (thin — delegate to presenters)
 │   └── Components/ LCD display (Canvas), bezel, menu rows, meters
 ├── Sprites/        SpriteFrame/Animator/Catalog + per-species frame files
 ├── Health/         HealthKit step provider + store
 ├── Weather/        WeatherKit provider + store, scene mapping, moon phase
+├── Settings/       SettingsStore — the feature toggles behind the Settings page
+├── Power/          PowerSaverStore — mirrors system Low Power Mode
 ├── Notifications/  Care-call and exercise-nudge scheduling
 ├── Background/     Background refresh so the pet advances while closed
-└── Complication/   Watch-face complication (SkykinComplicationExtension)
+└── Complication/   App-side timeline baking for the watch-face complication;
+                    the widget itself is the SkykinComplication extension target
 ```
 
 ## Sprites

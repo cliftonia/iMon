@@ -36,7 +36,4 @@ extension BackgroundRefreshScheduler {
             }
         )
     }
-
-    // AUDIT 2026-06-24: unused — tests build witnesses inline. Kept as DI scaffolding.
-    static let mock = BackgroundRefreshScheduler(schedule: { _ in })
 }

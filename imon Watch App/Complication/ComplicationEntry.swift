@@ -3,8 +3,9 @@ import Foundation
 /// A glanceable snapshot of the pet for the watch-face complication. Pure data,
 /// `Codable`, and free of the engine and sprite stack — the app bakes everything
 /// (including the pet's 16×16 pixel rows) into this so the widget process can
-/// render without importing the whole engine. This is the single type shared
-/// between the app and the `SkykinComplication` widget target.
+/// render without importing the whole engine. The widget target deliberately
+/// compiles none of the app's source: it decodes the JSON this type writes into
+/// its own `WidgetEntry` mirror, so the serialised keys are the contract.
 nonisolated struct ComplicationEntry: Codable, Sendable, Equatable {
 
     let date: Date
