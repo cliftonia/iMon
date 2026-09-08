@@ -55,6 +55,8 @@ final class PetPresenter {
 
     // MARK: - Wander State
 
+    /// The wandering state: idle, or walking one direction with a count of
+    /// steps still to take. The movement itself lives in the `+Wander` extension.
     enum WanderState {
         case idle
         case walking(direction: Int, stepsRemaining: Int)
@@ -64,6 +66,9 @@ final class PetPresenter {
 
     // MARK: - Init
 
+    /// Creates the presenter around an existing `PetState`, filling the view
+    /// model from it at once. Readings not injected default to nil — treated
+    /// as unavailable — and dependencies to their live witnesses.
     init(
         state: PetState,
         store: PetStateStore,
@@ -87,6 +92,9 @@ final class PetPresenter {
 
     // MARK: - Game Loop
 
+    /// Starts the foreground tick loop: advances the state immediately, then
+    /// ticks on `TimeConstants.gameTickInterval`, and starts wandering.
+    /// Repeat calls while running are ignored.
     func startGameLoop() {
         // Idempotent — a re-fired `.task` would otherwise double-tick and double-save.
         guard gameTimer == nil else { return }
@@ -102,6 +110,9 @@ final class PetPresenter {
         startWandering()
     }
 
+    /// Stops the loop and everything hanging off it: tick timer, ceremony and
+    /// sleep-toggle tasks, the pending rollover, the training and battle modes,
+    /// wandering, and both sprite animators.
     func stopGameLoop() {
         gameTimer?.invalidate()
         gameTimer = nil
@@ -214,6 +225,8 @@ final class PetPresenter {
 
     // MARK: - Training & Battle Results
 
+    /// Applies a finished training round's outcome, plays the happy animation
+    /// when it was a win, and saves.
     func applyTrainingResult(won: Bool) {
         state = TrainAction.applyResult(to: state, won: won, at: .now)
         if won {
@@ -223,6 +236,7 @@ final class PetPresenter {
         save()
     }
 
+    /// Applies a finished battle's outcome to the state and saves.
     func applyBattleResult(_ result: BattleResult) {
         state = BattleEngine.applyResult(result, to: state, at: .now)
         updateViewModel()
@@ -231,6 +245,7 @@ final class PetPresenter {
 
     // MARK: - State Access
 
+    /// Returns the current pet state.
     func getCurrentState() -> PetState { state }
 
     // MARK: - Menu Navigation
@@ -243,12 +258,14 @@ final class PetPresenter {
         viewModel.menuSelection = all[index]
     }
 
+    /// Moves the menu selection one item forward, wrapping past the last.
     func selectNextMenu() {
         let all = PetViewModel.MenuAction.allCases
         let index = (viewModel.menuSelection.rawValue + 1) % all.count
         viewModel.menuSelection = all[index]
     }
 
+    /// Moves the menu selection one item back, wrapping before the first.
     func selectPreviousMenu() {
         let all = PetViewModel.MenuAction.allCases
         let index = (viewModel.menuSelection.rawValue - 1 + all.count) % all.count
@@ -274,6 +291,8 @@ final class PetPresenter {
 
     // MARK: - Helpers
 
+    /// Recomputes the view model's published fields from the current state.
+    /// Called after every state change so the screen never shows stale values.
     func updateViewModel() {
         viewModel.status = PetStatus(from: state)
         viewModel.evolutionProgress = state.evolutionProgressFraction
@@ -282,6 +301,9 @@ final class PetPresenter {
         )
     }
 
+    /// Picks the base sprite animation — weak, sleep or idle — from the state.
+    /// Does nothing off the normal screen or mid-ceremony: a ceremony's own
+    /// animation must keep playing.
     func updateAnimation() {
         guard viewModel.screenMode == .normal else { return }
         // Every other activity plays its own ceremony animation — never override it.
@@ -303,6 +325,7 @@ final class PetPresenter {
         }
     }
 
+    /// Persists the state through the store; a failure is logged, not thrown.
     func save() {
         do {
             try store.save(state)

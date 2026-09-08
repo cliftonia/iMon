@@ -12,6 +12,9 @@ final class AppPresenter {
 
     // MARK: - State
 
+    /// The mutually exclusive phases of the lifecycle cycle. Each phase owns
+    /// its presenter in the properties below, which is why the cases carry
+    /// no payload.
     enum LifecyclePhase {
         case loading
         case hatching
@@ -44,6 +47,8 @@ final class AppPresenter {
 
     // MARK: - Init
 
+    /// Creates the presenter at the `loading` phase; nothing is read from
+    /// the store until `onAppear` resolves the saved pet.
     init(
         store: PetStateStore = JSONPetStateStore.live(),
         weatherStore: WeatherStore = .makeDefault(),
@@ -60,6 +65,9 @@ final class AppPresenter {
 
     // MARK: - Lifecycle
 
+    /// Loads the saved pet and flips the phase machine to match it, after a
+    /// catch-up tick that lands on now; a missing save, an egg state or a
+    /// load error restarts at hatching.
     func onAppear() {
         loadOrStartNew()
     }
@@ -198,6 +206,9 @@ final class AppPresenter {
 
     // MARK: - Navigation Actions
 
+    /// Pushes the stats screen with a snapshot of the live pet state; steps
+    /// are included only when the steps setting is enabled, else nil. Does
+    /// nothing while no pet is alive.
     func navigateToStats() {
         guard let petPresenter else { return }
         let presenter = StatsPresenter()
@@ -210,6 +221,8 @@ final class AppPresenter {
         router.navigate(to: .stats)
     }
 
+    /// Pushes the settings screen bound to the shared `SettingsStore`; DEBUG
+    /// builds additionally wire a `SettingsDebugActions` set.
     func navigateToSettings() {
         #if DEBUG
         // Debug actions pop to the pet screen first so their effect is visible at once.

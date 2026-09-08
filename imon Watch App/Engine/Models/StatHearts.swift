@@ -6,6 +6,8 @@ import Foundation
 nonisolated struct StatHearts: Codable, Sendable, Hashable {
     private(set) var value: Int
 
+    /// Creates a meter with the given value clamped to zero; negative input
+    /// becomes empty.
     init(_ value: Int) {
         self.value = max(0, value)
     }
@@ -17,6 +19,7 @@ nonisolated struct StatHearts: Codable, Sendable, Hashable {
         value = min(max, value + 1)
     }
 
+    /// Lowers by one, never below zero.
     mutating func decrement() {
         value = max(0, value - 1)
     }

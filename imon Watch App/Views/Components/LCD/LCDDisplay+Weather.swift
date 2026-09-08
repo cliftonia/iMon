@@ -9,6 +9,9 @@ extension LCDDisplay {
         red: 200 / 255, green: 230 / 255, blue: 160 / 255
     )
 
+    /// Draws the active weather condition's layers for the given phase.
+    /// Indoors they are painted white and clipped to the window, which is
+    /// drawn beneath them, with the room chrome layered on top.
     func drawWeather(
         phase: Int,
         in context: GraphicsContext,
@@ -17,6 +20,8 @@ extension LCDDisplay {
     ) {
         // Indoors the weather is clipped to the window, white on the dark pane.
         let indoor = dayPhase == .inside
+        /// Paints the given cells at the given opacity: white clipped to the
+        /// window when indoors, the base pixel colour unclipped otherwise.
         func fill(_ cells: [(x: Int, y: Int)], _ opacity: Double) {
             let paint = (indoor ? Color.white : basePixelColor).opacity(opacity)
             let visible = indoor
@@ -113,6 +118,7 @@ extension LCDDisplay {
             return
         }
 
+        /// Paints the given cells in a single colour at the call's pixel size.
         func fillCells(_ cells: [(x: Int, y: Int)], _ color: Color) {
             context.fillLCDCells(
                 cells,

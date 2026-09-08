@@ -26,6 +26,9 @@ final class TrainingPresenter {
 
     // MARK: - Init
 
+    /// Creates the presenter for one species; `onComplete` fires exactly once
+    /// when the round tally decides the game — `true` on victory, `false` on
+    /// defeat.
     init(
         species: PetSpecies,
         onComplete: @escaping (Bool) -> Void
@@ -53,12 +56,16 @@ final class TrainingPresenter {
 
     // MARK: - Actions
 
+    /// Starts a fresh game, discarding any in-progress rounds, and enters the
+    /// ready phase with the first number drawn.
     func startTraining() {
         viewModel = TrainingViewModel()
         viewModel.currentNumber = TrainAction.generateNumber()
         enterReady()
     }
 
+    /// Scores the player's guess against the current number and enters the
+    /// attack phase; a no-op unless the phase machine is at `.challenge`.
     func guessAction(_ guess: TrainAction.Guess) {
         guard viewModel.phase == .challenge else { return }
 

@@ -5,6 +5,9 @@ import Foundation
 /// pet immediately. Day toggles are refused — daylight forces the light on.
 nonisolated enum LightsAction {
 
+    /// The outcome of a toggle attempt: `.toggled` when the light flipped,
+    /// `.blocked` when `canToggle` refused. A blocked attempt returns the
+    /// state unchanged.
     nonisolated enum ToggleResult: Sendable {
         case toggled
         case blocked
@@ -20,6 +23,9 @@ nonisolated enum LightsAction {
 
     // MARK: - Apply
 
+    /// Flips the light, waking the pet when it comes on and anchoring the
+    /// settle countdown when it goes out. A refused attempt returns the
+    /// state unchanged with `.blocked`.
     @discardableResult
     static func apply(
         to state: PetState,

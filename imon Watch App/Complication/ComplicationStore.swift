@@ -9,6 +9,8 @@ nonisolated enum ComplicationStore {
 
     private static let key = "com.cliftonia.imon.complicationTimeline"
 
+    /// Bakes the timeline into the App Group for the widget to read. An encoding
+    /// failure skips the write silently, leaving the App Group untouched.
     static func save(
         _ entries: [ComplicationEntry],
         to defaults: UserDefaults = .skykinShared
@@ -17,6 +19,8 @@ nonisolated enum ComplicationStore {
         defaults.set(data, forKey: key)
     }
 
+    /// Reads the baked timeline, or an empty list when nothing has been baked
+    /// yet or the stored data fails to decode.
     static func load(
         from defaults: UserDefaults = .skykinShared
     ) -> [ComplicationEntry] {

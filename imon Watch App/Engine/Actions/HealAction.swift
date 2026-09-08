@@ -7,12 +7,16 @@ nonisolated enum HealAction {
 
     // MARK: - Query
 
+    /// Reports whether the pet can be healed: only while alive, hatched, and
+    /// injured.
     static func canHeal(_ state: PetState) -> Bool {
         !state.isDead && !state.isEgg && state.isInjured
     }
 
     // MARK: - Apply
 
+    /// Applies the medicine, returning the state unchanged when `canHeal` is
+    /// false.
     static func apply(to state: PetState) -> PetState {
         guard canHeal(state) else { return state }
 

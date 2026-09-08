@@ -19,6 +19,8 @@ private enum BezelPalette {
     static let batterySaverStroke = batterySaver.opacity(0.6)
 }
 
+/// The watch-case frame drawn around the LCD screen's content: a panel fill and
+/// edge in the active palette, plus a ring showing evolution progress.
 struct LCDBezel<Content: View>: View {
 
     let content: Content

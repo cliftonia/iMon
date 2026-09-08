@@ -1,6 +1,10 @@
 import SwiftUI
 import WatchKit
 
+/// A hardware-style button whose printed face is only "A", "B" or "C".
+/// The letter cannot describe what the press does, so the action's meaning
+/// is carried separately: `accessibilityLabel` for VoiceOver and an optional
+/// debug action fired by a long press.
 struct ActionButton: View {
 
     let label: String

@@ -117,7 +117,8 @@ extension PetState {
             strengthEmptiedAt = nil
         }
 
-        // Full memberwise init (a custom init above suppresses the synthesised one).
+        /// Creates a fully specified timestamp set; handwritten because the
+        /// `init(creating:)` above suppresses the synthesised memberwise init.
         init(
             bornAt: Date,
             lastFedAt: Date,

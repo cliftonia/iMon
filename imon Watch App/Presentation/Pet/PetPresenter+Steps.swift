@@ -74,6 +74,9 @@ extension PetPresenter {
         return totals
     }
 
+    /// Rolls the finished day over at the current moment, crediting the live
+    /// count `todaySteps` carries. Writes the advanced progress into `state`
+    /// but never saves; each caller decides persistence.
     func rollOver(_ progress: StepProgress.Progress, todaySteps: Int) {
         StepProgress.advance(
             progress,

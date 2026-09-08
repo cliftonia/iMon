@@ -12,11 +12,15 @@ extension Tagged: Equatable where RawValue: Equatable {}
 extension Tagged: Hashable where RawValue: Hashable {}
 
 extension Tagged: Codable where RawValue: Codable {
+    /// Creates the branded value from the bare raw value, mirroring
+    /// `encode(to:)` so persisted data carries no brand.
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         rawValue = try container.decode(RawValue.self)
     }
 
+    /// Encodes the bare raw value without the brand, mirroring
+    /// `init(from:)`.
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)

@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// The egg-hatching screen; shows the hatch sequence from egg to newborn.
+///
+/// Renders the sprite inside `AnimatedSpriteBezel` with a caption tracking
+/// the `HatchPresenter`'s phase, and starts the sequence from `.task`.
 struct HatchScreen: View {
 
     let presenter: HatchPresenter

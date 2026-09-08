@@ -9,6 +9,9 @@ nonisolated struct LocationProvider: Sendable {
 
 nonisolated extension LocationProvider {
 
+    /// Builds the witness backed by CoreLocation: its `currentLocation`
+    /// requests authorization, then returns the first good fix, throwing
+    /// `WeatherError.locationUnavailable` on denial or when `timeout` elapses.
     static func live(timeout: Duration = .seconds(10)) -> LocationProvider {
         LocationProvider {
             await LocationAuthorizer.shared.requestIfNeeded()
@@ -48,6 +51,8 @@ private final class LocationAuthorizer {
     static let shared = LocationAuthorizer()
     private let manager = CLLocationManager()
 
+    /// Requests when-in-use authorization only while the status is
+    /// undetermined; repeat calls are no-ops.
     func requestIfNeeded() {
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()

@@ -8,8 +8,11 @@ import os
 /// the Steps toggle is off or the read failed — activity scaling is skipped.
 nonisolated enum BackgroundTick {
 
-    // No defaulted witnesses — a new call site must decide notifications explicitly.
-    // swiftlint:disable:next function_parameter_count
+    // swiftlint:disable function_parameter_count
+    /// Performs the whole tick end to end; a load failure still re-arms the next
+    /// wake-up so the refresh chain survives, while a missing pet is a no-op.
+    /// No defaulted witnesses — a new call site must decide notifications
+    /// explicitly.
     static func perform(
         store: PetStateStore,
         notifications: NotificationScheduler,
@@ -19,6 +22,7 @@ nonisolated enum BackgroundTick {
         steps: Int?,
         now: Date = .now
     ) {
+        // swiftlint:enable function_parameter_count
         // A load failure re-arms and bails (keep the chain); a missing pet is a true no-op.
         let loaded: PetState?
         do {

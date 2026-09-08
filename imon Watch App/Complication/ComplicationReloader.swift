@@ -9,6 +9,8 @@ nonisolated struct ComplicationReloader: Sendable {
 }
 
 extension ComplicationReloader {
+    /// Creates the witness backed by `WidgetCenter`, reloading every timeline
+    /// rather than a single complication's.
     static func live() -> ComplicationReloader {
         ComplicationReloader(reload: { WidgetCenter.shared.reloadAllTimelines() })
     }

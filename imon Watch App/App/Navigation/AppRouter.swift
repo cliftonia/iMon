@@ -6,10 +6,12 @@ import SwiftUI
 final class AppRouter {
     var path = NavigationPath()
 
+    /// Pushes `route`, presenting its screen.
     func navigate(to route: AppRoute) {
         path.append(route)
     }
 
+    /// Replaces the path so the pet screen becomes the root again.
     func popToRoot() {
         path = NavigationPath()
     }

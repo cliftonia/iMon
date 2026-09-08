@@ -5,6 +5,8 @@ import Foundation
 /// pet is overweight.
 nonisolated enum BattlePower {
 
+    /// Returns species base power plus strength and trained-power bonuses,
+    /// halved while the pet is overweight.
     static func calculate(for state: PetState) -> Double {
         let base = Double(state.species.basePower)
         let strengthBonus = Double(state.strengthHearts.value) * TimeConstants.strengthPowerWeight

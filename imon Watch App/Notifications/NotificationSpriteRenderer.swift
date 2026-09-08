@@ -32,6 +32,9 @@ nonisolated enum NotificationSpriteRenderer {
     private static let nightBackground = RGB(r: 0.07, g: 0.07, b: 0.07)
     private static let nightPixel = RGB(r: 1, g: 1, b: 1)
 
+    /// Renders the home scene and wraps it as the reminder's attachment for the
+    /// long-look; nil when rendering or attachment creation fails, leaving the
+    /// app icon.
     static func attachment(for species: PetSpecies, isNight: Bool) -> UNNotificationAttachment? {
         guard let url = renderPNG(for: species, isNight: isNight) else { return nil }
         return try? UNNotificationAttachment(

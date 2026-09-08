@@ -11,6 +11,9 @@ final class StatsPresenter {
 
     // MARK: - Update
 
+    /// Writes the full snapshot from `state` into the view model. A `nil`
+    /// `steps` renders the activity row as a dash; `stepsEnabled == false`
+    /// overrides both step-fed rows before any step value is read.
     func update(from state: PetState, steps: Int?, stepsEnabled: Bool = true) {
         let status = PetStatus(from: state)
         viewModel.speciesName = status.species.displayName

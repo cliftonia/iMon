@@ -54,7 +54,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Battle
 
-    // Frame 1: diagonal streaks flying right-to-left
+    // Frame 1: diagonal streaks flying right to left.
     private static let missStreaks1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0002, //  ..............#.
@@ -106,7 +106,7 @@ nonisolated extension SharedSprites {
         loops: false
     )
 
-    // Frame 1: small central burst
+    // Frame 1: a small central burst.
     static let explosion1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -126,7 +126,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Frame 2: medium starburst
+    // Frame 2: a medium starburst.
     static let explosion2 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -146,7 +146,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Frame 3: large blast with debris
+    // Frame 3: a large blast with debris.
     static let explosion3 = SpriteFrame(rows: [
         0x2004, //  ..#..........#..  debris
         0x0810, //  ....#......#....

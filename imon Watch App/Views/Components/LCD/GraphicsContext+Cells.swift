@@ -7,6 +7,8 @@ import SwiftUI
 
 extension GraphicsContext {
 
+    /// Fills one grid cell, bleeding 0.5 past its width and height so adjacent
+    /// cells stay seamless when the pixel size is non-integer.
     func fillCell(
         x: Int,
         y: Int,

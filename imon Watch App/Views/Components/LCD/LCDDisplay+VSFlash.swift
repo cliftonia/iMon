@@ -9,7 +9,10 @@ extension LCDDisplay {
         phase % 3 == 0
     }
 
+    /// Returns the "VS" glyph's set pixels, unpacked from `vsTextRows`.
     static func vsTextCells() -> [(x: Int, y: Int)] { cells(from: vsTextRows) }
+
+    /// Returns the drop shadow's set pixels, unpacked from `vsShadowRows`.
     static func vsShadowCells() -> [(x: Int, y: Int)] { cells(from: vsShadowRows) }
 
     /// Bold italic "VS" spanning the LCD, centred, one bit per pixel

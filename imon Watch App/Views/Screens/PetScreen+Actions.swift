@@ -73,6 +73,9 @@ extension PetScreen {
 
     // MARK: - Button Handlers
 
+    /// Handles the A button: a meat choice when the feeding ceremony awaits
+    /// selection, otherwise the previous menu item. Ignored while an activity
+    /// runs outside that selection.
     func handleButtonA() {
         guard !presenter.viewModel.isBusy
             || presenter.viewModel.feedingPhase == .selecting
@@ -84,6 +87,8 @@ extension PetScreen {
         }
     }
 
+    /// Handles the B button: cancels the in-flight activity when one runs,
+    /// otherwise executes the selected menu item.
     func handleButtonB() {
         if presenter.viewModel.isBusy {
             presenter.cancelActivity()
@@ -92,6 +97,9 @@ extension PetScreen {
         }
     }
 
+    /// Handles the C button: a vitamin choice when the feeding ceremony awaits
+    /// selection, otherwise the next menu item. Ignored while an activity runs
+    /// outside that selection.
     func handleButtonC() {
         guard !presenter.viewModel.isBusy
             || presenter.viewModel.feedingPhase == .selecting
@@ -105,6 +113,8 @@ extension PetScreen {
 
     // MARK: - Menu Action
 
+    /// Dispatches the highlighted menu item: navigation for stats and
+    /// settings, a presenter action or ceremony for the rest.
     func executeMenuAction() {
         switch presenter.viewModel.menuSelection {
         case .stats:

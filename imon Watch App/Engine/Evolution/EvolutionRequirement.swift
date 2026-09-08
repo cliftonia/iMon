@@ -15,6 +15,7 @@ nonisolated struct EvolutionRequirement: Sendable {
     let minWeight: Int?
     let isDefault: Bool
 
+    /// Creates a from→to edge with its care gates.
     init(
         from: PetSpecies,
         to: PetSpecies,

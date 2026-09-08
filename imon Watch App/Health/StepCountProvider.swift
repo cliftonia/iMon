@@ -24,6 +24,7 @@ nonisolated struct StepCountProvider: Sendable {
 }
 
 extension StepCountProvider {
+    /// Builds the HealthKit-backed witness; both closures share one `HKHealthStore`.
     static func live() -> StepCountProvider {
         let store = HKHealthStore()
         return StepCountProvider(
@@ -63,6 +64,7 @@ extension StepCountProvider {
         return Int(result?.sumQuantity()?.doubleValue(for: .count()) ?? 0)
     }
 
+    /// Builds a test witness reporting `steps` for any day, past days included.
     static func mock(steps: Int = 0) -> StepCountProvider {
         StepCountProvider(fetchTodaySteps: { steps })
     }

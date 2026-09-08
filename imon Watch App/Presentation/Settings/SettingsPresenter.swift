@@ -21,11 +21,14 @@ final class SettingsPresenter {
     #if DEBUG
     let debug: SettingsDebugActions
 
+    /// Creates the presenter for the Settings screen, with the developer
+    /// actions shown in its Debug section.
     init(settings: SettingsStore, debug: SettingsDebugActions) {
         self.settings = settings
         self.debug = debug
     }
     #else
+    /// Creates the presenter for the Settings screen.
     init(settings: SettingsStore) {
         self.settings = settings
     }

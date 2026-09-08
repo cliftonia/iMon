@@ -6,23 +6,32 @@ import Foundation
 /// a poop (60%) or an injury (10%).
 nonisolated enum TrainAction {
 
+    /// A guess that the hidden number lands above or below 5. No "equal"
+    /// case exists because `generateNumber` excludes 5, so every round has
+    /// a true answer.
     nonisolated enum Guess: Sendable {
         case high
         case low
     }
 
+    /// The outcome of one round, produced by `evaluateRound`: `won` records
+    /// whether the guess matched the hidden number.
     nonisolated struct RoundResult: Sendable {
         let won: Bool
     }
 
     // MARK: - Query
 
+    /// Reports whether a training session may start. `applyResult` enforces
+    /// the same gate and returns the state unchanged when this is false.
     static func canTrain(_ state: PetState) -> Bool {
         state.isAwakeAndAlive
     }
 
     // MARK: - Round Logic
 
+    /// Draws the round's hidden number uniformly from 1...9 but never 5, so
+    /// every guess has a true answer.
     static func generateNumber() -> Int {
         var number = Int.random(in: 1...9)
         while number == 5 {
@@ -31,6 +40,8 @@ nonisolated enum TrainAction {
         return number
     }
 
+    /// Scores one round: `.high` wins when `number` is above 5, `.low` when
+    /// it is below. A 5 loses either way, which `generateNumber` rules out.
     static func evaluateRound(number: Int, guess: Guess) -> RoundResult {
         let won: Bool = {
             switch guess {

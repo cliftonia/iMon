@@ -20,6 +20,7 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
     /// Whether the Call sign blinks while the pet languishes — the toy's attention alert.
     let showCallSign: Bool
 
+    /// Creates the immutable inputs for a single `LCDDisplay` render.
     init(
         leftSprite: SpriteFrame,
         rightSprite: SpriteFrame? = nil,

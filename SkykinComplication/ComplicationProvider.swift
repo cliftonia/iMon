@@ -44,12 +44,19 @@ struct ComplicationProvider: TimelineProvider {
     private static let appGroup = "group.cliftonia.skykin"
     private static let timelineKey = "com.cliftonia.imon.complicationTimeline"
 
+    /// Returns `WidgetEntry.placeholder`, the newborn pose shown before the app
+    /// has baked any timeline.
     func placeholder(in context: Context) -> WidgetEntry { .placeholder }
 
+    /// Answers with the first baked entry, or the placeholder when the App
+    /// Group holds nothing readable.
     func getSnapshot(in context: Context, completion: @escaping (WidgetEntry) -> Void) {
         completion(loadEntries().first ?? .placeholder)
     }
 
+    /// Answers with the baked entries and asks WidgetKit to reload one hour
+    /// after the last entry's date; an unreadable App Group yields a one-entry
+    /// timeline of the placeholder.
     func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
         let entries = loadEntries()
         let last = entries.last ?? .placeholder

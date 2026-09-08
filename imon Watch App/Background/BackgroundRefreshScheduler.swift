@@ -18,6 +18,8 @@ extension BackgroundRefreshScheduler {
         schedule(now.addingTimeInterval(TimeConstants.backgroundRefreshInterval))
     }
 
+    /// Creates the witness backed by `WKApplication.scheduleBackgroundRefresh`.
+    /// The `schedule` closure assumes the main actor, as its callers are.
     static func live() -> BackgroundRefreshScheduler {
         BackgroundRefreshScheduler(
             schedule: { date in

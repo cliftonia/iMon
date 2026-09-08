@@ -14,6 +14,8 @@ final class DeathPresenter {
 
     // MARK: - Init
 
+    /// Creates the memorial from the pet's final state and plays the grave
+    /// sprite.
     init(state: PetState, onRestart: @escaping () -> Void) {
         self.onRestart = onRestart
         viewModel.speciesName = state.species.displayName
@@ -25,6 +27,7 @@ final class DeathPresenter {
 
     // MARK: - Actions
 
+    /// Forwards the restart tap to the injected `onRestart` closure.
     func restartAction() {
         onRestart()
     }

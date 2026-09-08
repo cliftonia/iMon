@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// The menu's icon strip: one symbol per action, with the icon at
+/// `selectedIndex` tinted and backed and the rest muted. Renders selection
+/// only; it carries no interaction, and an index outside the list highlights
+/// nothing.
 struct MenuIconRow: View {
 
     let selectedIndex: Int

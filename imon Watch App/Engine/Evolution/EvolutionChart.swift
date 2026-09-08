@@ -9,6 +9,8 @@ nonisolated enum EvolutionChart {
 
     static let requirements: [EvolutionRequirement] = buildRequirements()
 
+    /// Returns the rows leaving a species, preserving chart order so the
+    /// first-satisfied-row rule still applies to the filtered slice.
     static func evolutions(
         for species: PetSpecies
     ) -> [EvolutionRequirement] {

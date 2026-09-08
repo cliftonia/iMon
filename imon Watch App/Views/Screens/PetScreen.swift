@@ -1,6 +1,10 @@
 import SwiftUI
 import WatchKit
 
+/// The pet's home screen, showing the LCD display, menu icon row and A/B/C
+/// buttons. Binds `PetPresenter`: the digital crown drives menu selection and
+/// the game loop runs only while the screen is visible. Swaps to training or
+/// battle layout when the presenter's screen mode leaves normal play.
 struct PetScreen: View {
 
     let presenter: PetPresenter

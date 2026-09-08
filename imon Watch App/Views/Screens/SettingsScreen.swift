@@ -1,5 +1,8 @@
 import SwiftUI
 
+/// The Settings screen: a list of toggles bound directly to the
+/// `SettingsPresenter`'s settings, plus the About section and a DEBUG-only
+/// debug menu.
 struct SettingsScreen: View {
 
     let presenter: SettingsPresenter

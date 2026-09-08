@@ -283,7 +283,7 @@ struct LCDDisplay: View {
             (25, 13), (29, 13)
         ]
 
-        // Coiled poop pile: tip + mound + base
+        // The coiled poop pile: tip, mound and base.
         let pilePixels: [(dx: Int, dy: Int)] = [
             (1, 0),
             (0, 1), (1, 1),

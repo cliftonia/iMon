@@ -4,6 +4,9 @@ import Foundation
 
 extension PetPresenter {
 
+    /// Toggles the lights via `LightsAction`; by day the light is forced on
+    /// and the action is refused like any other blocked action. A successful
+    /// toggle saves the state and starts the settle countdown toward sleep.
     func lightsAction() {
         let (newState, result) = LightsAction.apply(
             to: state, night: currentlyNight, at: .now

@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// The Stats screen, showing the pet's species and stage, core stats, hunger
+/// and strength meters, and battle record as read from `StatsPresenter`.
 struct StatsScreen: View {
 
     let presenter: StatsPresenter

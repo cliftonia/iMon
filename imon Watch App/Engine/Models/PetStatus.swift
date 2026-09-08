@@ -24,6 +24,8 @@ nonisolated struct PetStatus: Sendable {
     /// empty, any poop is present, or the pet is injured.
     let needsAttention: Bool
 
+    /// Creates a snapshot from one `PetState`, computing the care-call flag
+    /// from the same values the snapshot carries so the two cannot drift.
     init(from state: PetState) {
         species = state.species
         stage = state.species.stage

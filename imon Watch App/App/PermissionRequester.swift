@@ -12,6 +12,10 @@ nonisolated struct PermissionRequester: Sendable {
 
 nonisolated extension PermissionRequester {
 
+    /// Creates the live witness backed by the real frameworks: HealthKit
+    /// authorization through `StepCountProvider` and reminder authorization
+    /// through `NotificationScheduler`, whose granted-or-denied answer is
+    /// discarded.
     static func live() -> PermissionRequester {
         PermissionRequester {
             await StepCountProvider.requestAuthorization()

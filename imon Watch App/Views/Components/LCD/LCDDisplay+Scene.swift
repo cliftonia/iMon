@@ -4,6 +4,8 @@ import SwiftUI
 
 extension LCDDisplay {
 
+    /// Draws the backdrop's faint grid, with a line every fourth column and
+    /// row and a dimmer wash on a dark screen.
     func drawGrid(
         in context: GraphicsContext,
         size: CGSize,
@@ -34,6 +36,8 @@ extension LCDDisplay {
         }
     }
 
+    /// Draws the ground line at row 19 and a tuft of grass one row above it
+    /// at seven fixed columns, dimmer on a dark screen.
     func drawGround(
         in context: GraphicsContext,
         size: CGSize,

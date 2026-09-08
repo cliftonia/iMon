@@ -35,6 +35,8 @@ nonisolated struct WeatherSnapshot: Sendable, Equatable {
     let humidity: Double
 }
 
+/// Failures obtaining a weather reading: the location is unavailable, or the
+/// weather itself is unavailable.
 nonisolated enum WeatherError: Error, Sendable {
     case locationUnavailable
     case weatherUnavailable

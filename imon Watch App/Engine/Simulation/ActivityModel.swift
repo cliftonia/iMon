@@ -23,6 +23,8 @@ nonisolated enum ActivityModel {
         min(1, max(0, Double(steps) / Double(stepGoal)))
     }
 
+    /// Reports whether a step count is sedentary: an activity factor below
+    /// `sedentaryFactor`.
     static func isSedentary(steps: Int) -> Bool {
         factor(steps: steps) < sedentaryFactor
     }

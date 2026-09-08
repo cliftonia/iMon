@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// The app's root view, switching the hosted screen on `AppPresenter.phase`
+/// from loading through hatching, onboarding, alive, and dead. Owns the
+/// battery-saver theme override so the red palette reaches every hosted screen
+/// and both navigation destinations.
 struct ContentView: View {
     @State private var appPresenter = AppPresenter()
     @State private var powerSaver = PowerSaverStore.live()

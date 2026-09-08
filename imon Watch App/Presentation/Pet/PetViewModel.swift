@@ -1,11 +1,17 @@
 import Foundation
 import Observation
 
+/// Display state for the pet screen. Holds the screen's state — mode,
+/// activity, menu selection and the display values the view renders — as
+/// plain mutable properties, with `@Observable` doing the change tracking.
 @Observable
 final class PetViewModel {
 
     // MARK: - Screen Mode
 
+    /// Which flow the screen is in: normal play, or the training or battle
+    /// mode. Kept as a separate axis from `Activity` — either a mode or an
+    /// activity on its own blocks input (`isBusy`).
     enum ScreenMode {
         case normal
         case training
@@ -27,6 +33,9 @@ final class PetViewModel {
 
     // MARK: - Menu
 
+    /// The main menu's entries. Sequential `Int` values from `stats = 0` plus
+    /// `CaseIterable` let the menu be enumerated and stepped by position;
+    /// `stats` is also the initial `menuSelection`.
     enum MenuAction: Int, CaseIterable {
         case stats = 0
         case feed

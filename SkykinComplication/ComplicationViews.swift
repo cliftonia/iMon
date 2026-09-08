@@ -27,6 +27,8 @@ struct SpriteCanvas: View {
     }
 }
 
+/// Row of small heart icons, filled up to `value` out of `max`; always draws at
+/// least one slot even when `max` is zero.
 struct HeartsRow: View {
     let value: Int
     let max: Int
@@ -41,6 +43,8 @@ struct HeartsRow: View {
     }
 }
 
+/// Root complication content; switches on the widget family, with every family
+/// other than rectangular, inline and corner falling through to `CircularView`.
 struct ComplicationView: View {
     @Environment(\.widgetFamily) private var family
     let entry: WidgetEntry
@@ -55,6 +59,8 @@ struct ComplicationView: View {
     }
 }
 
+/// Circular complication: the baked sprite centred on the system widget
+/// background.
 struct CircularView: View {
     let entry: WidgetEntry
 
@@ -67,6 +73,9 @@ struct CircularView: View {
     }
 }
 
+/// Rectangular complication: the sprite beside the species name, a hunger
+/// `HeartsRow`, and the status text, prefixed with "needs" when the pet needs
+/// attention.
 struct RectangularView: View {
     let entry: WidgetEntry
 
@@ -88,6 +97,8 @@ struct RectangularView: View {
     }
 }
 
+/// Inline complication: a single-line label of the status text with a warning
+/// glyph when the pet needs attention, a pawprint otherwise.
 struct InlineView: View {
     let entry: WidgetEntry
 
@@ -99,6 +110,8 @@ struct InlineView: View {
     }
 }
 
+/// Corner complication: the baked sprite with a widget label gauge of hunger
+/// against the maximum heart count.
 struct CornerView: View {
     let entry: WidgetEntry
 

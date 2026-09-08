@@ -9,6 +9,8 @@ nonisolated enum DayPhase: Sendable {
     /// Dark hours with the light on — the pet is awake indoors (lit room).
     case inside
 
+    /// Resolves the phase from the night signal and the light; daylight forces
+    /// `day`, so the light is consulted only in dark hours.
     static func resolve(isNight: Bool, lightsOn: Bool) -> DayPhase {
         guard isNight else { return .day }
         return lightsOn ? .inside : .night

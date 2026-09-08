@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// A labelled row of hearts showing a stat as filled and hollow symbols.
+///
+/// Draws `maxCount` hearts with the first `filledCount` filled, and flattens
+/// the row into one accessibility element reading the label and the count.
 struct HeartMeter: View {
 
     let label: String

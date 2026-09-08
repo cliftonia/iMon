@@ -8,6 +8,9 @@ nonisolated enum LCDTheme: Sendable {
     case classic
     case nightRed
 
+    /// The LCD backdrop colour. `lightsOn` matters only under `classic`, which
+    /// falls back to a near-black screen when the light is off; `nightRed` stays
+    /// black either way.
     func backgroundColor(lightsOn: Bool) -> Color {
         switch self {
         case .classic:
@@ -17,6 +20,9 @@ nonisolated enum LCDTheme: Sendable {
         }
     }
 
+    /// The colour of an on-pixel. `lightsOn` swaps `classic` between the
+    /// `LCDPixelOn` asset and plain white; `nightRed` keeps both states red,
+    /// dimming to a darker red when the light is off.
     func pixelColor(lightsOn: Bool) -> Color {
         switch self {
         case .classic:
@@ -49,6 +55,7 @@ nonisolated enum LCDTheme: Sendable {
     }
 }
 
+/// The environment key carrying `LCDTheme`, defaulting to `classic`.
 private struct LCDThemeKey: EnvironmentKey {
     static let defaultValue: LCDTheme = .classic
 }

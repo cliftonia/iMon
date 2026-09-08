@@ -1,6 +1,10 @@
 import Foundation
 import Observation
 
+/// Display state for the Training screen: the state of one training run.
+///
+/// A run moves through `TrainingPhase`, tracking the current round, the
+/// number being shown, and each round's result in `roundResults`.
 @Observable
 final class TrainingViewModel {
 
@@ -11,6 +15,8 @@ final class TrainingViewModel {
     var showingNumber: Bool = false
     var lastGuessHigh: Bool = true
 
+    /// The stage of a training run, from `ready` through the attack
+    /// sequence to `victory` or `defeat`.
     enum TrainingPhase: Sendable {
         case ready
         case challenge

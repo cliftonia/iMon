@@ -3,6 +3,8 @@ import Foundation
 /// Maps a weather condition (and daylight) to its LCD sprite icon.
 nonisolated enum WeatherIconMapper {
 
+    /// Returns the sprite for a condition; only clear and cloudy split on
+    /// daylight, every other condition ignores `isDaylight`.
     static func frame(
         for condition: WeatherIconCondition,
         isDaylight: Bool

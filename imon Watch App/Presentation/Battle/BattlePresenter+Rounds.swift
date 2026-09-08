@@ -120,6 +120,8 @@ extension BattlePresenter {
         try? await Task.sleep(for: .seconds(1.5))
     }
 
+    /// Judges the battle on remaining HP: the pet wins on more HP, loses on
+    /// less, and equal HP is a draw.
     func resolveTiebreaker() {
         switch (viewModel.petHP, viewModel.opponentHP) {
         case let (pet, opp) where pet > opp: showVictory()
@@ -128,6 +130,8 @@ extension BattlePresenter {
         }
     }
 
+    /// Ends the battle as a win: the pet celebrates, the opponent stops, the
+    /// win haptic fires, then `.win` is reported through `onComplete`.
     func showVictory() {
         viewModel.result = .win
         viewModel.phase = .victory
@@ -137,6 +141,9 @@ extension BattlePresenter {
         onComplete(.win)
     }
 
+    /// Ends the battle as a loss: the pet's defeat animation against a
+    /// celebrating opponent, the lose haptic, then `.lose` reported through
+    /// `onComplete`. Does nothing when `opponent` is nil.
     func showDefeat() {
         guard let opp = opponent else { return }
         viewModel.result = .lose

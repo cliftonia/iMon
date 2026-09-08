@@ -62,6 +62,7 @@ extension LCDDisplay {
         pixelWidth: CGFloat,
         pixelHeight: CGFloat
     ) {
+        /// Fills one cell list using the enclosing draw's context and pixel size.
         func fill(_ cells: [(x: Int, y: Int)], _ color: Color) {
             context.fillLCDCells(
                 cells,

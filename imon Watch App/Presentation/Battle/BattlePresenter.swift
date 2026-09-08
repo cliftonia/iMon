@@ -23,6 +23,8 @@ final class BattlePresenter {
 
     // MARK: - Init
 
+    /// Creates the presenter for a single battle; the result is reported once
+    /// through `onComplete`.
     init(
         petState: PetState,
         steps: Int?,
@@ -35,6 +37,9 @@ final class BattlePresenter {
 
     // MARK: - Actions
 
+    /// Generates the opponent, seeds the view model's species and HP, and
+    /// launches the round loop. Returns immediately — the loop runs in a
+    /// background task and the outcome arrives via `onComplete`.
     func startBattle() {
         let opp = BattleOpponent.generate(matching: petState)
         self.opponent = opp
@@ -57,6 +62,8 @@ final class BattlePresenter {
         }
     }
 
+    /// Resolves the pending pick with the player's choice; ignored unless the
+    /// phase is `.choosing`, so stray taps cannot resume a continuation twice.
     func pickAction(_ height: AttackHeight) {
         guard viewModel.phase == .choosing else { return }
         pickContinuation?.resume(returning: height)

@@ -8,6 +8,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
 
     let rows: [UInt16]
 
+    /// Creates a frame; traps unless `rows` contains exactly 16 rows.
     init(rows: [UInt16]) {
         precondition(rows.count == 16, "SpriteFrame must have exactly 16 rows")
         self.rows = rows
@@ -21,6 +22,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return (rows[y] >> (15 - x)) & 1 == 1
     }
 
+    /// Flips the frame left-for-right; column x moves to column 15 - x.
     func mirrored() -> SpriteFrame {
         let mirroredRows = rows.map { row -> UInt16 in
             var result: UInt16 = 0
@@ -32,6 +34,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: mirroredRows)
     }
 
+    /// Slides the frame n pixels up, discarding pixels past the top edge.
     func shiftedUp(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = Array(rows.suffix(Self.size - n))
@@ -39,6 +42,7 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: shifted)
     }
 
+    /// Slides the frame n pixels down, discarding pixels past the bottom edge.
     func shiftedDown(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = [UInt16](repeating: 0, count: n)
@@ -46,11 +50,13 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: shifted)
     }
 
+    /// Slides the frame n pixels left, discarding pixels past the left edge.
     func shiftedLeft(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         return SpriteFrame(rows: rows.map { $0 << n })
     }
 
+    /// Slides the frame n pixels right, discarding pixels past the right edge.
     func shiftedRight(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         return SpriteFrame(rows: rows.map { $0 >> n })
@@ -71,6 +77,9 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         var exterior = [Bool](repeating: false, count: n * n)
         var stack: [(x: Int, y: Int)] = []
 
+        /// Marks the off pixel at (x, y) as exterior and pushes it onto the
+        /// flood-fill stack; lit, already-marked, and out-of-bounds pixels are
+        /// ignored, so call sites can pass every candidate guard-free.
         func markExterior(_ x: Int, _ y: Int) {
             guard x >= 0, x < n, y >= 0, y < n else { return }
             guard !pixel(x: x, y: y), !exterior[y * n + x] else { return }

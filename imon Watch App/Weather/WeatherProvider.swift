@@ -9,6 +9,9 @@ nonisolated struct WeatherProvider: Sendable {
 
 nonisolated extension WeatherProvider {
 
+    /// Creates a provider that fetches live conditions from WeatherKit for the
+    /// location returned by the given `LocationProvider`; failures from either
+    /// call propagate to the caller.
     static func live(location: LocationProvider = .live()) -> WeatherProvider {
         WeatherProvider {
             let coordinate = try await location.currentLocation()
@@ -23,10 +26,12 @@ nonisolated extension WeatherProvider {
         }
     }
 
+    /// Creates a provider that answers every fetch with the given snapshot.
     static func mock(_ snapshot: WeatherSnapshot) -> WeatherProvider {
         WeatherProvider { snapshot }
     }
 
+    /// Creates a provider that fails every fetch with the given error.
     static func mockFailing(
         _ error: WeatherError = .weatherUnavailable
     ) -> WeatherProvider {

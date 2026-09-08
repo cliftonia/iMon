@@ -6,6 +6,8 @@ import Foundation
 /// at zero, so effective HP / power never drops below the species base.
 nonisolated enum ConditioningSimulator {
 
+    /// Decays both trained bonuses from their anchors up to `now`. Dead pets
+    /// and eggs are returned unchanged.
     static func apply(to state: PetState, at now: Date) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }

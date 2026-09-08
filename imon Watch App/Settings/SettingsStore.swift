@@ -37,6 +37,8 @@ final class SettingsStore {
 
     private let defaults: UserDefaults
 
+    /// The `UserDefaults` keys the toggles persist under. The strings address
+    /// already-stored settings, so they must not be renamed.
     private enum Key {
         static let batterySaver = "settings.batterySaver"
         static let notifications = "settings.notifications"
@@ -45,6 +47,9 @@ final class SettingsStore {
         static let haptics = "settings.haptics"
     }
 
+    /// Creates the store over the injected `UserDefaults`. Keys with no prior
+    /// write fall back to per-toggle defaults, and the haptics toggle is
+    /// applied to `WKInterfaceDevice.hapticsEnabled` on creation.
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         // Integrations default on; battery saver defaults off (it follows Low

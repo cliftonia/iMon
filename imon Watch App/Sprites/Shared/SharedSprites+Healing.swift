@@ -4,7 +4,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Healing
 
-    // Syringe with plunger up — ready to inject
+    // The syringe with its plunger up, ready to inject.
 
     private static let needleUp = SpriteFrame(rows: [
         0x0000, //  ................
@@ -25,7 +25,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Syringe with plunger pressed — fluid injected
+    // The syringe with its plunger pressed, the fluid injected.
 
     private static let needleDown = SpriteFrame(rows: [
         0x0000, //  ................

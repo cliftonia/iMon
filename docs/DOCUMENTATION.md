@@ -9,14 +9,20 @@ belong in prose; anything a reader can recover from the code itself does not.
 
 ### When a doc comment is required
 
-- **Type-level headers** on every Presenter, Store, engine simulator, engine
-  action, protocol-witness struct, and persistence type. The header states the
-  type's role and the reason behind any non-obvious design choice.
-- **Members** only when the contract is not evident from the signature: units,
-  side effects, failure modes, ordering requirements, isolation caveats, or a
-  surprising interaction with another type.
-- **Views, ViewModels, and small extensions** usually need none — their names
-  and the layer rules in the README carry the meaning.
+These rules are mechanical so that every file has the same shape; the
+checker in `Tools/doc_lint.py` enforces them and runs with the lint gate.
+
+- **Every type** — `struct`, `class`, `enum`, `actor`, `protocol`, at any
+  nesting — carries a header: one summary sentence, then up to three more
+  lines only when the shape needs a reason. A View's header names the screen
+  or component and what it shows; a ViewModel's names the screen it binds.
+  Four lines is the ceiling for most; six is the ceiling for anything.
+- **Every non-private function and initializer** carries at least the one
+  summary sentence. Add more only for a contract the signature cannot say:
+  units, `nil` semantics, side effects, failure modes, ordering, isolation.
+- **Private helpers, properties and cases** are commented only when the
+  contract is not evident from the name.
+- **Extensions** need no header of their own; a `// MARK:` names the group.
 
 ### Voice
 
@@ -75,6 +81,9 @@ why. Name related types in backticks so the connection is searchable.
 - Do not narrate implementation steps inside function bodies. An inline `//`
   comment is reserved for a constraint the code cannot express (a magic
   number's origin, a workaround's cause, an ordering that must not change).
+- A `//` comment is one or more complete sentences ending in a period, the
+  same voice as a doc comment — never a fragment or a label. A sprite frame
+  is "Frame 1: a small central burst." not "Frame 1: small central burst".
 - When behaviour mirrors or must stay in lockstep with another site, say so
   and name it — e.g. "matching the foreground contract in
   `PetPresenter.handleScenePhase`".

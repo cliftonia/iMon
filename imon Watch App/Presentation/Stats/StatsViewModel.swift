@@ -1,6 +1,9 @@
 import Foundation
 import Observation
 
+/// Display state for the Stats screen. Values are pre-formatted for display
+/// (strings default to placeholders such as "—"), so the view binds directly
+/// with no formatting logic of its own.
 @Observable
 final class StatsViewModel {
     var speciesName: String = ""

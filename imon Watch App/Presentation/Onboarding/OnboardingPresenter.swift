@@ -15,6 +15,8 @@ final class OnboardingPresenter {
 
     // MARK: - Init
 
+    /// Creates the walkthrough driver and starts playing the first tip's
+    /// animation at once.
     init(onComplete: @escaping () -> Void) {
         self.onComplete = onComplete
         playCurrentTip()

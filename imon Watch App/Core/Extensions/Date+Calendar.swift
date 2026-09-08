@@ -7,6 +7,8 @@ import Foundation
 /// so its date arithmetic stays deterministic.
 nonisolated extension Date {
 
+    /// Reports whether two dates fall on the same calendar day in `calendar`, so
+    /// moments hours apart can match while moments across midnight do not.
     func isSameDay(as other: Date, calendar: Calendar = .current) -> Bool {
         calendar.isDate(self, inSameDayAs: other)
     }

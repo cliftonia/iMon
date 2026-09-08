@@ -6,6 +6,9 @@ import Foundation
 /// value in, value out, like the simulators.
 nonisolated enum DeathEvaluator {
 
+    /// Which death threshold killed the pet: the injury count, an untreated
+    /// injury, or the collapse countdown. Returned separately from `evaluate`
+    /// so `GameEngine.step` can log it before `applyDeath` flips the flag.
     nonisolated enum CauseOfDeath: Sendable {
         case injuries
         case untreatedInjury
@@ -45,6 +48,8 @@ nonisolated enum DeathEvaluator {
 
     // MARK: - Apply
 
+    /// Marks the pet dead, flipping `isDead` and nothing else. The cause is
+    /// not stored: the caller logs the `CauseOfDeath` it got from `evaluate`.
     static func applyDeath(to state: PetState) -> PetState {
         var state = state
         state.isDead = true

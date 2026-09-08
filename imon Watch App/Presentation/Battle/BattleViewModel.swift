@@ -1,6 +1,9 @@
 import Foundation
 import Observation
 
+/// Display state for the battle screen: the active `BattlePhase`, both
+/// species, both health pools, and the last round's outcome. Held as one
+/// `@Observable` class so each mutation republishes to the view.
 @Observable
 final class BattleViewModel {
 
@@ -14,6 +17,9 @@ final class BattleViewModel {
     var result: BattleResult?
     var lastRoundOutcome: RoundOutcome?
 
+    /// The stages of a battle: intros, the move choice, each side's attack and
+    /// projectile, then `victory` or `defeat`. `phase` is non-optional — a
+    /// battle is always in exactly one stage.
     enum BattlePhase: Sendable {
         case introPet
         case introVS

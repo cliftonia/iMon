@@ -14,12 +14,16 @@ final class HatchPresenter {
 
     // MARK: - Init
 
+    /// Creates the presenter; `onHatched` fires once the hatch ceremony ends.
     init(onHatched: @escaping () -> Void) {
         self.onHatched = onHatched
     }
 
     // MARK: - Actions
 
+    /// Runs the ceremony's egg → crack → newborn timeline, then stops the
+    /// sprite animator and calls `onHatched` — asynchronously, roughly five
+    /// and a half seconds after this returns.
     func startHatching() {
         viewModel.phase = .egg
         spriteAnimator.play(SharedSprites.egg)

@@ -22,6 +22,7 @@ final class StepActivityStore {
     private let provider: StepCountProvider
     private let throttle = ThrottledFetch()
 
+    /// Creates the store, reading step counts through the given provider.
     init(provider: StepCountProvider = .live()) {
         self.provider = provider
     }
@@ -46,8 +47,8 @@ final class StepActivityStore {
 
     /// The settled total for a past day, used to credit a day that ended while
     /// the app was closed. Deliberately bypasses the cache — it asks about a
-    /// named day, not "now" — and reports nil rather than throwing, since a
-    /// missing tail must not block rollover.
+    /// named day rather than the current one — and reports nil rather than
+    /// throwing, since a missing tail must not block rollover.
     func finalSteps(for day: Date) async -> Int? {
         try? await provider.fetchStepsForDay(day)
     }
@@ -65,6 +66,7 @@ final class StepActivityStore {
         }
     }
 
+    /// Creates the store with the default live step-count provider.
     static func makeDefault() -> StepActivityStore {
         StepActivityStore()
     }

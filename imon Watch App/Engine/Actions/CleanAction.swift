@@ -8,6 +8,8 @@ nonisolated enum CleanAction {
 
     // MARK: - Query
 
+    /// Reports whether cleaning can proceed: the pet is alive, hatched, and
+    /// has at least one pile to remove.
     static func canClean(_ state: PetState) -> Bool {
         !state.isDead && !state.isEgg && state.poopCount > 0
     }

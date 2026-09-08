@@ -64,6 +64,8 @@ nonisolated struct PetStateDTO: Codable, Sendable {
 // MARK: - Mapping
 
 nonisolated extension PetStateDTO {
+    /// Creates the stored form of a `PetState`, stamping `schemaVersion` with
+    /// `Self.currentVersion` and flattening `PetState.timestamps` into fields.
     init(from state: PetState) {
         let times = state.timestamps
         schemaVersion = Self.currentVersion

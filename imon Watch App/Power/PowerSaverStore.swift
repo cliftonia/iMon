@@ -11,6 +11,8 @@ final class PowerSaverStore {
     private(set) var isActive: Bool
     private let isLowPowerEnabled: @Sendable () -> Bool
 
+    /// Creates the store with an injected low-power check, sampling it once so
+    /// `isActive` starts at the current system value.
     init(isLowPowerEnabled: @escaping @Sendable () -> Bool) {
         self.isLowPowerEnabled = isLowPowerEnabled
         self.isActive = isLowPowerEnabled()
@@ -24,6 +26,8 @@ final class PowerSaverStore {
 }
 
 extension PowerSaverStore {
+    /// Returns the store backed by the real system check,
+    /// `ProcessInfo.isLowPowerModeEnabled`, rather than a test mock.
     static func live() -> PowerSaverStore {
         PowerSaverStore(
             isLowPowerEnabled: { ProcessInfo.processInfo.isLowPowerModeEnabled }

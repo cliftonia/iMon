@@ -10,6 +10,7 @@ extension PetPresenter {
 
     // MARK: - Wandering
 
+    /// Starts the wander loop by scheduling the first walk attempt.
     func startWandering() {
         scheduleNextWander()
     }

@@ -1,5 +1,7 @@
 import Foundation
 
+/// The result of one arena round, resolved from the `AttackHeight` triangle:
+/// a hit on either side, or a `.clash` when neither height beats the other.
 nonisolated enum RoundOutcome: Equatable, Sendable {
     case playerHit
     case opponentHit
@@ -14,6 +16,7 @@ nonisolated enum BattleEngine {
 
     // MARK: - Query
 
+    /// Reports whether the pet may battle, which requires it to be awake and alive.
     static func canBattle(_ state: PetState) -> Bool {
         state.isAwakeAndAlive
     }

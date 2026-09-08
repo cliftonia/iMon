@@ -1,5 +1,8 @@
 import SwiftUI
 
+/// The onboarding tutorial screen.
+/// Shows the animated LCD, a scrolling speech bubble with the current tip, and
+/// progress dots; tapping the content advances to the next tip.
 struct OnboardingScreen: View {
 
     let presenter: OnboardingPresenter

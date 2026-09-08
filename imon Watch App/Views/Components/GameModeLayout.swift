@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// The game-mode screen shell: the LCD content in an `LCDBezel` on top, a
+/// one-line info strip, and buttons pinned to the bottom.
+/// Generic over the three slots so callers supply the views while this type
+/// owns their vertical arrangement and spacing.
 struct GameModeLayout<
     LCD: View,
     Info: View,
@@ -10,6 +14,8 @@ struct GameModeLayout<
     let info: Info
     let buttons: Buttons
 
+    /// Creates the layout, evaluating each view builder immediately and
+    /// storing the built views.
     init(
         @ViewBuilder lcd: () -> LCD,
         @ViewBuilder info: () -> Info,

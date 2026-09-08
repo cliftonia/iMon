@@ -5,6 +5,8 @@ import Foundation
 /// path (the chart's `minWeight` gates) rather than a free top-up.
 nonisolated enum FeedAction {
 
+    /// The two foods. The case selects which heart a feed refills and which
+    /// weight gain applies, per the switch in `FeedAction.apply`.
     nonisolated enum FoodKind: Sendable {
         case meat
         case vitamin
@@ -12,6 +14,8 @@ nonisolated enum FeedAction {
 
     // MARK: - Query
 
+    /// Reports whether the pet can eat — the gate `apply` checks first; only
+    /// an awake, living pet can be fed, regardless of heart levels.
     static func canFeed(_ state: PetState) -> Bool {
         state.isAwakeAndAlive
     }

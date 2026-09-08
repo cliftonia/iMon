@@ -1,6 +1,9 @@
 import WidgetKit
 import SwiftUI
 
+/// The complication extension's entry point. The bundle shape exists so the
+/// extension can group several widgets under one `@main`; it currently holds
+/// only `SkykinComplication`.
 @main
 struct SkykinComplicationBundle: WidgetBundle {
     var body: some Widget {

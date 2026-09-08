@@ -1,11 +1,16 @@
 import Foundation
 
+/// An ordered sequence of sprite frames with per-frame timing and a loop flag.
+///
+/// A value type so animations compare and copy cheaply; `SpriteAnimator`
+/// advances the frames on a timer.
 nonisolated struct SpriteAnimation: Sendable, Hashable {
 
     let frames: [SpriteFrame]
     let frameDuration: TimeInterval
     let loops: Bool
 
+    /// Creates an animation whose frames play in the given order.
     init(
         frames: [SpriteFrame],
         frameDuration: TimeInterval = 0.5,

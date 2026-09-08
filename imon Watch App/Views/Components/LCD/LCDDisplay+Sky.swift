@@ -75,6 +75,8 @@ extension LCDDisplay {
     /// The lit fraction of the moon for the given phase (waxing lit on the
     /// right; terminator vertical) — drawn bright over the dim disc.
     static func moonLitCells(_ moonPhase: MoonPhase) -> [(x: Int, y: Int)] {
+        /// Reports whether the disc column at offset `dx` from the moon's centre is
+        /// lit for this phase; offsets are positive rightward.
         func isLit(_ dx: Int) -> Bool {
             switch moonPhase {
             case .new: return false

@@ -1,5 +1,8 @@
 import SwiftUI
 
+/// The screen shown after the pet dies. Shows the pet's sprite, species name,
+/// and age in days above a "New Egg" button; restarting routes through
+/// `DeathPresenter`.
 struct DeathScreen: View {
 
     let presenter: DeathPresenter

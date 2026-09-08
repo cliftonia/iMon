@@ -6,6 +6,9 @@ import Foundation
 /// itself engine-free for sharing with the complication extension.
 nonisolated extension ComplicationEntry {
 
+    /// Creates an entry from a state snapshot, baking the mood word and the
+    /// first frame of the sleep or idle sprite; a missing frame set bakes as
+    /// blank rows.
     init(date: Date, state: PetState) {
         let status = PetStatus(from: state)
         let kind: SpriteCatalog.AnimationKind = status.isSleeping ? .sleep : .idle

@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// Displays a pixel-art sprite as a grid of filled cells in a `Canvas`.
+/// One drawing path serves both frame sources: a live `SpriteAnimator`,
+/// or a fixed `SpriteFrame` under `DEBUG`. The view is a fixed square of
+/// `SpriteFrame.size` cells per side.
 struct SpriteView: View {
 
     private let animator: SpriteAnimator?
@@ -7,6 +11,8 @@ struct SpriteView: View {
     private let pixelSize: CGFloat
     private let pixelColor: Color
 
+    /// Creates the animated sprite view; the static fallback frame stays
+    /// `.empty`, so the animator alone supplies what is drawn.
     init(
         animator: SpriteAnimator,
         pixelSize: CGFloat,

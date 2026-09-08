@@ -5,6 +5,8 @@ import Foundation
 /// duplicates.
 nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
 
+    /// The reason the reminder fires. Keys both the message text and the stable
+    /// identifier: `id` is the raw value, so one pending request per kind.
     nonisolated enum Kind: String, Sendable {
         case hunger
         case strength
