@@ -1,0 +1,87 @@
+# Release checklist
+
+What stands between the current tree and a build in App Review, written after
+the September 2026 release audit. Items are grouped by who can do them: the
+code is done; the identifier decision and the App Store Connect work are the
+developer's.
+
+## Done in the audit pass (2026-09-08)
+
+- `PrivacyInfo.xcprivacy` in the watch app and the complication extension,
+  declaring the UserDefaults required-reason API (CA92.1), no tracking, no
+  collected data. Without it App Store Connect refuses the upload (ITMS-91053).
+- The complication extension's deployment target lowered to 26.2 to match the
+  app — an extension may not require a newer OS than its container.
+- Display names and the complication's picker name changed to **Stepkin**;
+  the complication's `kind` string is unchanged so placed complications
+  survive an update.
+- Apple Weather attribution and a version row under Settings → About, as the
+  WeatherKit terms require wherever Apple Weather data is shown.
+- Permission prompts (HealthKit, notifications) moved from the first frame of
+  a fresh install to the moment the pet is alive — after the walkthrough that
+  explains what steps and reminders are for. A freshly granted permission
+  re-reads today's steps at once.
+- Sleep is now a pause: waking re-anchors the hunger, strength and poop
+  clocks, so the pet no longer wakes starved and injured after every night.
+- The save keeps one backup copy; a torn or undecodable write falls back to
+  the previous good save instead of hatching a new egg over a months-old pet.
+- A dead pet can no longer evolve on the grave tick; leaving the pet screen
+  stops the wander and sprite timers; the multi-day step catch-up is bounded
+  by days rather than by successful fetches.
+- Stats says "Steps off" / "Needs steps" when the Steps switch is off, and the
+  Settings footer explains that evolution is step-fed.
+- VoiceOver: the three buttons announce what they do; the home screen reads
+  the pet's condition.
+- Build warning-free, SwiftLint clean, 345 tests green.
+
+## Decide before the upload (developer)
+
+1. **Bundle identifiers.** The App Store Connect record (created 2026-07-19)
+   is an iOS record against `cliftonia.stepkin`; the project still builds
+   `cliftonia.imon`, `cliftonia.imon.watchkitapp` and
+   `…watchkitapp.SkykinComplication`, and the App Group is
+   `group.cliftonia.skykin`. The upload will be refused until they match.
+   Changing them is a text edit in `project.pbxproj`, both entitlements files
+   and `AppGroup.swift` / `ComplicationProvider.swift` — but it also **strands
+   the pet on the wrist** (new container). Decide the hand-off first; see
+   `migration-plan.md` § 3. The UserDefaults keys
+   (`com.cliftonia.imon.petState`, `.backup`, `.complicationTimeline`) must
+   *not* change in either case.
+2. **Provisioning on the new App ID.** HealthKit, WeatherKit, App Groups and
+   the notification capability must be ticked on `cliftonia.stepkin.watchkitapp`
+   in the developer portal; WeatherKit takes time to propagate, so the first
+   TestFlight build may show no weather.
+3. **Export compliance.** The app uses only Apple's TLS. Set the
+   "App Encryption Documentation" answer once in App Store Connect (or add
+   `ITSAppUsesNonExemptEncryption = NO` to the Info tab of both targets) so
+   every build is not held for the question.
+
+## App Store Connect (developer)
+
+- Privacy policy URL (required for every app; HealthKit makes it mandatory).
+  A one-page statement that nothing leaves the device suffices.
+- Privacy nutrition labels: Health & Fitness → not collected (data never
+  leaves the device); Location → not collected. Declare "Data Not Collected".
+- Screenshots from the largest simulator (Ultra 3 49mm, `xcrun simctl io
+  booted screenshot`) — one set covers all watch sizes.
+- Age rating questionnaire: infrequent mild cartoon violence (training and
+  battles), no other flags. The pet's death is fine; do not mention any
+  trademarked franchise in the name, subtitle, keywords or description.
+- Review notes: explain that HealthKit steps drive evolution and can be
+  declined, that weather needs location and can be declined, and that the
+  reviewer can reach every screen without granting anything.
+- TestFlight on the physical watch for at least one full day/night cycle
+  before submitting — the sleep-pause change and the permission timing are
+  the two behaviours that cannot be judged in the simulator.
+
+## Known and accepted for 1.0
+
+- Evolution is step-fed; with HealthKit declined or the Steps switch off the
+  pet cannot evolve. Stats now says so. A time-based fallback is a design
+  decision for later.
+- Rexkin evolves only after 15 wins at an 80 % rate, faithful to the original;
+  the ring fills before the gate is met and nothing in the UI names the gate.
+- The care-reminder replan and complication reload run on every wrist-down
+  (`.inactive`); WidgetKit's reload budget may throttle some of them.
+- The DEBUG build shows a sample weather reading; Release shows nothing until
+  WeatherKit is provisioned and location granted.

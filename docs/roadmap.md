@@ -95,10 +95,16 @@ data arrives via iCloud Health sync, so the loop works there too.
 | 2 | The founding: fresh repo, workspace + packages, watch shell, hand-off if granted | new repo | Everything after lands in the new home |
 | 3 | Deferred polish: defer-night-notifications, lifecycle items, debug-only items | new repo | No schema impact; benefits from the fast package test loop |
 | 4 | Sprite treatment for Hopkin, Dotkin, Orbkin, Marshkin | new repo | Zero dependencies — runs parallel to Epic 3 |
-| 5 | Watch submission: WeatherKit provisioning on the new App ID, privacy strings, icon, screenshots, TestFlight, App Review | new repo | Last, because every prior epic changes what the reviewer sees |
+| 5 | Watch submission: WeatherKit provisioning on the new App ID, privacy strings, icon, screenshots, TestFlight, App Review. **Code side done 2026-09-08** (privacy manifests, attribution, permission timing, sleep-pause and save-backup fixes — see `release-checklist.md`); the identifier swap and the App Store Connect work remain | new repo | Last, because every prior epic changes what the reviewer sees |
 | 6 | Sync + iPhone/iPad shells: transport decision, `iOSApp` target, platform shims (haptics, `BGTaskScheduler`), home-screen widget | new repo | Post-launch (v1.x); the packages make it thin-shell work |
 
 Epics 3 and 4 run in parallel; everything else is a chain.
+
+**Shortcut taken 2026-09-08:** the release audit was done in this repository
+rather than after Epic 2. If shipping soon matters more than the package
+restructure, Epic 2 can shrink to the identity rename alone (migration-plan
+§ 1–3) and the package extraction can follow the launch — the code does not
+need it to pass review.
 
 ## Standing risks
 
