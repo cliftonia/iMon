@@ -14,10 +14,11 @@ final class SpriteAnimator {
     private var animation: SpriteAnimation?
     // The run loop retains a repeating timer, so it must be invalidated in
     // deinit or every discarded animator leaves a timer firing forever.
-    // `nonisolated(unsafe)` lets deinit reach it; all other access is on main.
-    nonisolated(unsafe) private var timer: Timer?
+    // Not observed — a timer swap is never something a view redraws for.
+    @ObservationIgnored private var timer: Timer?
 
-    deinit {
+    // Runs on the main actor, so the timer can be reached without an unsafe escape.
+    isolated deinit {
         timer?.invalidate()
     }
 

@@ -49,6 +49,17 @@ struct PetPresenterTests {
     }
 
     @Test
+    func `stopping the game loop leaves no wander timer armed`() {
+        let presenter = makePresenter(makeTestState(), SaveBox())
+        presenter.startGameLoop()
+
+        presenter.stopGameLoop()
+
+        #expect(presenter.wanderTimer == nil)
+        #expect(presenter.spriteAnimator.isPlaying == false)
+    }
+
+    @Test
     func `applying a battle win advances state and persists it`() {
         let box = SaveBox()
         var state = makeTestState(species: .emberkin)
