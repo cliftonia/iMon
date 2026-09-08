@@ -4,6 +4,9 @@ import WatchKit
 struct ActionButton: View {
 
     let label: String
+    /// What the press does right now, for VoiceOver — the printed label is
+    /// only "A", "B" or "C".
+    var accessibilityLabel: String?
     /// Optional debug action fired on a long press (e.g. cycle weather / evolve).
     var longPressAction: (() -> Void)?
     let action: () -> Void
@@ -23,7 +26,7 @@ struct ActionButton: View {
         .buttonStyle(.bordered)
         // Only override the fill under battery-saver; classic keeps the default.
         .tint(theme == .nightRed ? theme.chromeTint : nil)
-        .accessibilityLabel("\(label) button")
+        .accessibilityLabel(accessibilityLabel ?? "\(label) button")
         .simultaneousGesture(
             LongPressGesture(minimumDuration: 0.5).onEnded { _ in
                 guard let longPressAction else { return }

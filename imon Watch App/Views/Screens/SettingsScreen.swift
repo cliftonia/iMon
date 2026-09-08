@@ -10,17 +10,38 @@ struct SettingsScreen: View {
             Section("Display") {
                 Toggle("Battery saver", isOn: $settings.batterySaverEnabled)
             }
-            Section("Features") {
+            Section {
                 Toggle("Notifications", isOn: $settings.notificationsEnabled)
                 Toggle("Weather", isOn: $settings.weatherEnabled)
                 Toggle("Steps", isOn: $settings.stepsEnabled)
                 Toggle("Haptics", isOn: $settings.hapticsEnabled)
+            } header: {
+                Text("Features")
+            } footer: {
+                Text("Your steps grow your pet. With Steps off it cannot evolve.")
             }
+            aboutSection
             #if DEBUG
             debugSection
             #endif
         }
         .navigationTitle("Settings")
+    }
+
+    // MARK: - About
+
+    /// Version and the attribution WeatherKit's terms require wherever Apple
+    /// Weather data is shown.
+    private var aboutSection: some View {
+        Section("About") {
+            LabeledContent("Version", value: presenter.versionLabel)
+            if let url = WeatherAttribution.legalPageURL {
+                Link(destination: url) {
+                    Label("Weather data by Apple Weather", systemImage: "apple.logo")
+                }
+                .accessibilityLabel("Weather data by Apple Weather. Opens the attribution page.")
+            }
+        }
     }
 
     #if DEBUG

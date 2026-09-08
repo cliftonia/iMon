@@ -38,10 +38,11 @@ nonisolated enum BackgroundTick {
 
         // Evolution otherwise runs only foregrounded — evaluate so pets grow while away.
         if let target = EvolutionEngine.checkEvolution(for: advanced) {
+            let previous = advanced.species
             advanced = EvolutionEngine.evolve(advanced, to: target, at: now)
             if notificationsEnabled {
                 notifications.notify(
-                    target.displayName, "evolved into a \(target.displayName)!", target
+                    "Evolution!", "\(previous.displayName) evolved into \(target.displayName)!", target
                 )
             }
         }

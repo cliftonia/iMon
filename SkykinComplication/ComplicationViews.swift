@@ -65,7 +65,7 @@ struct CircularView: View {
             AccessoryWidgetBackground()
             SpriteCanvas(rows: entry.spriteRows).padding(5)
         }
-        .accessibilityLabel("Skykin, \(entry.statusText)")
+        .accessibilityLabel("Stepkin, \(entry.statusText)")
     }
 }
 
@@ -95,7 +95,7 @@ struct InlineView: View {
 
     var body: some View {
         Label(
-            "Skykin \u{00b7} \(entry.statusText)",
+            "Stepkin \u{00b7} \(entry.statusText)",
             systemImage: entry.needsAttention ? "exclamationmark.circle" : "pawprint"
         )
     }
@@ -111,6 +111,6 @@ struct CornerView: View {
                     Text(entry.statusText)
                 }
             }
-            .accessibilityLabel("Skykin, \(entry.statusText)")
+            .accessibilityLabel("Stepkin, \(entry.statusText)")
     }
 }

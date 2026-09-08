@@ -19,7 +19,7 @@ struct SkykinComplication: Widget {
             ComplicationView(entry: entry)
                 .containerBackground(.clear, for: .widget)
         }
-        .configurationDisplayName("Skykin")
+        .configurationDisplayName("Stepkin")
         .description("Your pet at a glance.")
         .supportedFamilies([
             .accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner

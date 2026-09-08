@@ -14,10 +14,16 @@ struct AppPresenterTests {
         var deleteCount = 0
     }
 
+    /// Counts permission rounds so the tests can pin down when they happen.
+    private final class PermissionBox: @unchecked Sendable {
+        var requests = 0
+    }
+
     private func makePresenter(
         load: @escaping @Sendable () throws -> PetState?,
         box: StoreBox,
-        deleteFails: Bool = false
+        deleteFails: Bool = false,
+        permissions: PermissionBox = PermissionBox()
     ) -> AppPresenter {
         AppPresenter(
             store: PetStateStore(
@@ -33,7 +39,8 @@ struct AppPresenterTests {
             ),
             stepActivityStore: StepActivityStore(
                 provider: StepCountProvider(fetchTodaySteps: { 0 })
-            )
+            ),
+            permissions: PermissionRequester(requestAll: { permissions.requests += 1 })
         )
     }
 
@@ -103,6 +110,33 @@ struct AppPresenterTests {
 
         #expect(presenter.phase == .hatching)
         #expect(presenter.hatchPresenter != nil)
+    }
+
+    // MARK: - Permissions
+
+    @Test
+    func `permissions are not requested while the egg is still hatching`() async {
+        let permissions = PermissionBox()
+        let presenter = makePresenter(load: { nil }, box: StoreBox(), permissions: permissions)
+
+        presenter.onAppear()
+        await presenter.permissionTask?.value
+
+        #expect(presenter.phase == .hatching)
+        #expect(permissions.requests == 0)
+    }
+
+    @Test
+    func `permissions are requested once the pet is alive`() async {
+        let permissions = PermissionBox()
+        let saved = makeTestState()
+        let presenter = makePresenter(load: { saved }, box: StoreBox(), permissions: permissions)
+
+        presenter.onAppear()
+        await presenter.permissionTask?.value
+
+        #expect(presenter.phase == .alive)
+        #expect(permissions.requests == 1)
     }
 
     // MARK: - Restart After Death

@@ -41,6 +41,22 @@ extension PetScreen {
         presenter.viewModel.feedingPhase == .selecting ? "VITA" : "C"
     }
 
+    // MARK: - Button Accessibility
+
+    var buttonAAccessibilityLabel: String {
+        presenter.viewModel.feedingPhase == .selecting ? "Feed meat" : "Previous menu item"
+    }
+
+    var buttonBAccessibilityLabel: String {
+        if presenter.viewModel.feedingPhase == .selecting { return "Back" }
+        if presenter.viewModel.isBusy { return "Cancel" }
+        return "Select \(presenter.viewModel.menuSelection.accessibilityName)"
+    }
+
+    var buttonCAccessibilityLabel: String {
+        presenter.viewModel.feedingPhase == .selecting ? "Feed vitamin" : "Next menu item"
+    }
+
     // MARK: - Effect Display
 
     var effectRightSprite: SpriteFrame? {

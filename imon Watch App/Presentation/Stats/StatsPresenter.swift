@@ -1,15 +1,17 @@
 import Foundation
 
-/// Drives the read-only stats screen. `update(from:steps:)` formats a one-shot
-/// snapshot of the live `PetState` into display strings — the screen does not
-/// tick, so its figures are frozen at the moment Stats was opened.
+/// Drives the read-only stats screen. `update(from:steps:stepsEnabled:)` formats
+/// a one-shot snapshot of the live `PetState` into display strings — the screen
+/// does not tick, so its figures are frozen at the moment Stats was opened.
+/// With the Steps switch off the activity and evolution rows say so, since
+/// evolution is step-fed and would otherwise look silently stuck.
 final class StatsPresenter {
 
     private(set) var viewModel = StatsViewModel()
 
     // MARK: - Update
 
-    func update(from state: PetState, steps: Int?) {
+    func update(from state: PetState, steps: Int?, stepsEnabled: Bool = true) {
         let status = PetStatus(from: state)
         viewModel.speciesName = status.species.displayName
         viewModel.stageName = status.stage.displayName
@@ -22,7 +24,9 @@ final class StatsPresenter {
         let hp = BattleHP.calculate(for: state, steps: steps)
         viewModel.hpDisplay = state.trainedHP > 0 ? "\(hp) (+\(state.trainedHP))" : "\(hp)"
         viewModel.powerBonus = "+\(state.trainedPower)"
-        if let steps {
+        if !stepsEnabled {
+            viewModel.activityLabel = "Steps off"
+        } else if let steps {
             let active = !ActivityModel.isSedentary(steps: steps)
             viewModel.activityLabel = "\(steps) \u{00b7} \(active ? "Active" : "Resting")"
         } else {
@@ -31,6 +35,8 @@ final class StatsPresenter {
         let total = StatFormatter.grouped(state.lifetimeActiveSteps)
         if status.species.stage == .ultimate {
             viewModel.evolveProgress = "MAX \u{00b7} " + total
+        } else if !stepsEnabled {
+            viewModel.evolveProgress = "Needs steps"
         } else {
             viewModel.evolveProgress = total + " / " + StatFormatter.grouped(state.evolutionGoal)
         }

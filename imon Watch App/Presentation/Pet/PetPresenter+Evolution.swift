@@ -136,8 +136,8 @@ extension PetPresenter {
             self.viewModel.debugNotice = "N:" + Self.describe(settings.authorizationStatus)
             // Unique id per press — a repeated id silently updates, showing no new banner.
             let content = UNMutableNotificationContent()
-            content.title = "Skykin"
-            content.body = "Your Skykin is hungry!"
+            content.title = "Care test"
+            content.body = "Your pet is hungry!"
             content.sound = .default
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 12, repeats: false)
             let request = UNNotificationRequest(

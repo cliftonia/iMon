@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 /// Drives the Settings screen. The toggles bind straight to the shared
@@ -8,6 +9,14 @@ import Observation
 final class SettingsPresenter {
 
     let settings: SettingsStore
+
+    /// "1.0 (1)" from the bundle — shown on the About row.
+    var versionLabel: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        return "\(version) (\(build))"
+    }
 
     #if DEBUG
     let debug: SettingsDebugActions

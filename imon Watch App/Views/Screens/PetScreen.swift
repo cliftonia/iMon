@@ -52,7 +52,7 @@ struct PetScreen: View {
                 presenter.stopGameLoop()
             }
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Creature virtual pet")
+            .accessibilityLabel(presenter.viewModel.accessibilityDescription)
     }
 
     // MARK: - Weather
@@ -221,13 +221,22 @@ struct PetScreen: View {
 
     private var normalButtons: some View {
         HStack(spacing: 4) {
-            ActionButton(label: buttonALabel, longPressAction: debugWeatherCycle) {
+            ActionButton(
+                label: buttonALabel, accessibilityLabel: buttonAAccessibilityLabel,
+                longPressAction: debugWeatherCycle
+            ) {
                 handleButtonA()
             }
-            ActionButton(label: buttonBLabel, longPressAction: debugEvolveAction) {
+            ActionButton(
+                label: buttonBLabel, accessibilityLabel: buttonBAccessibilityLabel,
+                longPressAction: debugEvolveAction
+            ) {
                 handleButtonB()
             }
-            ActionButton(label: buttonCLabel, longPressAction: debugCareAction) {
+            ActionButton(
+                label: buttonCLabel, accessibilityLabel: buttonCAccessibilityLabel,
+                longPressAction: debugCareAction
+            ) {
                 handleButtonC()
             }
         }

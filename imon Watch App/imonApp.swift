@@ -18,10 +18,9 @@ struct imon_Watch_AppApp: App {
 final class AppDelegate: NSObject, WKApplicationDelegate {
 
     func applicationDidFinishLaunching() {
-        Log.presentation.info("Skykin launched")
+        Log.presentation.info("App launched")
         UNUserNotificationCenter.current().delegate = self
-        Task { await StepCountProvider.requestAuthorization() }
-        Task { _ = await NotificationScheduler.live().requestAuthorization() }
+        // Permission prompts wait until the pet is alive — see `PermissionRequester`.
     }
 
     func applicationDidBecomeActive() {

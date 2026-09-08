@@ -30,8 +30,8 @@ xcodebuild test -project imon.xcodeproj -scheme "imon Watch App" \
 The simulator builds and runs everything, but two integrations only produce
 real data on a physical watch: HealthKit step counts and WeatherKit (which
 also needs the WeatherKit capability provisioned; in DEBUG a sample snapshot
-stands in). SwiftLint runs as a build phase — the codebase holds a
-zero-warning bar.
+stands in). SwiftLint is not a build phase; run `swiftlint lint` from the repo root —
+the codebase holds a zero-warning bar.
 
 ## How the game works
 

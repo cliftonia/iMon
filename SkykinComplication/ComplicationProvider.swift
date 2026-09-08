@@ -17,10 +17,17 @@ struct WidgetEntry: TimelineEntry, Codable {
 }
 
 extension WidgetEntry {
+    /// The newborn's idle pose (a copy of the app's Dotkin frame — the widget
+    /// shares no source with the app), so the gallery preview and a fresh
+    /// install show a creature rather than an empty box.
     static let placeholder = WidgetEntry(
         date: Date(),
-        speciesName: "Skykin",
-        spriteRows: [UInt16](repeating: 0, count: 16),
+        speciesName: "Dotkin",
+        spriteRows: [
+            0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+            0x03C0, 0x0FF0, 0x1FF8, 0x37B8, 0x3FF8, 0x3C78, 0x1FF8, 0x0FF0, 0x03C0,
+            0x0000
+        ],
         hungerValue: 2,
         hungerMax: 4,
         needsAttention: false,

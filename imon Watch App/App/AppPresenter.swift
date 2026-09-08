@@ -36,6 +36,11 @@ final class AppPresenter {
     let settings: SettingsStore
 
     private let store: PetStateStore
+    private let permissions: PermissionRequester
+
+    /// The in-flight permission round started by `startAlive`. Not private:
+    /// the tests await it so the step refresh that follows can be observed.
+    private(set) var permissionTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -43,12 +48,14 @@ final class AppPresenter {
         store: PetStateStore = JSONPetStateStore.live(),
         weatherStore: WeatherStore = .makeDefault(),
         stepActivityStore: StepActivityStore = .makeDefault(),
-        settings: SettingsStore = SettingsStore()
+        settings: SettingsStore = SettingsStore(),
+        permissions: PermissionRequester = .live()
     ) {
         self.store = store
         self.weatherStore = weatherStore
         self.stepActivityStore = stepActivityStore
         self.settings = settings
+        self.permissions = permissions
     }
 
     // MARK: - Lifecycle
@@ -151,6 +158,22 @@ final class AppPresenter {
         onboardingPresenter = nil
         deathPresenter = nil
         router.popToRoot()
+        requestPermissions()
+    }
+
+    /// Prompts for HealthKit and notifications now that the pet is on screen,
+    /// then re-reads today's steps so a freshly granted permission shows at
+    /// once rather than after the cache window.
+    private func requestPermissions() {
+        guard permissionTask == nil else { return }
+        permissionTask = Task { [weak self] in
+            guard let self else { return }
+            await permissions.requestAll()
+            if settings.stepsEnabled {
+                await stepActivityStore.refresh()
+            }
+            permissionTask = nil
+        }
     }
 
     private func startDeath(state: PetState) {
@@ -180,7 +203,8 @@ final class AppPresenter {
         let presenter = StatsPresenter()
         presenter.update(
             from: petPresenter.getCurrentState(),
-            steps: stepActivityStore.todaySteps
+            steps: settings.stepsEnabled ? stepActivityStore.todaySteps : nil,
+            stepsEnabled: settings.stepsEnabled
         )
         statsPresenter = presenter
         router.navigate(to: .stats)

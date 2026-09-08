@@ -66,6 +66,15 @@ struct StatsPresenterTests {
     }
 
     @Test
+    func `with steps off the activity and evolution rows say so`() {
+        let presenter = StatsPresenter()
+        presenter.update(from: makeTestState(), steps: nil, stepsEnabled: false)
+
+        #expect(presenter.viewModel.activityLabel == "Steps off")
+        #expect(presenter.viewModel.evolveProgress == "Needs steps")
+    }
+
+    @Test
     func `zero battles fall back to an em-dash win rate`() {
         let viewModel = makeViewModel()
         #expect(viewModel.winRate == "\u{2014}")
