@@ -79,6 +79,67 @@ why. Name related types in backticks so the connection is searchable.
   and name it — e.g. "matching the foreground contract in
   `PetPresenter.handleScenePhase`".
 
+## Readers who arrive cold
+
+Most readers of any one file arrive without the context its author had: a
+newcomer, a reviewer, the author a year on, or a tool reading the file in
+isolation. None of them carry the tacit knowledge a colleague absorbs over
+months, so the standard above is applied with these emphases:
+
+- **Precision over inference.** State the contract in full: units, `nil`
+  semantics, clamping, ordering, what happens on failure. A reader who finds
+  a gap fills it with a guess. "Today's steps, or nil when HealthKit is
+  unavailable — the engine then runs unscaled" beats "the steps".
+- **One word per concept.** Use the glossary terms below and nothing else for
+  them. A comment that says "timer" here and "clock" there for the same
+  anchor invites a rename nobody asked for.
+- **The present tense, and only the present.** A comment describes the code as
+  it is. No dates, audit tags, "now", "no longer", "recently", "was
+  previously" — git owns history, and a dated remark is stale the day after
+  it is written.
+- **Name the counterpart.** When a value, order or format must stay in
+  lockstep with another site, name the file or symbol in backticks so a
+  search finds both ends before either is edited.
+- **State the invariant where it is enforced**, not where it is assumed. The
+  guard that keeps an `Int` inside 32 bits carries the comment; the callers
+  do not repeat it.
+- **Say what must not be done when it looks harmless.** Renaming a
+  `UserDefaults` key, changing a widget `kind`, reordering the simulators —
+  a one-line "do not" at the site is the cheapest guard rail there is.
+- **Simple, explicit, boring.** No idiom, no wit, no metaphor in a doc
+  comment. The persona lives in conversation, not in the source.
+
+### Glossary
+
+The words this codebase uses for its own ideas. Use them verbatim.
+
+| Term | Meaning |
+|---|---|
+| **tick** | One run of `GameEngine.advance`; in the foreground every 30 s, in the background roughly hourly |
+| **catch-up** | A tick spanning a long gap (the app was closed); replays the clock's sleep boundaries before landing on now |
+| **anchor** | A timestamp a simulator counts whole intervals from (`lastHungerDecayAt`, `lastPoopAt`, …) |
+| **interval** | The base time per unit of change (70 min per hunger heart), before activity scaling |
+| **activity scaling** | Today's step count stretching or compressing an interval via `ActivityModel` |
+| **night** | The resolved day/night signal: the weather's daylight flag, else the 18:00–06:00 clock window |
+| **bedtime** | The 21:00–06:00 window in which the pet can settle to sleep |
+| **settle** | The two minutes between the light going out at bedtime and the pet falling asleep |
+| **wake** | Leaving sleep, by dawn or the light; re-anchors hunger, strength and poop so sleep is a pause |
+| **care call** | The pet asking for something (empty hearts, mess, injury); unanswered for 20 min it becomes a care mistake |
+| **care mistake** | A neglect count that steers evolution but never kills |
+| **languishing** | Hunger and strength both empty; the collapse countdown toward death is running |
+| **collapse** | The 48 h languishing death |
+| **lazy day** | A calendar day under 2,000 steps; raises the evolution goal by a stage-scaled penalty |
+| **lifetime steps** | The evolution accumulator (`lifetimeActiveSteps`), credited per day at rollover |
+| **rollover** | Crediting a finished day's steps and starting the next day's baseline |
+| **ceremony** | A short scripted activity the presenter plays (feed, clean, heal, refuse, evolve) that blocks input |
+| **activity** | The presenter's single in-flight ceremony state (`PetViewModel.activity`) |
+| **witness** | A struct of closures standing in for a dependency (`PetStateStore`, `NotificationScheduler`); mocks are built inline in tests |
+| **store** | An `@Observable` holder of shared, throttled readings (weather, steps, settings, power) |
+| **presenter** | The main-actor owner of a screen's state and actions; views delegate to it |
+| **DTO** | `PetStateDTO`, the flat versioned save format; the one thing sync and hand-off depend on |
+| **complication** | The watch-face widget; the app bakes a timeline into the App Group, the extension only renders it |
+| **scene** | What the LCD draws behind the pet (`LCDScene`): home by day or night, the clean booth, the arena |
+
 ## Markdown docs
 
 - **`README.md` is the map.** It owns the game-rules table, the architecture

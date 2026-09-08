@@ -18,9 +18,31 @@ Package.resolved
 *.swp
 *~.nib
 
-# Claude
+# Local tooling state — editor assistants, their config, prompts and drivers
 .claude/
 CLAUDE.md
+AGENTS.md
+GEMINI.md
+.crush/
+.crush.json
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.kimi/
+.gemini/
+.codex/
+.continue/
+.cline*
+.roo*
+.opencode/
+opencode.json
+.mcp.json
+.github/copilot-instructions.md
+*.local.md
+Tools/comments/
 
 # Secrets
 *.env
