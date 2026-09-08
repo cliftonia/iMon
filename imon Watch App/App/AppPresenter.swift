@@ -26,7 +26,7 @@ final class AppPresenter {
     private(set) var settingsPresenter: SettingsPresenter?
     private(set) var hatchPresenter: HatchPresenter?
     private(set) var onboardingPresenter: OnboardingPresenter?
-    /// The newborn saved at hatch, carried through the walkthrough.
+    /// The newborn saved at hatch, held until onboarding finishes.
     private var hatchedState: PetState?
     private(set) var deathPresenter: DeathPresenter?
 
@@ -94,8 +94,8 @@ final class AppPresenter {
         }
     }
 
-    /// Saves through a logged funnel — a silent save failure here would lose
-    /// the pet (or its catch-up) with no signal.
+    /// Saves the pet; errors are logged, never thrown — otherwise a failed
+    /// save would silently lose the pet (or its catch-up).
     private func persist(_ state: PetState) {
         do {
             try store.save(state)
@@ -114,7 +114,7 @@ final class AppPresenter {
     }
 
     private func onHatchComplete() {
-        // Persist before onboarding — quitting mid-walkthrough must not lose the pet.
+        // Persist before onboarding — quitting mid-onboarding must not lose the pet.
         let state = PetState.hatched(at: .now)
         persist(state)
         hatchedState = state
@@ -145,7 +145,7 @@ final class AppPresenter {
                 settings.weatherEnabled ? weatherStore.nightSignal() : nil
             },
             currentSteps: { [stepActivityStore, settings] in
-                // Steps off -> no reading, so no step bonuses accrue.
+                // Steps off -> no reading, so no activity scaling.
                 settings.stepsEnabled ? stepActivityStore.todaySteps : nil
             },
             finalSteps: { [stepActivityStore, settings] day in
@@ -161,7 +161,7 @@ final class AppPresenter {
         requestPermissions()
     }
 
-    /// Prompts for HealthKit and notifications now that the pet is on screen,
+    /// Prompts for HealthKit and notifications once the pet is on screen,
     /// then re-reads today's steps so a freshly granted permission shows at
     /// once rather than after the cache window.
     private func requestPermissions() {

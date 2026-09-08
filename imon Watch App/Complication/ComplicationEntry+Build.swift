@@ -3,7 +3,7 @@ import Foundation
 /// App-side builder: turns a `PetState` into a `ComplicationEntry`, baking the
 /// display values and the current sprite rows. Lives only in the app target
 /// (it touches `PetStatus` and `SpriteCatalog`), keeping `ComplicationEntry`
-/// itself engine-free for sharing with the widget.
+/// itself engine-free for sharing with the complication extension.
 nonisolated extension ComplicationEntry {
 
     init(date: Date, state: PetState) {
@@ -25,6 +25,9 @@ nonisolated extension ComplicationEntry {
         )
     }
 
+    /// Status word for the complication face. The check order is the
+    /// precedence: first match wins, so `asleep` and `happy` appear only when
+    /// every earlier state is false.
     private static func mood(for status: PetStatus) -> String {
         if status.isDead { return "gone" }
         if status.isEgg { return "egg" }

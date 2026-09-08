@@ -1,9 +1,10 @@
 import Foundation
 import os
 
-/// Builds the production `PetStateStore`: the pet serialised through the
-/// versioned `PetStateDTO` into a single JSON blob in `UserDefaults` — a save
-/// measured in hundreds of bytes, so a file store would add only failure modes.
+/// Builds the production `PetStateStore` witness: the pet serialised through
+/// the versioned `PetStateDTO` into a single JSON blob in `UserDefaults` — a
+/// save measured in hundreds of bytes, so a file store would add only failure
+/// modes.
 nonisolated enum JSONPetStateStore {
 
     static let key = "com.cliftonia.imon.petState"
@@ -13,10 +14,10 @@ nonisolated enum JSONPetStateStore {
 
     // MARK: - Live
 
-    /// Pet state stays in `.standard` so persistence never depends on the App
-    /// Group being provisioned. Only the complication hand-off needs the
-    /// shared suite (`ComplicationStore`), and it degrades gracefully if
-    /// that suite is missing.
+    /// Creates the store on `.standard` so persistence never depends on the
+    /// App Group being provisioned. Only the complication hand-off needs the
+    /// shared suite (`ComplicationStore`), and it degrades gracefully if that
+    /// suite is missing.
     static func live(
         defaults: UserDefaults = .standard
     ) -> PetStateStore {

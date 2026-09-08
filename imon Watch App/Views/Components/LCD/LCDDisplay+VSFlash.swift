@@ -4,7 +4,7 @@ import Foundation
 
 extension LCDDisplay {
 
-    /// A faster, steady strobe for the short battle "VS" beat.
+    /// True on every third `phase`, strobing the short battle "VS" beat.
     static func isVSFlash(_ phase: Int) -> Bool {
         phase % 3 == 0
     }
@@ -12,8 +12,8 @@ extension LCDDisplay {
     static func vsTextCells() -> [(x: Int, y: Int)] { cells(from: vsTextRows) }
     static func vsShadowCells() -> [(x: Int, y: Int)] { cells(from: vsShadowRows) }
 
-    /// Bold italic "VS" spanning the LCD (Street Fighter style), centred, one
-    /// bit per pixel (bit 31 = col 0).
+    /// Bold italic "VS" spanning the LCD, centred, one bit per pixel
+    /// (bit 31 = col 0).
     private static let vsTextRows: [UInt32] = [
         0x00000000, 0x00000000, 0x00000000,
         0x381C7FF0, 0x381C7FF0, 0x1C387FF0, 0x1C387000,

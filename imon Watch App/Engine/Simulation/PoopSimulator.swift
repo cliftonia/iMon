@@ -1,9 +1,17 @@
 import Foundation
 
-/// Adds poop piles based on elapsed time since `lastPoopAt`.
-/// One poop every `poopInterval` (2 hours). Max 4 piles.
+/// Adds poop piles for elapsed time, counting whole intervals from the
+/// `lastPoopAt` anchor.
+///
+/// Stateless like the other simulators: all progress lives in the anchor, so
+/// catch-up and `wake` re-anchoring need no simulator-local state.
 nonisolated enum PoopSimulator {
 
+    /// Adds one pile per whole `poopInterval` elapsed since the anchor, capped
+    /// at `TimeConstants.maxPoopPiles`. A no-op while the pet sleeps or is
+    /// dead: `wake` re-anchors poop so sleep reads as a pause. The anchor
+    /// advances only by the counted intervals, so a partial remainder carries
+    /// into the next tick.
     static func apply(to state: PetState, at now: Date) -> PetState {
         var state = state
         guard state.isAwakeAndAlive else { return state }

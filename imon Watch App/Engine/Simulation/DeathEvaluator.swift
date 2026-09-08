@@ -1,7 +1,9 @@
 import Foundation
 
-/// Evaluates whether the pet has met a death condition and applies the
-/// resulting state change.
+/// Decides whether a death threshold in `TimeConstants` has killed the pet,
+/// and applies it. Evaluation and application are split so `GameEngine.step`
+/// can log the `CauseOfDeath` between deciding and flipping the flag; pure
+/// value in, value out, like the simulators.
 nonisolated enum DeathEvaluator {
 
     nonisolated enum CauseOfDeath: Sendable {
@@ -12,7 +14,11 @@ nonisolated enum DeathEvaluator {
 
     // MARK: - Evaluate
 
-    /// Returns the cause of death if a threshold is met, or `nil` if the pet is alive.
+    /// Returns the cause of death once a threshold is met, or `nil` while the
+    /// pet is alive. Eggs and pets already dead are ineligible. When several
+    /// thresholds are met at once the first check wins: lifetime `injuryCount`,
+    /// then an untreated injury older than `untreatedInjuryDeathTime`, then
+    /// the collapse countdown `CollapseTracker` started.
     static func evaluate(_ state: PetState, at now: Date) -> CauseOfDeath? {
         guard !state.isDead, !state.isEgg else { return nil }
 

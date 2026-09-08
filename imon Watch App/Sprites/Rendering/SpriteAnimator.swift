@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/// Drives sprite animation playback on the main thread for SwiftUI display.
+/// Sprite animation playback for SwiftUI views.
 /// `@Observable` so a view reading `currentFrame` re-renders on every frame
 /// advance without any explicit publisher wiring.
 @MainActor

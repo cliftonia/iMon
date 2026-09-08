@@ -7,7 +7,7 @@ extension PetScreen {
     // MARK: - Scene
 
     /// The home screen's scene: a clean booth during an action ceremony, else
-    /// the full environment. Resolved by `SceneResolver` (the rules' home).
+    /// the full environment. `SceneResolver` owns the resolution rules.
     var homeScene: LCDScene {
         let status = presenter.viewModel.status
         let careMessPresent = (status?.poopCount ?? 0) > 0 || status?.isInjured == true

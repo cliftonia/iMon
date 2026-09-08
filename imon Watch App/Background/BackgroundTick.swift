@@ -1,15 +1,11 @@
 import Foundation
 import os
 
-/// The work performed on a background wake: advance the saved pet to `now`,
-/// persist it, re-arm the next wake, and re-evaluate the care reminders against
-/// the fresh state. Self-contained — it reads and writes the store directly, so
-/// it runs on a bare background launch with no SwiftUI scene. Reuses the existing
-/// engine and the care-notification planner; it introduces no new game logic.
-/// Honours the Settings toggle via `notificationsEnabled`, matching the
-/// foreground contract in `PetPresenter.handleScenePhase`. `steps` is today's
-/// HealthKit total, `nil` when the Steps toggle is off or the read failed —
-/// the engine and planner then skip activity scaling.
+/// Runs one background tick: advances the saved pet to `now`, persists it,
+/// re-arms the next wake-up, and re-evaluates care reminders and complications.
+/// Self-contained: reads and writes `PetStateStore` directly, so a bare
+/// background launch runs it. `steps` is today's HealthKit total, or `nil` when
+/// the Steps toggle is off or the read failed — activity scaling is skipped.
 nonisolated enum BackgroundTick {
 
     // No defaulted witnesses — a new call site must decide notifications explicitly.
@@ -56,7 +52,8 @@ nonisolated enum BackgroundTick {
         // Re-arm before the task completes — the chain survives if work below is cut short.
         refresh.scheduleNext(from: now)
 
-        // Toggle off: a wake must not re-arm reminders — clear any left pending instead.
+        // Toggle off: a wake-up must not re-arm reminders — clear any left pending instead.
+        // Toggle handling matches the foreground contract in `PetPresenter.handleScenePhase`.
         if notificationsEnabled {
             let plan = CareNotificationPlanner.plan(for: advanced, now: now, steps: steps)
             notifications.schedule(plan)

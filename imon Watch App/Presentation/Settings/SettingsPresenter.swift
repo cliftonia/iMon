@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/// Drives the Settings screen. The toggles bind straight to the shared
+/// The Settings screen's presenter. Toggles bind straight to the shared
 /// `SettingsStore` (itself observable); the debug actions (DEBUG only) are
 /// injected closures onto the app's presenters, so this stays free of
 /// navigation and game knowledge. Holds no ViewModel — everything it exposes
@@ -10,7 +10,7 @@ final class SettingsPresenter {
 
     let settings: SettingsStore
 
-    /// "1.0 (1)" from the bundle — shown on the About row.
+    /// "1.0 (1)" from the bundle, "—" for missing values; shown on the About row.
     var versionLabel: String {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "—"
@@ -33,7 +33,8 @@ final class SettingsPresenter {
 }
 
 #if DEBUG
-/// The developer-only actions surfaced under the Settings page's Debug section.
+/// The developer-only actions under the Settings screen's Debug section,
+/// injected as a witness so `SettingsPresenter` holds no game knowledge.
 @MainActor
 struct SettingsDebugActions {
     let setWeather: (WeatherIconCondition?) -> Void

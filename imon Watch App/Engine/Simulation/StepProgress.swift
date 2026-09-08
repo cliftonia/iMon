@@ -1,17 +1,22 @@
 import Foundation
 
-/// Accumulates real-world steps into the lifetime total that drives evolution.
+/// Accumulates each day's real-world steps into the lifetime steps that drive
+/// evolution.
 ///
-/// Each day's fresh steps are folded into the (only-ever-growing) lifetime total.
-/// Finishing a *lazy* day (fewer than `lazyThreshold` steps) instead raises the
-/// evolution goal by a stage-scaled penalty - so progression rewards staying
-/// active rather than a single burst. All tuning lives here and in `EvolutionStage`.
+/// Fresh steps are credited to the lifetime total, which only ever grows, and
+/// finishing a lazy day — under `lazyThreshold` steps — raises the evolution
+/// goal by a stage-scaled penalty, so progression rewards staying active
+/// rather than a single burst. The accumulator is a plain value so a catch-up
+/// can replay each missed day through the same `advance` call, as
+/// `PetPresenter.settleAndRollOver` does. All tuning lives here and in
+/// `EvolutionStage`.
 nonisolated enum StepProgress {
 
-    /// A day below this step count is "lazy" and raises the evolution goal.
+    /// Steps under which a finished day counts as a lazy day; kept in line with
+    /// `ActivityModel.sedentaryFactor`, whose sedentary floor is the same count.
     static let lazyThreshold = 2_000
 
-    /// The persisted evolution accumulator, advanced as a unit.
+    /// The lifetime steps accumulator, advanced as a unit.
     nonisolated struct Progress: Sendable, Equatable {
         var lifetime: Int
         var creditedToday: Int
@@ -21,10 +26,14 @@ nonisolated enum StepProgress {
         var goalPenalty: Int
     }
 
-    /// Folds `todaySteps` into the accumulator, charging a lazy day's
-    /// `stagePenalty` to the evolution goal on a calendar-day rollover.
-    /// `todaySteps` is HealthKit's running total for the current day, so within a
-    /// day we credit only the delta since last seen.
+    /// Folds `todaySteps` into the accumulator, charging `stagePenalty` to the
+    /// evolution goal when a calendar-day rollover finishes a lazy day.
+    ///
+    /// `todaySteps` is HealthKit's running total for the current day, so within
+    /// a day only the delta since `creditedToday` is credited, and a downward
+    /// reading is ignored rather than subtracted; a negative count clamps to
+    /// zero. Callers pass the current stage's `EvolutionStage.lazyDayPenalty`
+    /// as `stagePenalty`.
     static func advance(
         _ progress: Progress,
         todaySteps: Int,
@@ -54,9 +63,10 @@ nonisolated enum StepProgress {
             )
         }
 
-        // One rollover charges one lazy day. A multi-day absence is settled by
-        // the caller replaying each missed day through here, so every one gets
-        // its own verdict rather than a single approximate charge.
+        // One rollover charges at most one lazy day: a multi-day absence is
+        // settled by `PetPresenter.settleAndRollOver` replaying each missed day
+        // through here, so every day gets its own verdict rather than one
+        // approximate charge.
         let penalty = progress.creditedToday < lazyThreshold ? stagePenalty : 0
         return Progress(
             lifetime: progress.lifetime + today,
@@ -71,7 +81,8 @@ nonisolated enum StepProgress {
 
 nonisolated extension StepProgress.Progress {
 
-    /// Packs the accumulator from the pet state's four persisted fields.
+    /// Creates an accumulator from `PetState`'s four persisted fields; the
+    /// field-for-field inverse of `write(to:)`.
     init(of state: PetState) {
         self.init(
             lifetime: state.lifetimeActiveSteps,
@@ -81,7 +92,8 @@ nonisolated extension StepProgress.Progress {
         )
     }
 
-    /// Writes the accumulator back into the pet state's four persisted fields.
+    /// Writes the accumulator back into the same four `PetState` fields that
+    /// `init(of:)` reads.
     func write(to state: inout PetState) {
         state.lifetimeActiveSteps = lifetime
         state.stepsCreditedToday = creditedToday

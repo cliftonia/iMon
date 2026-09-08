@@ -39,9 +39,8 @@ nonisolated struct EvolutionRequirement: Sendable {
 
     // MARK: - Evaluation
 
-    /// Steps gate *when* (the lifetime accumulator must reach the stage
-    /// threshold, raised by any lazy-day penalty); the care fields below decide
-    /// *which* branch.
+    /// Steps gate *when* — lifetime steps must reach the stage threshold, raised
+    /// by any lazy-day penalty; the care fields below decide *which* branch.
     func isSatisfied(by state: PetState) -> Bool {
         guard state.lifetimeActiveSteps >= state.evolutionGoal else {
             return false

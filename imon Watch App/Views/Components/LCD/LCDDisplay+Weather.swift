@@ -4,7 +4,7 @@ import SwiftUI
 
 extension LCDDisplay {
 
-    /// A brighter shade of the LCD green for the daytime lightning flash.
+    /// A brighter shade of the LCD green for the lights-on lightning flash.
     static let lightningFlashColor = Color(
         red: 200 / 255, green: 230 / 255, blue: 160 / 255
     )
@@ -79,16 +79,16 @@ extension LCDDisplay {
         }
     }
 
-    /// Lightning wash is active: an outdoor weather storm, or the battle VS
-    /// flash. Indoors the storm shows only as rain through the window.
+    /// Lightning wash is active: an outdoor weather storm, the battle VS
+    /// flash, or the evolution flash. Indoors the storm shows only as rain
+    /// through the window.
     private var isLightningActive: Bool {
         (weatherCondition == .storm && dayPhase != .inside) || stormFlash || evolveFlash
     }
 
-    /// Whether this tick is inside a lightning white-out (storm weather or the
-    /// battle storm flash), i.e. the whole screen is washed by the flash fill.
-    /// The eye re-stamp is skipped on these frames so dark holes don't punch
-    /// through the flash.
+    /// Whether the current phase is a lightning white-out: the whole screen is
+    /// washed by the flash fill, and the eye re-stamp is skipped on these
+    /// frames so dark holes don't punch through the flash.
     func isFlashFrame(phase: Int) -> Bool {
         guard isLightningActive else {
             return false
@@ -176,7 +176,7 @@ extension LCDDisplay {
         }
     }
 
-    /// Far snow layer — dim, slow fall, no sway (distant).
+    /// Far snow layer — dim, slow fall, no sway.
     private static func snowBackCells(phase: Int) -> [(x: Int, y: Int)] {
         let flakes: [(col: Int, offset: Int)] = [
             (1, 4), (7, 13), (12, 1), (18, 9), (24, 16), (29, 6)
@@ -241,7 +241,7 @@ extension LCDDisplay {
         return cells
     }
 
-    /// Near fog layer — shorter, denser wisps drifting a touch faster.
+    /// Near fog layer — shorter, denser wisps drifting slightly faster.
     private static func fogFrontCells(phase: Int) -> [(x: Int, y: Int)] {
         var cells: [(x: Int, y: Int)] = []
         for (row, off, length) in [(6, 0, 12), (12, 9, 16), (17, 4, 10)] {

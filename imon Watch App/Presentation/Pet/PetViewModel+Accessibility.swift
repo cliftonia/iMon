@@ -26,7 +26,6 @@ extension PetViewModel {
 
 extension PetViewModel.MenuAction {
 
-    /// The spoken name of each menu ring entry.
     var accessibilityName: String {
         switch self {
         case .stats: "stats"

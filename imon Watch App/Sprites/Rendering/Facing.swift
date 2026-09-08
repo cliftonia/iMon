@@ -2,14 +2,10 @@ import Foundation
 
 /// Horizontal orientation of a creature.
 ///
-/// **Single source of truth for facing.** Every creature sprite is authored
-/// facing `left`; `right` mirrors it. Frame data is NEVER pre-mirrored — each
-/// context (wander, feed, train, battle) states its facing explicitly via
-/// `.facing(_:)`, so changing one context can't silently flip another.
-///
-/// Front frames and side profiles are drawn facing opposite ways, so the
-/// context facings deliberately differ: eating shows `.left`, training and
-/// battle show `.right`. Do not "unify" them.
+/// Sprites are authored facing `left`; `right` mirrors them — frame data is
+/// never pre-mirrored, so each context states its facing via `.facing(_:)`.
+/// Differing context facings are deliberate (front and side art face
+/// opposite ways): do not "unify" them.
 nonisolated enum Facing: Sendable {
     case left
     case right

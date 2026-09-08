@@ -16,8 +16,8 @@ nonisolated enum FeedAction {
         state.isAwakeAndAlive
     }
 
-    /// Whether the stat this food refills is already at capacity, so eating it
-    /// would only add weight — a cue for the pet to refuse as "full".
+    /// Reports whether the stat this food refills is already at capacity, so
+    /// eating it would only add weight — a cue for the pet to refuse as "full".
     static func isSated(_ state: PetState, food: FoodKind) -> Bool {
         switch food {
         case .meat:
@@ -29,6 +29,9 @@ nonisolated enum FeedAction {
 
     // MARK: - Apply
 
+    /// Feeds the pet, refilling the food's heart up to the species maximum
+    /// and adding weight even when that stat is already full. Returns `state`
+    /// unchanged when `canFeed` is false.
     static func apply(to state: PetState, food: FoodKind, at now: Date = .now) -> PetState {
         guard canFeed(state) else { return state }
 

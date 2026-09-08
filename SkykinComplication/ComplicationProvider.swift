@@ -1,11 +1,11 @@
 import WidgetKit
 import Foundation
 
-/// The widget's view of one timeline snapshot. A deliberate mirror of the app's
-/// `ComplicationEntry`, kept here so the widget shares no source with the app —
-/// the contract is the JSON the app writes to the App Group. Decodes only the
-/// subset of `ComplicationEntry`'s keys the views render; `JSONDecoder` ignores
-/// the extra keys the app writes.
+/// The complication's view of one timeline snapshot. A deliberate mirror of the
+/// app's `ComplicationEntry`, kept here so the extension shares no source with
+/// the app — the contract is the JSON the app writes to the App Group. Decodes
+/// only the subset of `ComplicationEntry`'s keys the views render; `JSONDecoder`
+/// ignores the extra keys the app writes.
 struct WidgetEntry: TimelineEntry, Codable {
     let date: Date
     let speciesName: String
@@ -17,9 +17,9 @@ struct WidgetEntry: TimelineEntry, Codable {
 }
 
 extension WidgetEntry {
-    /// The newborn's idle pose (a copy of the app's Dotkin frame — the widget
-    /// shares no source with the app), so the gallery preview and a fresh
-    /// install show a creature rather than an empty box.
+    /// The newborn's idle pose (a copy of the app's Dotkin frame — the extension
+    /// shares no source with the app), so the gallery preview and a fresh install
+    /// show a creature rather than an empty box.
     static let placeholder = WidgetEntry(
         date: Date(),
         speciesName: "Dotkin",
@@ -35,8 +35,9 @@ extension WidgetEntry {
     )
 }
 
-/// Reads the baked timeline the app writes to the App Group. No engine here —
-/// the app does all the simulation and bakes the result, including the sprite.
+/// The complication's timeline provider. Reads the baked timeline the app
+/// writes to the App Group — no engine here: the app does all the simulation
+/// and bakes the result, including the sprite.
 struct ComplicationProvider: TimelineProvider {
 
     // Must match `AppGroup.identifier` and `ComplicationStore.key` in the app.

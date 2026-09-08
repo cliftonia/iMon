@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Draws a 16x16 sprite at a small pixel size — either following an
-/// animator's current frame or rendering one fixed frame.
 struct SpriteView: View {
 
     private let animator: SpriteAnimator?
@@ -21,8 +19,8 @@ struct SpriteView: View {
     }
 
     #if DEBUG
-    /// Static single-frame rendering — sole consumer is PetScreen's
-    /// debugNameOverlay.
+    /// Creates a view that renders one static frame; sole consumer is
+    /// `PetScreen.debugNameOverlay`.
     init(
         frame: SpriteFrame,
         pixelSize: CGFloat,

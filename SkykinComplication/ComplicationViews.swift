@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /// Renders a 16×16 sprite (one `UInt16` per row, MSB = leftmost) baked into the
-/// entry by the app, so the widget needs none of the app's sprite stack.
+/// entry by the app, so the complication needs none of the app's sprite stack.
 struct SpriteCanvas: View {
     let rows: [UInt16]
 
@@ -27,7 +27,6 @@ struct SpriteCanvas: View {
     }
 }
 
-/// Hunger hearts drawn with SF Symbols.
 struct HeartsRow: View {
     let value: Int
     let max: Int
@@ -42,7 +41,6 @@ struct HeartsRow: View {
     }
 }
 
-/// Family router.
 struct ComplicationView: View {
     @Environment(\.widgetFamily) private var family
     let entry: WidgetEntry

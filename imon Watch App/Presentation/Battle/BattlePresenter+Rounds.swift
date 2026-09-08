@@ -6,7 +6,7 @@ import WatchKit
 extension BattlePresenter {
 
     /// Plays one full round: pick, both attack ceremonies, then the impact.
-    /// Returns false when the battle task was cancelled mid-round so
+    /// Returns false when the battle task is cancelled mid-round so
     /// `runRoundLoop` bails out without judging HP.
     func runSingleRound() async -> Bool {
         enterChoosing()
@@ -149,6 +149,7 @@ extension BattlePresenter {
         onComplete(.lose)
     }
 
+    /// A draw reuses the `victory` phase: both pets idle, no winner animation.
     func showDraw() {
         guard let opp = opponent else { return }
         viewModel.result = .draw

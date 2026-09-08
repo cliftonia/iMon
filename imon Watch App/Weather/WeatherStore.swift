@@ -1,9 +1,9 @@
 import Foundation
 import os
 
-/// Holds the current weather snapshot and refreshes it on demand, throttled to
-/// the cache window. Leaves `snapshot` nil when weather is unavailable, so the
-/// UI can simply hide the overlay.
+/// The store for the current weather reading: refreshes on demand, throttled
+/// to the cache window. The reading stays nil when weather is unavailable so
+/// the UI can hide the overlay.
 @Observable
 final class WeatherStore {
 
@@ -13,8 +13,9 @@ final class WeatherStore {
     private let fallback: WeatherSnapshot?
     private let throttle = ThrottledFetch()
 
-    /// The snapshot the UI should render. In Release this is just `snapshot`;
-    /// in DEBUG a preview override can force a condition to polish its effect.
+    /// The snapshot the UI renders. Falls back to the injected `fallback` when
+    /// no live reading exists; in DEBUG a set `debugCondition` forces the
+    /// condition onto the current reading, or onto `.sample` when there is none.
     var displaySnapshot: WeatherSnapshot? {
         #if DEBUG
         if let debugCondition {
@@ -52,14 +53,14 @@ final class WeatherStore {
     }
     #endif
 
-    /// `fallback` is shown only when a fetch fails and no real reading exists
+    /// Creates the store. `fallback` is shown only when no real reading exists
     /// yet; left nil in Release so the overlay simply hides.
     init(provider: WeatherProvider = .live(), fallback: WeatherSnapshot? = nil) {
         self.provider = provider
         self.fallback = fallback
     }
 
-    /// Night derived from the reading's daylight flag, but only while the reading
+    /// Derives night from the reading's daylight flag, but only while the reading
     /// is still fresh. A stale reading (e.g. last night's, on reopening the next
     /// day) returns nil so day/night falls back to the clock instead of showing
     /// the old night until a fetch completes.
@@ -72,8 +73,9 @@ final class WeatherStore {
         return !snapshot.isDaylight
     }
 
-    /// Kicks off a refresh unless one is in flight or the last fetch is still
-    /// within the cache window. Returns the spawned task (nil if skipped).
+    /// Starts a refresh unless one is in flight or the last fetch is still
+    /// within the cache window. The returned task is nil when the refresh is
+    /// skipped.
     @discardableResult
     func refreshIfStale(now: Date = .now) -> Task<Void, Never>? {
         throttle.startIfStale(
@@ -89,7 +91,7 @@ final class WeatherStore {
     /// Fetches and stores a snapshot, leaving the existing value on failure.
     /// Failures still count toward the cache window (so a missing
     /// authorization doesn't spin a fetch on every wrist raise) but never
-    /// refresh the reading's age — the surviving snapshot ages out honestly.
+    /// refresh the reading's age — the surviving snapshot keeps its true age.
     func refresh(now: Date = .now) async {
         do {
             snapshot = try await provider.fetchCurrent()
@@ -100,8 +102,9 @@ final class WeatherStore {
         }
     }
 
-    /// Live store with a DEBUG-only placeholder so the overlay is visible before
-    /// the WeatherKit capability is provisioned. Release shows real data only.
+    /// Creates the live store with a DEBUG-only placeholder so the overlay is
+    /// visible before the WeatherKit capability is provisioned. Release shows
+    /// real data only.
     static func makeDefault() -> WeatherStore {
         #if DEBUG
         return WeatherStore(provider: .live(), fallback: .sample)

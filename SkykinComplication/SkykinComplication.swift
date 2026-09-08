@@ -1,8 +1,6 @@
 import WidgetKit
 import SwiftUI
 
-/// The complication extension's entry point — watchOS discovers the widget
-/// through this bundle.
 @main
 struct SkykinComplicationBundle: WidgetBundle {
     var body: some Widget {

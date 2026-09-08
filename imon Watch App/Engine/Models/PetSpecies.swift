@@ -84,7 +84,6 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
 
     // MARK: - Capacity (grows per evolution; strength ↔ HP trade off per branch)
 
-    /// Maximum hunger hearts (heart-meter capacity).
     var maxHunger: Int {
         switch self {
         case .dotkin: 2
@@ -95,7 +94,6 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
         }
     }
 
-    /// Maximum strength hearts (heart-meter capacity).
     var maxStrength: Int {
         switch self {
         case .dotkin: 2
@@ -107,7 +105,6 @@ nonisolated enum PetSpecies: String, Codable, Sendable, CaseIterable, Identifiab
         }
     }
 
-    /// Base battle HP (combat stamina); higher where strength is lower.
     var baseHP: Int {
         switch self {
         case .dotkin: 2

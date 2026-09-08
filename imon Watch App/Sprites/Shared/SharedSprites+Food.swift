@@ -4,16 +4,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Food
 
-    // Meat: compact drumstick shifted left for trailing padding
-    //    ..######........  dome
-    //    .########.......  widest
-    //    .########.......
-    //    ..######........
-    //    ....##..........  bone shaft
-    //    ....##..........
-    //    ...####.........  bone knob
-    //    ....##..........
-
+    // Compact drumstick shifted left, leaving trailing padding.
     static let meat = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -33,15 +24,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin: compact capsule shifted left for trailing padding
-    //    ...####.........  rounded top
-    //    ..######........  body
-    //    ..######........
-    //    ..##..##........  center divide
-    //    ..######........
-    //    ..######........
-    //    ...####.........  rounded bottom
-
+    // Compact capsule shifted left, leaving trailing padding.
     static let vitamin = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -63,7 +46,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Feeding Sprites
 
-    // Meat steaming — frame 1: steam wisps above compact drumstick
+    // Steam wisps reused above the drumstick; matches `meatSteaming2` shifted.
     static let meatSteaming1 = SpriteFrame(rows: [
         0x0A00, //  ....#.#.........  steam wisps
         0x0600, //  .....##.........  steam
@@ -83,7 +66,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Meat steaming — frame 2: steam wisps shifted
+    // Same steam as `meatSteaming1`, shifted; body is unchanged.
     static let meatSteaming2 = SpriteFrame(rows: [
         0x1400, //  ...#.#..........  steam shifted
         0x0A00, //  ....#.#.........  steam
@@ -103,7 +86,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Meat after first bite — dome reduced
     static let meatBite1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -123,7 +105,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Meat after second bite — small scrap, bone visible
     static let meatBite2 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -143,7 +124,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Bare bone — compact knob-shaft-knob
     static let meatBone = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -163,7 +143,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin gleaming — frame 1: sparkle upper-right
+    // Sparkle upper-right; capsule is unchanged.
     static let vitaminGleaming1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0080, //  ........#.......  sparkle top
@@ -183,7 +163,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin gleaming — frame 2: sparkle lower-left
+    // Same sparkle as `vitaminGleaming1`, relocated lower-left.
     static let vitaminGleaming2 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -203,7 +183,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin after first bite — bottom shrunk
     static let vitaminBite1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -223,7 +202,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin after second bite — top half only
     static let vitaminBite2 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -243,7 +221,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Vitamin empty — compact hollow outline
     static let vitaminEmpty = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -263,15 +240,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Satisfaction heart — shifted left+up so it doesn't touch the right edge
-    //
-    //    ...##.##........
-    //    ..########......
-    //    ..########......
-    //    ...######.......
-    //    ....####........
-    //    .....##.........
-
+    // Shifted left and up on purpose; do not center it or it touches the edge.
     static let satisfactionHeart = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -288,14 +257,12 @@ nonisolated extension SharedSprites {
 
     // MARK: - Feeding Animations
 
-    /// Steaming meat — steam wisps alternate (looping).
     static let meatServing = SpriteAnimation(
         frames: [meatSteaming1, meatSteaming2],
         frameDuration: 0.4,
         loops: true
     )
 
-    /// Gleaming vitamin — sparkle alternates position (looping).
     static let vitaminServing = SpriteAnimation(
         frames: [vitaminGleaming1, vitaminGleaming2],
         frameDuration: 0.5,

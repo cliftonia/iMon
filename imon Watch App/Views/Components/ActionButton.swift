@@ -7,7 +7,7 @@ struct ActionButton: View {
     /// What the press does right now, for VoiceOver — the printed label is
     /// only "A", "B" or "C".
     var accessibilityLabel: String?
-    /// Optional debug action fired on a long press (e.g. cycle weather / evolve).
+    /// Debug action fired on a long press (e.g. cycle weather / evolve).
     var longPressAction: (() -> Void)?
     let action: () -> Void
     @Environment(\.lcdTheme) private var theme

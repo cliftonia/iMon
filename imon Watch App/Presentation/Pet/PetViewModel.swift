@@ -81,7 +81,6 @@ final class PetViewModel {
         }
     }
 
-    /// The evolution flash is playing.
     var isEvolving: Bool { activity == .evolving }
 
     /// True when any activity or mode is active (blocks input).

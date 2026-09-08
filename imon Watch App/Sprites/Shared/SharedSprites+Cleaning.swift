@@ -4,13 +4,6 @@ nonisolated extension SharedSprites {
 
     // MARK: - Cleaning
 
-    // Water drops falling — frame 1 (shower head + drops)
-    //
-    //    .....###........   pipe stem
-    //    ...#######......   head plate
-    //    ...#.#.#.#......   nozzle holes
-    //    ...#..#..#......   drops fall below
-    //
     static let waterDrops1 = SpriteFrame(rows: [
         0x0700, //  .....###........   (pipe stem)
         0x1FC0, //  ...#######......   (head plate)
@@ -50,7 +43,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Clean sparkle — frame 1
     static let cleanSparkle1 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
         0x0800, //  ....#...........
@@ -76,14 +68,13 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000
     ])
 
-    /// Falling water drops for shower cleaning (looping).
     static let waterDrops = SpriteAnimation(
         frames: [waterDrops1, waterDrops2],
         frameDuration: 0.2,
         loops: true
     )
 
-    /// Clean sparkles after washing (looping).
+    /// Plays after the wash; `waterDrops` plays during it.
     static let cleanSparkle = SpriteAnimation(
         frames: [cleanSparkle1, cleanSparkle2],
         frameDuration: 0.3,

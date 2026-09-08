@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A bezel-framed animator sprite on the LCD background — the shared
-/// assembly used by the death, hatch, and onboarding screens.
+/// A shared bezel-and-sprite assembly used by the death, hatch, and
+/// onboarding screens.
 struct AnimatedSpriteBezel: View {
 
     let animator: SpriteAnimator

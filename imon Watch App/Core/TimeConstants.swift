@@ -8,37 +8,36 @@ nonisolated enum TimeConstants {
 
     // MARK: - Stat Depletion
 
-    /// Hunger hearts deplete one every 70 minutes.
+    /// One hunger heart per interval.
     static let hungerDepletionInterval: TimeInterval = 4_200
 
-    /// Strength hearts deplete one every 60 minutes.
+    /// One strength heart per interval.
     static let strengthDepletionInterval: TimeInterval = 3_600
 
     // MARK: - Lifecycle Events
 
-    /// A poop pile appears every 2 hours.
+    /// One poop pile per interval.
     static let poopInterval: TimeInterval = 7_200
 
-    /// Owner has 20 minutes to respond to a care call before it counts as a care mistake.
+    /// A care call unanswered for this long becomes a care mistake.
     static let careMistakeWindow: TimeInterval = 1_200
 
-    /// A light left on at night accrues a mistake only every 3 hours, so one
+    /// A light left on at night accrues one care mistake per interval, so one
     /// forgetful night nudges evolution toward neglect without hard-locking it.
     static let lightsMistakeWindow: TimeInterval = 10_800
 
     // MARK: - Game Loop
 
-    /// Main simulation tick fires every 30 seconds.
     static let gameTickInterval: TimeInterval = 30
 
-    /// How long after the light goes off at bedtime before the pet drops off.
+    /// The settle — the gap between the light going out at bedtime and the pet falling asleep.
     static let sleepDelay: TimeInterval = 120
 
     /// The pet's bedtime: it only settles to sleep from 9pm until the morning
     /// wake hour, so an early winter dusk doesn't send it to bed at 5pm.
     static let sleepHour: Int = 21
 
-    /// Fallback dark window (24h clock) used only when weather is unavailable.
+    /// The fallback night window (24h clock), used only when weather is unavailable.
     static let nightStartHour: Int = 18
     static let nightEndHour: Int = 6
 
@@ -49,16 +48,16 @@ nonisolated enum TimeConstants {
 
     // MARK: - Death Thresholds
 
-    /// Total untreated injuries before the Creature dies.
+    /// Total untreated injuries before the pet dies.
     static let maxInjuriesBeforeDeath: Int = 20
 
-    /// An untreated injury leads to death after 6 hours (an acute condition the
-    /// owner is expected to treat promptly).
+    /// An untreated injury becomes fatal after this long.
     static let untreatedInjuryDeathTime: TimeInterval = 21_600
 
-    /// A pet with no hunger and no strength collapses; left languishing this
-    /// long (48 hours) without recovery, it finally perishes. Care mistakes no
-    /// longer kill — they only steer evolution — so this is the sole neglect death.
+    /// The languishing countdown toward collapse: once hunger and strength
+    /// are both empty, the pet dies if this interval elapses without recovery.
+    /// Care mistakes steer evolution but never kill, so this is the sole
+    /// neglect death.
     static let collapseDeathTime: TimeInterval = 172_800
 
     // MARK: - Notifications
@@ -72,13 +71,13 @@ nonisolated enum TimeConstants {
     /// Small lead before the exercise nudge fires, so it's prompt but not instant.
     static let exerciseNudgeLead: TimeInterval = 600
 
-    /// How long before a collapse death to warn that the pet is fading (6 hours).
+    /// How long before a collapse death to warn that the pet is fading.
     static let nearingDeathLead: TimeInterval = 21_600
 
     // MARK: - Background Refresh
 
-    /// How far ahead to request the next background wake (the system grants
-    /// roughly one per hour for a Dock app, so asking sooner is pointless).
+    /// How far ahead to request the next background refresh; the system grants
+    /// roughly one per hour for a Dock app, so asking sooner is pointless.
     static let backgroundRefreshInterval: TimeInterval = 3_600
 
     // MARK: - Feeding
@@ -94,7 +93,6 @@ nonisolated enum TimeConstants {
     /// Weight lost per completed training session (grams).
     static let trainWeightLoss: Int = 2
 
-    /// Number of rounds in a training session.
     static let trainRounds: Int = 5
 
     /// Wins needed in training to count as a successful session.
@@ -114,7 +112,7 @@ nonisolated enum TimeConstants {
     /// Battle-power added per strength heart.
     static let strengthPowerWeight: Double = 5.0
 
-    /// Overweight pets fight at half power.
+    /// Multiplier applied to battle power while the pet is overweight.
     static let overweightPowerPenalty: Double = 0.5
 
     /// Activity factor at or above this grants the active HP bonus.
@@ -122,9 +120,7 @@ nonisolated enum TimeConstants {
 
     // MARK: - Weather
 
-    /// Cache window before re-fetching current weather (30 minutes).
     static let weatherCacheInterval: TimeInterval = 1_800
 
-    /// Cache window before re-fetching today's step count (10 minutes).
     static let stepCacheInterval: TimeInterval = 600
 }

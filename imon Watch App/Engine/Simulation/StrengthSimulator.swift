@@ -1,16 +1,25 @@
 import Foundation
 
-/// Depletes strength hearts based on elapsed time since `lastStrengthDecayAt`.
-/// One heart lost per `strengthDepletionInterval` (60 min).
+/// Decays strength hearts one per `strengthDepletionInterval` (60 min),
+/// counting whole intervals from the `lastStrengthDecayAt` anchor.
+///
+/// Activity scaling runs inverse to hunger — strength depletes faster the
+/// less the wearer moves (`ActivityModel.strengthRateMultiplier`). Like the
+/// other simulators, the enum is stateless: all progress lives in the
+/// anchor, so catch-up and `wake` re-anchoring need no simulator-local
+/// state.
 nonisolated enum StrengthSimulator {
 
-    /// `steps` (today's running count) speeds depletion via
-    /// `ActivityModel.strengthRateMultiplier`; `nil` keeps the base rate.
+    /// Skips depletion while the pet sleeps or is dead: `wake` re-anchors
+    /// strength along with hunger and poop, so sleep reads as a pause.
+    /// `steps` is today's running count, fed to
+    /// `ActivityModel.strengthRateMultiplier`; `nil` keeps the base
+    /// interval. Emptying the last heart stamps `strengthEmptiedAt`, which
+    /// `CollapseTracker` uses to start the languishing countdown.
     static func apply(to state: PetState, at now: Date, steps: Int? = nil) -> PetState {
         var state = state
         guard state.isAwakeAndAlive else { return state }
 
-        // Strength depletes faster the less the wearer moves (more vitamins).
         let multiplier = steps.map { ActivityModel.strengthRateMultiplier(steps: $0) } ?? 1.0
         let emptiedAt = HeartDecay.deplete(
             &state.strengthHearts,

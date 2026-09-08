@@ -1,6 +1,9 @@
 import Foundation
 
-/// Cleaning flushes every poop pile in one go; there is no per-pile scoop.
+/// Flushes every poop pile in one go; there is deliberately no per-pile scoop.
+///
+/// A caseless enum because the action is pure behaviour over `PetState` — no
+/// instance state exists to carry between the `canClean` gate and `apply`.
 nonisolated enum CleanAction {
 
     // MARK: - Query
@@ -11,12 +14,14 @@ nonisolated enum CleanAction {
 
     // MARK: - Apply
 
+    /// Removes every pile and re-anchors `lastPoopAt` to `now`, so a pile
+    /// nearly due does not reappear right after cleaning. Returns the state
+    /// unchanged when `canClean` says there is nothing to do.
     static func apply(to state: PetState, at now: Date = .now) -> PetState {
         guard canClean(state) else { return state }
 
         var state = state
         state.poopCount = 0
-        // Reset the timer — a pile nearly due must not reappear right after cleaning.
         state.timestamps.lastPoopAt = now
         return state
     }

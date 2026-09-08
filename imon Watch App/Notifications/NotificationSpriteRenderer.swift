@@ -86,7 +86,7 @@ nonisolated enum NotificationSpriteRenderer {
         drawPet(species, pixel: pixel, in: context)
     }
 
-    /// The faint 4-cell backdrop grid, matching the on-screen LCD.
+    /// Draws the faint 4-cell backdrop grid, matching the on-screen LCD.
     private static func drawGrid(pixel: RGB, in context: CGContext) {
         fill(pixel, alpha: 0.06, in: context)
         let thickness: CGFloat = 1
@@ -102,7 +102,7 @@ nonisolated enum NotificationSpriteRenderer {
         }
     }
 
-    /// The ground band and the scattered grass tufts sitting just above it.
+    /// Draws the ground band and the scattered grass tufts sitting just above it.
     private static func drawGround(pixel: RGB, in context: CGContext) {
         fill(pixel, alpha: 0.12, in: context)
         context.fill(CGRect(
@@ -114,7 +114,7 @@ nonisolated enum NotificationSpriteRenderer {
         }
     }
 
-    /// A full moon in the top-right with a few stars kept clear of the pet.
+    /// Draws a full moon in the top-right with a few stars kept clear of the pet.
     private static func drawNightSky(pixel: RGB, in context: CGContext) {
         fill(pixel, alpha: 1, in: context)
         for disc in moonDisc {

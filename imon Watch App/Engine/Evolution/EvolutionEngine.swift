@@ -6,6 +6,8 @@ import os
 /// specific rows.
 nonisolated enum EvolutionEngine {
 
+    /// Returns the next species, or nil for an egg, a dead pet, an
+    /// ultimate-stage pet, or one with no satisfied chart row.
     static func checkEvolution(for state: PetState) -> PetSpecies? {
         guard !state.isEgg, !state.isDead, state.species.stage != .ultimate else { return nil }
 
@@ -40,9 +42,10 @@ nonisolated enum EvolutionEngine {
         state.battleWins = 0
         state.battleLosses = 0
         state.trainingCount = 0
-        // Fresh stage, fresh goal — lazy penalties don't follow the pet across stages.
+        // Lazy-day penalties do not carry across stages.
         state.evolutionGoalPenalty = 0
-        // injuryCount resets too — carried over, training injuries kill in ~40 days.
+        // injuryCount must not carry over: kept across stages, training
+        // injuries would kill the pet in ~40 days.
         state.timestamps.collapsingAt = nil
         state.isInjured = false
         state.timestamps.injuredAt = nil

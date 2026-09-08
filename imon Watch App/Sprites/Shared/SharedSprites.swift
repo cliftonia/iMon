@@ -1,37 +1,23 @@
 import Foundation
 
-/// Common sprites shared across the app: egg, food, status icons, and effects.
-/// All bitmaps are 16x16 monochrome encoded as UInt16 rows (MSB = left).
+/// Egg animations and status icons shared across the app.
+/// Bitmaps are 16x16 monochrome, one `UInt16` per row with the MSB as the
+/// leftmost pixel.
 nonisolated enum SharedSprites {
 
     // MARK: - Egg
 
-    /// Egg sitting still, then wobbling side-to-side.
     static let egg = SpriteAnimation(
         frames: [eggStill, eggWobble],
         frameDuration: 0.8,
         loops: true
     )
 
-    /// Egg cracking sequence: small crack, big crack, hatching burst.
     static let eggCrack = SpriteAnimation(
         frames: [eggCrack1, eggCrack2, eggCrack3],
         frameDuration: 0.6,
         loops: false
     )
-
-    // Egg still - oval shape centered
-    //
-    //    ......####......
-    //    ....########....
-    //    ...##########...
-    //    ..############..
-    //    ..############..
-    //    ..############..
-    //    ..############..
-    //    ...##########...
-    //    ....########....
-    //    ......####......
 
     private static let eggStill = SpriteFrame(rows: [
         0x0000, //  ................
@@ -52,7 +38,6 @@ nonisolated enum SharedSprites {
         0x0000  //  ................
     ])
 
-    // Egg wobbled to the right
     private static let eggWobble = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -72,7 +57,6 @@ nonisolated enum SharedSprites {
         0x0000  //  ................
     ])
 
-    // Egg with small crack line across middle
     private static let eggCrack1 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
         0x03C0, //  ......####......
@@ -88,7 +72,6 @@ nonisolated enum SharedSprites {
         0x0000, 0x0000, 0x0000
     ])
 
-    // Egg with large crack, splitting open
     private static let eggCrack2 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
         0x03C0,
@@ -104,7 +87,6 @@ nonisolated enum SharedSprites {
         0x0000, 0x0000, 0x0000
     ])
 
-    // Egg bursting open - shell fragments flying
     private static let eggCrack3 = SpriteFrame(rows: [
         0x1008, //  ...#.........#..  fragment
         0x0810, //  ....#......#....  fragment
@@ -126,17 +108,7 @@ nonisolated enum SharedSprites {
 
     // MARK: - Status Icons
 
-    // Compact skull and crossbones (top-right status icon)
-    //    .....####.......
-    //    ....######......
-    //    ....#.##.#......  eye sockets
-    //    ....######......
-    //    .....####.......  jaw
-    //    .....#..#.......  teeth
-    //    .....#..#.......  bone tips
-    //    ......##........  bone cross
-    //    .....#..#.......  bone tips
-
+    /// Skull and crossbones shown as the top-right status icon.
     static let skull = SpriteFrame(rows: [
         0x0000, //  ................
         0x0780, //  .....####.......  skull cap
@@ -155,19 +127,6 @@ nonisolated enum SharedSprites {
         0x0000, //  ................
         0x0000  //  ................
     ])
-
-    // Tombstone / grave marker
-    //    .....######.....
-    //    ....########....
-    //    ...##########...
-    //    ...##.####.##...   R.I.P. cross
-    //    ...####..####...
-    //    ...##.####.##...
-    //    ...##########...
-    //    ...##########...
-    //    ...##########...
-    //    ....########....
-    //    ..##############
 
     static let grave = SpriteFrame(rows: [
         0x0000, //  ................

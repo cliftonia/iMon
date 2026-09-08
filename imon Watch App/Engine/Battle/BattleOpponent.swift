@@ -1,7 +1,8 @@
 import Foundation
 
-/// A sparring partner drawn for a single battle: a species plus a power roll
-/// jittered around the species base so repeat fights are not identical.
+/// A sparring partner drawn for a single battle: a `PetSpecies` plus a
+/// power roll jittered around the species' `basePower` so repeat fights
+/// are not identical.
 nonisolated struct BattleOpponent: Sendable {
 
     let species: PetSpecies
@@ -9,7 +10,8 @@ nonisolated struct BattleOpponent: Sendable {
 
     /// Generates an opponent matched to the player's current stage.
     /// Prefers a different species of the same evolution stage, falling
-    /// back to any other species so the pet never battles itself.
+    /// back to any other species, and to the pet's own species as a last
+    /// resort.
     static func generate(matching state: PetState) -> BattleOpponent {
         let sameStage = PetSpecies.allCases.filter {
             $0.stage == state.species.stage && $0 != state.species

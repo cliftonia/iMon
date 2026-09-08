@@ -23,7 +23,7 @@ extension LCDDisplay {
     }
 
     /// The lamp-lit room gradient — bright pool under the lamp fading to the
-    /// ambient shade. Shared by the room glow and the indoor eye-hole backing
+    /// ambient shade. Shared by `drawRoomGlow` and the indoor eye-hole backing
     /// so the eyes match the wall behind them exactly, wherever the pet stands.
     func roomGlowShading(
         pixelWidth: CGFloat,

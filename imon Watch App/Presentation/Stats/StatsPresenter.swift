@@ -1,8 +1,8 @@
 import Foundation
 
-/// Drives the read-only stats screen. `update(from:steps:stepsEnabled:)` formats
-/// a one-shot snapshot of the live `PetState` into display strings — the screen
-/// does not tick, so its figures are frozen at the moment Stats was opened.
+/// Presenter for the read-only stats screen. `update(from:steps:stepsEnabled:)`
+/// formats a one-shot snapshot of the live `PetState` into display strings — the
+/// screen does not tick, so its figures are frozen at the moment Stats was opened.
 /// With the Steps switch off the activity and evolution rows say so, since
 /// evolution is step-fed and would otherwise look silently stuck.
 final class StatsPresenter {

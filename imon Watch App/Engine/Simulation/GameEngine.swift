@@ -1,17 +1,25 @@
 import Foundation
 import os
 
-/// Core simulation loop that advances pet state from `lastAdvancedAt` to a
-/// given point in time. Called on app wake, timer tick, and user actions.
+/// Runs a tick: advances pet state from `lastAdvancedAt` to a given date.
+///
+/// A caseless enum because the engine is a pure state-to-state function with
+/// no stored state; `nonisolated` lets a tick run from any isolation. Called
+/// on app wake, on the foreground and background schedules, and after user
+/// actions.
 nonisolated enum GameEngine {
 
     /// Advances the full game state to the supplied date, running every
-    /// simulator in the correct order and checking death conditions.
+    /// simulator in order and evaluating death.
     ///
-    /// `isNight` is the weather's daylight reading; `nil` falls back to the
-    /// fixed clock window in `SleepSchedule.isNight`. `steps` is today's
-    /// running step count; `nil` (steps disabled or unavailable) leaves every
-    /// simulator at its base, activity-unscaled rate.
+    /// A call spanning a long gap is a catch-up: the clock's sleep boundaries
+    /// inside the span are replayed before landing on `now`, so a missed
+    /// night is slept through rather than charged as waking hours. `isNight`
+    /// is the weather's daylight reading; `nil` resolves night from the
+    /// 18:00–06:00 clock window in `SleepSchedule.isNight`. `steps` is
+    /// today's running count; `nil` (steps disabled or unavailable) disables
+    /// activity scaling, leaving every simulator at its base interval. For a
+    /// dead or egg pet only `lastAdvancedAt` moves; no simulator runs.
     static func advance(
         _ state: PetState,
         to now: Date,
@@ -25,10 +33,9 @@ nonisolated enum GameEngine {
             return state
         }
 
-        // Replay the clock's dusk, bedtime, settle and dawn inside the span, so a
-        // night the app never saw is slept through rather than charged as waking
-        // hours. Those moments predate the weather reading, so they use the clock;
-        // only the final step sees the live signal.
+        // Replayed boundaries predate the weather reading, so they resolve
+        // night from the clock (isNight: nil); only the final step sees the
+        // live signal.
         let boundaries = SleepSchedule.replayBoundaries(
             from: state.timestamps.lastAdvancedAt, to: now
         )
@@ -39,8 +46,11 @@ nonisolated enum GameEngine {
         return step(state, to: now, isNight: isNight, steps: steps)
     }
 
-    /// One simulation step from `lastAdvancedAt` to `now`, every simulator in
-    /// dependency order, then the death check.
+    /// Runs one step from `lastAdvancedAt` to `now`: every simulator, then
+    /// the death check.
+    ///
+    /// The simulator order is load-bearing — the trackers read the hearts and
+    /// flags the earlier simulators wrote — so do not reorder it.
     private static func step(
         _ state: PetState,
         to now: Date,
@@ -55,11 +65,11 @@ nonisolated enum GameEngine {
         ).day ?? state.age
         state.age = max(0, days)
 
-        // Resolve day/night and bedtime once so every simulator sees the same signal.
+        // Resolve night and bedtime once so every simulator in the step sees
+        // the same signal.
         let night = SleepSchedule.isNight(weatherNight: isNight, at: now)
         let bedtime = SleepSchedule.isBedtime(at: now)
 
-        // Apply simulators in dependency order
         state = SleepSchedule.apply(to: state, at: now, night: night)
         state = HungerSimulator.apply(to: state, at: now, steps: steps)
         state = StrengthSimulator.apply(to: state, at: now, steps: steps)

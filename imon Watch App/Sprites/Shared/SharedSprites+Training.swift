@@ -4,129 +4,110 @@ nonisolated extension SharedSprites {
 
     // MARK: - Training
 
-    // Boxing heavy bag — shifted left for trailing padding
-    //
-    //    ....##..........  chain
-    //    ....##..........  chain
-    //    ...####.........  bracket
-    //    .########.......  body (flat top)
-    //    .########.......
-    //    .########.......
-    //    .########.......
-    //    .########.......
-    //    .########.......
-    //    .########.......
-    //    .########.......  body (flat bottom)
-    //    ..######........  rounded
-    //    ...####.........  rounded
-
+    // `trainingTargetHit` and `trainingTargetRecoil` keep the chain's top
+    // two rows identical to this frame, so the bag swings without its
+    // hanger moving.
     static let trainingTarget = SpriteFrame(rows: [
-        0x0C00, //  ....##..........  chain
-        0x0C00, //  ....##..........  chain
-        0x0C00, //  ....##..........  chain
-        0x1E00, //  ...####.........  bracket
-        0x7F80, //  .########.......  body
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x7F80, //  .########.......
-        0x3F00, //  ..######........  rounded bottom
-        0x1E00  //  ...####.........
+        0x0C00,
+        0x0C00,
+        0x0C00,
+        0x1E00,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x7F80,
+        0x3F00,
+        0x1E00
     ])
 
-    // Heavy bag punched right — body shifted, impact lines
     static let trainingTargetHit = SpriteFrame(rows: [
-        0x0C00, //  ....##..........  chain (anchored)
-        0x0C00, //  ....##..........  chain
-        0x0600, //  .....##.........  chain bends right
-        0x0F00, //  ....####........  bracket shifted
-        0x3FC0, //  ..########......  body shifted right
-        0x3FC0, //  ..########......
-        0xBFC0, //  #.########......  impact line
-        0x7FC0, //  .#########......  impact line
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x3FC0, //  ..########......
-        0x1F80, //  ...######.......  rounded bottom
-        0x0F00  //  ....####........
+        0x0C00,
+        0x0C00,
+        0x0600,
+        0x0F00,
+        0x3FC0,
+        0x3FC0,
+        0xBFC0,
+        0x7FC0,
+        0x3FC0,
+        0x3FC0,
+        0x3FC0,
+        0x3FC0,
+        0x3FC0,
+        0x3FC0,
+        0x1F80,
+        0x0F00
     ])
 
-    // Heavy bag recoiling left — body shifted left
     static let trainingTargetRecoil = SpriteFrame(rows: [
-        0x0C00, //  ....##..........  chain (anchored)
-        0x0C00, //  ....##..........  chain
-        0x1800, //  ...##...........  chain bends left
-        0x3C00, //  ..####..........  bracket shifted
-        0xFF00, //  ########........  body shifted left
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0xFF00, //  ########........
-        0x7E00, //  .######.........  rounded bottom
-        0x3C00  //  ..####..........
+        0x0C00,
+        0x0C00,
+        0x1800,
+        0x3C00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0xFF00,
+        0x7E00,
+        0x3C00
     ])
 
-    // Victory sparkle frame 1 — stars scattered
     static let trainingStar1 = SpriteFrame(rows: [
-        0x0100, //  .......#........
-        0x0280, //  ......#.#.......
-        0x0100, //  .......#........
-        0x0000, //  ................
-        0x8001, //  #..............#
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0100, //  .......#........
-        0x0280, //  ......#.#.......
-        0x0100, //  .......#........
-        0x0000, //  ................
-        0x0000  //  ................
+        0x0100,
+        0x0280,
+        0x0100,
+        0x0000,
+        0x8001,
+        0x0000,
+        0x0000,
+        0x0000,
+        0x0000,
+        0x0000,
+        0x0000,
+        0x0100,
+        0x0280,
+        0x0100,
+        0x0000,
+        0x0000
     ])
 
-    // Victory sparkle frame 2 — stars shifted
     static let trainingStar2 = SpriteFrame(rows: [
-        0x0000, //  ................
-        0x0000, //  ................
-        0x2004, //  ..#..........#..
-        0x0000, //  ................
-        0x0100, //  .......#........
-        0x0280, //  ......#.#.......
-        0x0100, //  .......#........
-        0x0000, //  ................
-        0x0000, //  ................
-        0x0100, //  .......#........
-        0x0280, //  ......#.#.......
-        0x0100, //  .......#........
-        0x0000, //  ................
-        0x2004, //  ..#..........#..
-        0x0000, //  ................
-        0x0000  //  ................
+        0x0000,
+        0x0000,
+        0x2004,
+        0x0000,
+        0x0100,
+        0x0280,
+        0x0100,
+        0x0000,
+        0x0000,
+        0x0100,
+        0x0280,
+        0x0100,
+        0x0000,
+        0x2004,
+        0x0000,
+        0x0000
     ])
 
-    // Punching bag hit sequence: hit → recoil → settle
     static let trainingHitSequence = SpriteAnimation(
         frames: [trainingTargetHit, trainingTargetRecoil, trainingTarget],
         frameDuration: 0.2,
         loops: false
     )
 
-    // Victory sparkle looping
     static let trainingVictorySparkle = SpriteAnimation(
         frames: [trainingStar1, trainingStar2],
         frameDuration: 0.3,

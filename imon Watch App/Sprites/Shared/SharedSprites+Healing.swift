@@ -5,17 +5,6 @@ nonisolated extension SharedSprites {
     // MARK: - Healing
 
     // Syringe with plunger up — ready to inject
-    //
-    //    ......##........  plunger handle
-    //    ......##........  plunger shaft
-    //    ......##........
-    //    ....######......  barrel top
-    //    ....##..##......  barrel body
-    //    ....##..##......
-    //    ....##..##......
-    //    ....######......  barrel bottom
-    //    ......##........  needle
-    //    ......##........
 
     private static let needleUp = SpriteFrame(rows: [
         0x0000, //  ................
@@ -37,14 +26,6 @@ nonisolated extension SharedSprites {
     ])
 
     // Syringe with plunger pressed — fluid injected
-    //
-    //    ....######......  barrel top
-    //    ....######......  barrel body (filled)
-    //    ....######......
-    //    ....######......
-    //    ....######......  barrel bottom
-    //    ......##........  needle
-    //    ......##........
 
     private static let needleDown = SpriteFrame(rows: [
         0x0000, //  ................
@@ -65,7 +46,6 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    /// Needle injection — plunger up/down loop (0.3s per frame).
     static let needleInjection = SpriteAnimation(
         frames: [needleUp, needleDown],
         frameDuration: 0.3,

@@ -1,15 +1,23 @@
 import Foundation
 
-/// Shared heart-depletion arithmetic for the hunger and strength simulators.
-/// One heart is lost per elapsed `baseInterval / multiplier` since `anchor`,
-/// and the anchor always advances by the full consumed span — even when the
-/// hearts are already empty. (Deliberately different from
-/// `ConditioningSimulator.decay`, which advances only by points consumed.)
+/// Spends hunger and strength hearts for whole intervals elapsed since an
+/// anchor — shared arithmetic for `HungerSimulator` and `StrengthSimulator`.
+/// One heart is spent per whole `baseInterval / multiplier`; `multiplier` is
+/// each caller's activity scaling, so the interval stretches or compresses
+/// with today's steps. The anchor advances by the full elapsed span even when
+/// the hearts are already empty, so spent time is never replayed on a later
+/// call. Contrast `ConditioningSimulator.decay`, which advances its anchor
+/// only by points consumed.
 nonisolated enum HeartDecay {
 
-    /// Returns the moment the last heart was spent, or nil if the stat did not
-    /// run out during this call. The anchor keeps advancing past empty, so this
-    /// is the only chance to learn when empty began.
+    /// Spends one heart per whole interval elapsed since `anchor` and advances
+    /// `anchor` by every elapsed interval — even those falling after the hearts
+    /// ran out. Returns the moment the last heart was spent, which can be
+    /// earlier than `now`; nil when the stat did not reach empty during this
+    /// call (no whole interval elapsed, hearts remain, or it was already
+    /// empty). Because `anchor` moves past that moment, this return value is
+    /// the only record of when empty began; the callers persist it as
+    /// `hungerEmptiedAt` / `strengthEmptiedAt`.
     @discardableResult
     static func deplete(
         _ hearts: inout StatHearts,
@@ -24,7 +32,8 @@ nonisolated enum HeartDecay {
 
         let start = anchor
         let ticksToEmpty = hearts.value
-        // Only the hearts actually held can be spent — `ticks` may be the clamp value.
+        // `min` caps iterations at the hearts held — `ticks` can be `Int.max`;
+        // see the clamp in `TickMath.ticks`.
         for _ in 0..<min(ticks, ticksToEmpty) {
             hearts.decrement()
         }

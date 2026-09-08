@@ -2,6 +2,10 @@ import Foundation
 
 // MARK: - View Frames & Positions
 
+/// Sprite frame and horizontal-offset selection during battle.
+///
+/// One sprite is active per phase, so both properties switch on
+/// `viewModel.phase` instead of exposing a frame per fighter.
 extension BattlePresenter {
 
     // Pet fights from the left, enemy from the right; sprites natively face left.
@@ -9,18 +13,16 @@ extension BattlePresenter {
     private static let petOffsetX = 1
     private static let opponentOffsetX = 15
 
-    /// Pet faces right (toward the enemy on the right).
     var petFrame: SpriteFrame {
         petAnimator.currentFrame.facing(.right)
     }
 
-    /// Enemy faces left (toward the pet on the left).
     var opponentFrame: SpriteFrame {
         opponentAnimator.currentFrame.facing(.left)
     }
 
-    /// Horizontal position of the active sprite — pet on the left,
-    /// enemy on the right, projectiles cross through the centre.
+    /// Horizontal offset of the active sprite; 8 is the centre between the pet
+    /// and enemy offsets, where projectiles cross.
     var activeOffsetX: Int {
         switch viewModel.phase {
         case .introPet, .introVS, .introEnemy, .choosing, .projectile, .opponentProjectile:
@@ -41,7 +43,6 @@ extension BattlePresenter {
         }
     }
 
-    /// Single active sprite — only one thing on screen at a time.
     var activeFrame: SpriteFrame {
         switch viewModel.phase {
         case .introPet:

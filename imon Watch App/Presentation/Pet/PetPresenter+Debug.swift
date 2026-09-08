@@ -8,8 +8,9 @@ import WatchKit
 
 extension PetPresenter {
 
-    /// Debug: walk through each evolution journey, resetting
-    /// to egg between them. Loops back to journey 1 at the end.
+    /// Ordered evolution journeys walked by `debugEvolve`. The persisted
+    /// `debugJourneyIndex` points into this list, so its order must stay
+    /// stable across launches.
     private static let debugJourneys: [[PetSpecies]] = [
         [.dotkin, .hopkin, .emberkin, .rexkin, .steelkin],
         [.dotkin, .hopkin, .marshkin, .blazekin, .orbkin],
@@ -27,6 +28,9 @@ extension PetPresenter {
         set { UserDefaults.standard.set(newValue, forKey: Self.debugJourneyKey) }
     }
 
+    /// Advances one species along the current journey in `debugJourneys`,
+    /// persisting the position; finishing a journey marks the pet dead so the
+    /// next starts from an egg, looping back to journey 1 at the end.
     func debugEvolve() {
         guard !viewModel.isBusy else { return }
 
@@ -48,8 +52,8 @@ extension PetPresenter {
         }
     }
 
-    /// Debug: morph the pet straight into any species, skipping the evolution
-    /// tree, so every creature's animations can be reviewed on demand.
+    /// Morphs the pet straight into any species, skipping the evolution tree,
+    /// so every creature's animations can be reviewed on demand.
     func debugMorph(into species: PetSpecies) {
         state = EvolutionEngine.evolve(state, to: species, at: .now)
         state.isEgg = false
@@ -60,10 +64,10 @@ extension PetPresenter {
         WKInterfaceDevice.evolveHaptic()
     }
 
-    /// Debug: drain the pet so it visibly needs care (screen + complication flip
-    /// to "hungry"), then fire a real care reminder ~12s out to verify on-device
-    /// notification delivery. Lower your wrist right after pressing so the banner
-    /// can appear (foreground notifications are suppressed).
+    /// Drains both stats to languishing so the pet visibly needs care (screen
+    /// and complication flip to "hungry"), then schedules a real care reminder
+    /// 12 s out to verify on-device notification delivery; foreground banners
+    /// are suppressed, so the banner appears only after the wrist drops.
     func debugCareTest() {
         guard !viewModel.isBusy else { return }
         // Empty both stats so the languishing state shows at once.

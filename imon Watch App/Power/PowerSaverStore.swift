@@ -1,8 +1,9 @@
 import Foundation
 import Observation
 
-/// Tracks the system Low Power Mode so the UI can switch to the red battery-saver
-/// palette. The low-power check is injected (witness style) so it can be mocked.
+/// Store holding the system Low Power Mode reading so the UI can switch to the
+/// red battery-saver palette. The low-power check is injected (witness style) so
+/// it can be mocked in tests.
 @MainActor
 @Observable
 final class PowerSaverStore {
@@ -15,7 +16,8 @@ final class PowerSaverStore {
         self.isActive = isLowPowerEnabled()
     }
 
-    /// Re-reads the system power state (called when it changes).
+    /// Re-reads the system Low Power Mode state. This is the only way `isActive`
+    /// updates after init, so callers invoke it when the system value changes.
     func refresh() {
         isActive = isLowPowerEnabled()
     }

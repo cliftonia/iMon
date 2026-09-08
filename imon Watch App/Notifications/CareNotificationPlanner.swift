@@ -1,17 +1,17 @@
 import Foundation
 
 /// Computes the care reminders to schedule for a backgrounded pet. Pure and
-/// deterministic: each event's fire time comes from its anchor timestamp plus a
-/// base interval of *waking* time (future activity is unknown, so the estimate
-/// is approximate). Hunger, strength and mess pause overnight exactly as the
-/// engine pauses them, so a projection that crosses bedtime resumes at dawn.
-/// Past events and any that would land while the pet sleeps (the night window)
-/// are held to morning or dropped, so the owner is never buzzed at 2am.
+/// deterministic: a fire time is its anchor plus whole intervals of waking
+/// time — future activity is unknown, so the estimate is approximate. Hunger,
+/// strength and mess pause overnight exactly as the engine pauses them, so a
+/// projection crossing bedtime resumes at dawn. Results in the past or in the
+/// night window are held to morning or dropped, never fired overnight.
 nonisolated enum CareNotificationPlanner {
 
-    /// `steps` is today's running step count and scales the hunger/strength
-    /// estimates exactly as the simulators do; `nil` (steps disabled or
-    /// unavailable) estimates at the base rates and skips the exercise nudge.
+    /// `steps` is today's running step count and applies activity scaling to
+    /// the hunger and strength projections exactly as the simulators do;
+    /// `nil` (steps disabled or unavailable) estimates at the base rates and
+    /// skips the exercise nudge. The result is sorted by fire date.
     static func plan(
         for state: PetState,
         now: Date,
@@ -23,7 +23,7 @@ nonisolated enum CareNotificationPlanner {
         let times = state.timestamps
         let calendar = Calendar.current
 
-        // Scale by activity as the simulators do — a fast-draining pet is flagged late otherwise.
+        // Match the simulators' activity scaling, or a fast-draining pet flags late.
         let hungerInterval = TimeConstants.hungerDepletionInterval
             / (steps.map { ActivityModel.hungerRateMultiplier(steps: $0) } ?? 1.0)
         let strengthInterval = TimeConstants.strengthDepletionInterval
@@ -54,7 +54,7 @@ nonisolated enum CareNotificationPlanner {
             candidates.append(CareNotification(kind: .injury, fireDate: fire, species: state.species))
         }
 
-        // Fading — warn before a languishing pet finally collapses to death.
+        // Fading — warn before a languishing pet collapses.
         if let collapsingAt = times.collapsingAt {
             let fire = collapsingAt.addingTimeInterval(
                 TimeConstants.collapseDeathTime - TimeConstants.nearingDeathLead
@@ -62,7 +62,7 @@ nonisolated enum CareNotificationPlanner {
             candidates.append(CareNotification(kind: .fading, fireDate: fire, species: state.species))
         }
 
-        // Exercise — nudge a lazy wearer to get moving once the afternoon is gone.
+        // Exercise — nudge a wearer below the step target once the afternoon is gone.
         let hour = calendar.component(.hour, from: now)
         if let steps, hour >= TimeConstants.exerciseHour, steps < TimeConstants.exerciseStepTarget {
             let fire = now.addingTimeInterval(TimeConstants.exerciseNudgeLead)
@@ -75,9 +75,9 @@ nonisolated enum CareNotificationPlanner {
             .sorted { $0.fireDate < $1.fireDate }
     }
 
-    /// The night policy. A death warning fires whenever it is due. A reminder
-    /// whose need survives the night is held to the wake hour rather than
-    /// dropped. Everything else is dropped, because a reminder that has
+    /// Adjusts a fire time that lands in the night window. A `fading` warning
+    /// fires whenever due; any other reminder is held to dawn when it will
+    /// still be meaningful then, and dropped otherwise — a reminder that has
     /// outlived its meaning is worse than silence.
     private static func nightAdjusted(
         _ notification: CareNotification,
@@ -94,7 +94,7 @@ nonisolated enum CareNotificationPlanner {
 
         return CareNotification(
             kind: notification.kind,
-            // Stagger by kind so several held reminders do not all buzz at once.
+            // Stagger by kind so several held reminders do not all fire at once.
             fireDate: morning.addingTimeInterval(morningOffset(for: notification.kind)),
             species: notification.species
         )
@@ -111,13 +111,12 @@ nonisolated enum CareNotificationPlanner {
             // The pet is just as hungry, weak or filthy when the owner wakes.
             true
         case .injury:
-            // Pointless past the untreated-injury death window — by then the
-            // pet is already in its grave.
+            // Pointless past the untreated-injury death window: the pet is already dead.
             times.injuredAt.map {
                 morning < $0.addingTimeInterval(TimeConstants.untreatedInjuryDeathTime)
             } ?? false
         case .exercise:
-            // A nudge about a step total the owner can no longer influence.
+            // A nudge about a step total the owner cannot influence by morning.
             false
         case .fading:
             true
@@ -134,11 +133,10 @@ nonisolated enum CareNotificationPlanner {
         }
     }
 
-    /// When `ticks` intervals of waking time complete, counting from `anchor`.
-    /// The bedtime window (`SleepSchedule.isBedtime`) is skipped, mirroring the
-    /// engine: a sleeping pet's clocks freeze and restart at dawn. An anchor
-    /// already inside the window jumps to the morning first, since waking
-    /// re-anchors there. Nil when the calendar cannot name a morning.
+    /// The instant `ticks` intervals of waking time complete, counting from
+    /// `anchor`. The bedtime window is skipped, mirroring the engine — waking
+    /// re-anchors at dawn, so an anchor in the window jumps to morning first.
+    /// Nil when no morning resolves within `SleepSchedule.maxReplayDays` days.
     private static func wakingProjection(
         from anchor: Date,
         ticks: Int,
@@ -172,8 +170,8 @@ nonisolated enum CareNotificationPlanner {
         return calendar.date(byAdding: .day, value: 1, to: settle)
     }
 
-    /// The next `nightEndHour` strictly after `date`, or nil if the calendar
-    /// cannot name that instant — dropping beats buzzing at 2am.
+    /// The next `nightEndHour` strictly after `date`, or nil when the calendar
+    /// cannot resolve that instant.
     private static func nextMorning(after date: Date, calendar: Calendar) -> Date? {
         let isBeforeDawn = calendar.component(.hour, from: date) < TimeConstants.nightEndHour
         guard let day = isBeforeDawn

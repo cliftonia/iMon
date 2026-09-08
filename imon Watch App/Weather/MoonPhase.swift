@@ -11,7 +11,7 @@ nonisolated enum MoonPhase: Sendable, CaseIterable {
     case lastQuarter
     case waningCrescent
 
-    /// The phase for a given date, derived from the synodic month (~29.53 days)
+    /// Derives the phase for a given date from the synodic month (~29.53 days),
     /// counting from a known new moon (2000-01-06 18:14 UTC).
     static func current(date: Date = Date()) -> MoonPhase {
         let synodicMonth = 29.530588853

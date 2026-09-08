@@ -6,11 +6,13 @@ import Foundation
 /// (3 h). Pending timestamps record when each neglect period began.
 nonisolated enum CareMistakeTracker {
 
+    /// Applies both neglect paths to the state. Dead and egg pets are exempt;
+    /// the hunger/strength path pauses while the pet sleeps — the lights path
+    /// does not.
     static func apply(to state: PetState, at now: Date, bedtime: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        // Lights on past bedtime is a care mistake; before bedtime a lit room is fine.
         state.careMistakes += accrueMistakes(
             anchor: &state.timestamps.pendingLightsMistakeAt,
             active: bedtime && state.lightsOn,
@@ -18,7 +20,8 @@ nonisolated enum CareMistakeTracker {
             now: now
         )
 
-        // Reset while asleep — a sparse wake must not back-fill the whole night.
+        // Reset while asleep — a catch-up tick after wake must not bill the
+        // whole night.
         guard !state.isSleeping else {
             state.timestamps.pendingCareMistakeAt = nil
             return state

@@ -20,9 +20,10 @@ extension PetPresenter {
         scheduleSleepSettle()
     }
 
-    /// After the light goes off at night the pet only drifts off once the
-    /// settle delay passes — re-advance then so it sleeps without waiting for
-    /// the next game tick.
+    /// Re-runs `environmentDidChange` once the settle delay passes, so the
+    /// pet falls asleep without waiting for the next tick. Calling again
+    /// cancels the pending run. Does nothing while the light is on or the
+    /// pet is already asleep.
     private func scheduleSleepSettle() {
         sleepToggleTask?.cancel()
         sleepToggleTask = nil

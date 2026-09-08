@@ -6,6 +6,7 @@ import Foundation
 /// the countdown.
 nonisolated enum CollapseTracker {
 
+    /// Starts or clears the countdown; dead and egg pets are exempt.
     static func apply(to state: PetState, at now: Date) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }

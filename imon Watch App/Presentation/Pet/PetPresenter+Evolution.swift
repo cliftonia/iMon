@@ -3,12 +3,13 @@ import WatchKit
 
 // MARK: - Evolution
 
+/// The presenter's share of the evolution ceremony: the threshold check, the
+/// reveal strobe, and applying the new stage.
 extension PetPresenter {
 
-    /// How long the evolution strobe plays before the new creature is revealed.
     static let evolveFlashMilliseconds = 1_600
 
-    /// Starts the evolution flash when the lifetime accumulator has crossed the
+    /// Starts the evolution flash when the lifetime steps have crossed the
     /// stage threshold and the pet is idle. The ceremony is automatic — there
     /// is nothing to tap — matching the original toy.
     func checkEvolution() {
@@ -18,8 +19,8 @@ extension PetPresenter {
     }
 
     /// Plays the strobe, then reveals the evolved creature. Runs through the
-    /// shared activity machinery so it blocks input and is cancelled cleanly if
-    /// the screen goes away mid-flash (the pet simply re-offers next tick).
+    /// shared activity machinery so the ceremony blocks input and is cancelled
+    /// cleanly if the screen goes away mid-flash (the pet re-offers next tick).
     func beginEvolution(to target: PetSpecies) {
         viewModel.activity = .evolving
         WKInterfaceDevice.evolveHaptic()

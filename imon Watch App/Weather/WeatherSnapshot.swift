@@ -12,7 +12,6 @@ nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable, Identi
 
     var id: Self { self }
 
-    /// Short human-readable label for the weather header.
     var displayName: String {
         switch self {
         case .clear: "Clear"

@@ -1,16 +1,20 @@
 import Foundation
 
-/// Drives sleep and the light from a single day/night signal.
+/// Applies the night signal to the pet's light and sleep, bundled with the
+/// bedtime window and the boundaries a catch-up replays, as pure functions
+/// over `PetState`. A caseless enum because the schedule keeps no state of
+/// its own.
 ///
-/// - **Day:** the light is always on and the pet is awake.
-/// - **Night:** the light is the player's switch; the pet sleeps when it's off.
-/// - **Transitions:** dusk turns the light off (pet sleeps), dawn turns it on
-///   (pet wakes). `wasNight` records the last state so we only act on a change.
+/// - **Day:** the light is on and the pet is awake.
+/// - **Night:** the light is the player's switch; the pet settles to sleep
+///   only inside bedtime with the light off.
+/// - **Transitions:** dusk turns the light off and dawn turns it on;
+///   `PetState.wasNight` records the previous signal so the flip happens only
+///   on a change.
 nonisolated enum SleepSchedule {
 
-    /// Whether it is night. Always defer to the weather's daylight flag; only
-    /// when no reading is available fall back to a fixed window (6am–6pm is day,
-    /// the rest is night).
+    /// Resolves whether it is night: the weather's daylight flag when a
+    /// reading exists, else the 18:00–06:00 clock window.
     static func isNight(
         weatherNight: Bool?,
         at now: Date,
@@ -21,24 +25,24 @@ nonisolated enum SleepSchedule {
         return hour < TimeConstants.nightEndHour || hour >= TimeConstants.nightStartHour
     }
 
-    /// The pet's bedtime window — it only settles to sleep from `sleepHour` (9pm)
-    /// until the morning wake hour. Outside it the pet stays up, even after dark.
+    /// Reports whether `now` is inside bedtime, the 21:00–06:00 window in
+    /// which the pet can settle to sleep; outside it the pet stays awake even
+    /// at night.
     static func isBedtime(at now: Date, calendar: Calendar = .current) -> Bool {
         let hour = calendar.component(.hour, from: now)
         return hour >= TimeConstants.sleepHour || hour < TimeConstants.nightEndHour
     }
 
-    /// How many days of clock boundaries a single catch-up replays. A pet
-    /// neglected longer than this has long since collapsed, so later nights
-    /// change nothing.
+    /// How many days of clock boundaries one catch-up replays. A pet neglected
+    /// longer has long since collapsed, so later nights change nothing.
     static let maxReplayDays = 14
 
-    /// The clock moments strictly between `start` and `end` at which the fixed
-    /// schedule changes the pet's state — dusk (light off), bedtime (the settle
-    /// begins), the settle itself (sleep) and dawn (wake) — in order. A catch-up
-    /// that steps through them sleeps through a night the app never saw instead
-    /// of charging it as waking hours. Dawn without a preceding settle still
-    /// matters: it is where a pet that was asleep at `start` wakes.
+    /// Returns the scheduled state-change moments strictly between `start` and
+    /// `end`, ascending, over at most `maxReplayDays` days: dusk (light off),
+    /// bedtime (the settle begins), the settle completing (the pet sleeps) and
+    /// dawn (wake). A catch-up steps through them so a night the app never saw
+    /// is slept through, not charged as waking hours. Dawn without a preceding
+    /// settle still matters: it is where a pet asleep at `start` wakes.
     static func replayBoundaries(
         from start: Date,
         to end: Date,
@@ -65,14 +69,15 @@ nonisolated enum SleepSchedule {
         return boundaries.filter { $0 > start && $0 < end }.sorted()
     }
 
-    /// Applies the resolved night signal to the light and sleep state. The pet only
-    /// drops off once it's past bedtime and the light has been out for `sleepDelay`;
-    /// waking goes through `PetState.wake(at:)` so the sleep counts as a pause.
+    /// Applies the resolved night signal: flips the light when the signal
+    /// changes, then settles or wakes the pet. A dead pet or egg is returned
+    /// unchanged. The pet falls asleep only inside bedtime, once the light has
+    /// been out for `sleepDelay`; waking goes through `PetState.wake(at:)` so
+    /// sleep is a pause.
     static func apply(to state: PetState, at now: Date, night: Bool) -> PetState {
         var state = state
         guard !state.isDead, !state.isEgg else { return state }
 
-        // Dusk/dawn: flip the light automatically on the day↔night transition.
         if night != state.wasNight {
             state.lightsOn = !night
             state.wasNight = night

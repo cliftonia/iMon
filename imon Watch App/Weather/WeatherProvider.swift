@@ -1,7 +1,7 @@
 import Foundation
 import WeatherKit
 
-/// Fetches the current weather for the device's location. Closure-based so the
+/// Fetches the current weather for the device's location. A witness so the
 /// WeatherKit/CoreLocation dependency can be mocked in tests and previews.
 nonisolated struct WeatherProvider: Sendable {
     let fetchCurrent: @Sendable () async throws -> WeatherSnapshot

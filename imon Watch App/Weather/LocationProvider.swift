@@ -1,7 +1,8 @@
 import CoreLocation
 import Foundation
 
-/// One-shot current-location lookup. Closure-based so it can be mocked.
+/// One-shot current-location lookup, a witness standing in for CoreLocation
+/// so it can be mocked.
 nonisolated struct LocationProvider: Sendable {
     let currentLocation: @Sendable () async throws -> CLLocation
 }
@@ -15,7 +16,8 @@ nonisolated extension LocationProvider {
         }
     }
 
-    /// First good fix from a live updates session, or throws on timeout/denial.
+    /// Returns the first good fix from a live updates session, throwing
+    /// `WeatherError.locationUnavailable` on timeout or denial.
     private static func firstFix(timeout: Duration) async throws -> CLLocation {
         try await withThrowingTaskGroup(of: CLLocation?.self) { group in
             group.addTask {
@@ -39,7 +41,7 @@ nonisolated extension LocationProvider {
     }
 }
 
-/// Owns a long-lived CLLocationManager so the authorization prompt isn't
+/// Owns a long-lived `CLLocationManager` so the authorization prompt isn't
 /// dismissed by the manager deallocating mid-request.
 @MainActor
 private final class LocationAuthorizer {

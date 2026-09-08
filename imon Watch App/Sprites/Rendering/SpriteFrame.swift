@@ -2,8 +2,7 @@ import Foundation
 
 /// A 16x16 1-bit monochrome bitmap. Each UInt16 is one row, MSB = leftmost
 /// pixel — the same encoding the Tools/ pipeline round-trips, so frames stay
-/// diffable against their ASCII-art comments. Immutable: every transform
-/// (mirror, shift, overlay) returns a new frame. Shifts discard pixels pushed
+/// diffable against their ASCII-art comments. Shifts discard pixels pushed
 /// past an edge, and shift amounts outside 1..<16 are a no-op.
 nonisolated struct SpriteFrame: Sendable, Hashable {
 
@@ -33,7 +32,6 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: mirroredRows)
     }
 
-    /// Shifts all pixels up by N rows (bottom fills with empty).
     func shiftedUp(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = Array(rows.suffix(Self.size - n))
@@ -41,7 +39,6 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: shifted)
     }
 
-    /// Shifts all pixels down by N rows (top fills with empty).
     func shiftedDown(_ n: Int) -> SpriteFrame {
         guard n > 0, n < Self.size else { return self }
         let shifted = [UInt16](repeating: 0, count: n)

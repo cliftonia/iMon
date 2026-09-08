@@ -1,8 +1,8 @@
 import Foundation
 
-/// Effective battle power: species base plus bonuses from current strength
-/// hearts and trained POW, halved when overweight — an overfed pet fights
-/// at a handicap.
+/// Computes effective battle power from `PetState`: species base power plus
+/// bonuses from current strength hearts and trained power, halved while the
+/// pet is overweight.
 nonisolated enum BattlePower {
 
     static func calculate(for state: PetState) -> Double {

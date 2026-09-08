@@ -19,6 +19,9 @@ nonisolated struct PetStatus: Sendable {
     let isLanguishing: Bool
     let battleWins: Int
     let battleLosses: Int
+
+    /// The care-call flag — true while hunger or strength hearts are
+    /// empty, any poop is present, or the pet is injured.
     let needsAttention: Bool
 
     init(from state: PetState) {

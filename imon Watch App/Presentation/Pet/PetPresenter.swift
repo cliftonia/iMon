@@ -1,13 +1,12 @@
 import Foundation
 import os
 
-/// Drives the home screen: owns the live `PetState`, the game-tick loop, and
+/// The home screen's presenter: owns the live `PetState`, the tick loop, and
 /// the sprite animators, fanning out to the feeding / healing / lights /
 /// wander / evolution extensions. Each tick advances the simulation, offers
-/// evolutions, and saves; death is edge-triggered inside a tick so `onDeath`
-/// fires during play, not on the next launch. Foregrounding restarts the loop
-/// and catches the simulation up; backgrounding hands care reminders and the
-/// complication timeline to the system (see `handleScenePhase`).
+/// evolutions, and saves; a death inside the tick fires `onDeath` during play.
+/// Foregrounding restarts the loop with the catch-up; backgrounding hands
+/// care reminders and the complication timeline to the system.
 final class PetPresenter {
 
     private(set) var viewModel = PetViewModel()
@@ -22,19 +21,18 @@ final class PetPresenter {
 
     /// Schedules care reminders while the app is backgrounded.
     let notificationScheduler: NotificationScheduler
-    /// Refreshes the watch-face complication.
     let complicationReloader: ComplicationReloader
 
     /// Weather-derived night (true/false), or nil when no reading is available.
     private let currentNight: () -> Bool?
 
-    /// Today's step count, or nil when unavailable — drives activity-based rates.
+    /// Today's step count, or nil when unavailable — drives activity scaling.
     /// Not private: the `+Wander` extension reads it when starting a battle.
     let currentSteps: () -> Int?
 
-    /// The settled total for a past day, so a day that ended while the app was
-    /// closed can be credited in full before the accumulator rolls over.
-    /// Not private: the `+Steps` extension performs the catch-up.
+    /// The final step total for a finished day, or nil when unavailable — a
+    /// day that ended while the app was closed is credited in full at rollover.
+    /// Not private: the `+Steps` extension performs the rollover.
     let finalSteps: (Date) async -> Int?
 
     /// Called when the pet dies during play, so the app can show the grave.
@@ -45,9 +43,9 @@ final class PetPresenter {
     /// The single in-flight activity ceremony (feed / clean / heal / refuse).
     var activityTask: Task<Void, Never>?
     var sleepToggleTask: Task<Void, Never>?
-    /// The in-flight settle of a day that ended while the app was closed.
-    /// Not private: the tests await it, since the rollover it performs is
-    /// asynchronous but must be observed.
+    /// The in-flight rollover of a day that ended while the app was closed.
+    /// Not private: the tests await it, since the rollover is asynchronous but
+    /// must be observed.
     var dayRecoveryTask: Task<Void, Never>?
 
     #if DEBUG
@@ -186,7 +184,8 @@ final class PetPresenter {
         notificationScheduler.cancelAll()
     }
 
-    /// The resolved day/night state — weather daylight, or the fixed window.
+    /// The resolved night signal — the weather's daylight flag, else the fixed
+    /// clock window.
     var currentlyNight: Bool {
         SleepSchedule.isNight(weatherNight: currentNight(), at: .now)
     }
@@ -258,12 +257,10 @@ final class PetPresenter {
 
     // MARK: - Scene Phase
 
-    /// Foregrounding catches the simulation up at once (so returning hours
-    /// later doesn't flash a stale scene) and restarts the loop if stopped.
-    /// Backgrounding hands care reminders to the system; activation never
-    /// cancels them, since a watch flips active on every wrist raise and would
-    /// wipe pending notifications before they fire. With the notifications
-    /// toggle off, backgrounding instead clears any pending reminders.
+    /// Foregrounding runs the catch-up at once (no stale scene after hours away)
+    /// and restarts the loop if stopped; backgrounding hands care reminders to
+    /// the system — or clears them when the toggle is off. Activation never
+    /// cancels: a wrist raise flips active and would wipe them before they fire.
     func handleScenePhase(isActive: Bool, notificationsEnabled: Bool) {
         if isActive {
             startGameLoop()

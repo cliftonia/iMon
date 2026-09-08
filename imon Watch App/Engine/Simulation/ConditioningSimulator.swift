@@ -1,9 +1,9 @@
 import Foundation
 
 /// Decays the trained HP / POW bonuses toward zero when the pet stops training
-/// or battling. One point is lost per `conditioningDecayInterval` of neglect,
-/// keyed off `lastTrainedAt` (HP) and `lastBattledAt` (POW). The bonus floors at
-/// zero, so effective HP / power never drops below the species base.
+/// or battling. One point is lost per `conditioningDecayInterval`, counted from
+/// the `lastTrainedAt` (HP) and `lastBattledAt` (POW) anchors. The bonus floors
+/// at zero, so effective HP / power never drops below the species base.
 nonisolated enum ConditioningSimulator {
 
     static func apply(to state: PetState, at now: Date) -> PetState {
@@ -23,8 +23,8 @@ nonisolated enum ConditioningSimulator {
         return state
     }
 
-    /// Reduces `bonus` by one per elapsed interval since `anchor`, advancing the
-    /// anchor only by the points actually consumed (so it never jumps past now).
+    /// Reduces `bonus` by one per whole elapsed interval since `anchor`,
+    /// advancing the anchor by only the points consumed, so it never passes `now`.
     private static func decay(
         bonus: Int,
         anchor: inout Date,

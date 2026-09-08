@@ -1,7 +1,7 @@
 import Foundation
 import WatchKit
 
-/// Runs the higher-or-lower training mini-game: owns the phase machine, both
+/// Owner of the higher-or-lower training mini-game: the phase machine, both
 /// sprite animators, and the round tally, reporting win or lose once through
 /// `onComplete`. Every phase advance goes through a single replaceable task —
 /// `cancel()` must run on dismissal so a pending advance cannot fire into a

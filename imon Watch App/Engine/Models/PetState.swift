@@ -42,7 +42,7 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Fitness (step-driven growth)
 
-    /// Lifetime active steps credited toward evolution (only ever grows).
+    /// Lifetime steps credited toward evolution (only ever grows).
     var lifetimeActiveSteps: Int = 0
     /// Today's steps already folded into `lifetimeActiveSteps`.
     var stepsCreditedToday: Int = 0
@@ -57,7 +57,7 @@ nonisolated struct PetState: Sendable {
     var isDead: Bool = false
     var isEgg: Bool = false
 
-    /// Last-known day/night state, for detecting dusk/dawn transitions.
+    /// Last-known night state, for detecting dusk/dawn transitions.
     var wasNight: Bool = false
 
     // MARK: - Timestamps
@@ -69,7 +69,7 @@ nonisolated struct PetState: Sendable {
 
 extension PetState {
 
-    /// Every event timestamp for the pet, grouped together. Elapsed timers are
+    /// Every event timestamp for the pet, grouped together. Anchors are
     /// non-optional; one-off / pending events are optional.
     nonisolated struct Timestamps: Sendable {
         var bornAt: Date
@@ -84,10 +84,10 @@ extension PetState {
         var injuredAt: Date?
         var pendingCareMistakeAt: Date?
         var pendingLightsMistakeAt: Date?
-        /// When the light was switched off at night — starts the sleep countdown.
+        /// When the light was switched off at night — starts the settle.
         var lightsOffAt: Date?
-        /// When the pet's hunger and strength both emptied — starts the collapse
-        /// countdown toward death; cleared on recovery.
+        /// When languishing began — starts the collapse countdown toward death;
+        /// cleared on recovery.
         var collapsingAt: Date?
         /// The moment each stat ran out, non-nil only while it is empty. The
         /// decay anchors keep advancing past empty, so the emptying moment
@@ -96,7 +96,7 @@ extension PetState {
         var hungerEmptiedAt: Date?
         var strengthEmptiedAt: Date?
 
-        /// A freshly created pet: every elapsed timer starts at `date`, with no
+        /// A freshly created pet: every anchor starts at `date`, with no
         /// pending events outstanding.
         init(creating date: Date) {
             bornAt = date
@@ -160,6 +160,7 @@ extension PetState {
 
 extension PetState {
 
+    /// Creates a new Dotkin pet with full hearts and base weight.
     static func hatched(at date: Date = .now) -> PetState {
         let species = PetSpecies.dotkin
         return PetState(

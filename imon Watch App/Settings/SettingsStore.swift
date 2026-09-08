@@ -1,15 +1,15 @@
 import Observation
 import WatchKit
 
-/// App-wide user settings, persisted to UserDefaults and shared across screens.
-/// Holds the feature toggles behind the Settings page. `@MainActor` since the UI
-/// binds to it directly and it mirrors the haptics switch down to WatchKit.
+/// The settings store: user toggles persisted to `UserDefaults` and shared
+/// across screens. Main-actor isolated because views bind to it directly.
 @MainActor
 @Observable
 final class SettingsStore {
 
-    /// Forces the red battery-saver palette on. OR'd with system Low Power Mode by
-    /// `ContentView`, so either this switch or the system setting turns it red.
+    /// Forces the red battery-saver palette on. `ContentView` ORs it with
+    /// system Low Power Mode, so either this switch or the system setting
+    /// turns it red.
     var batterySaverEnabled: Bool {
         didSet { defaults.set(batterySaverEnabled, forKey: Key.batterySaver) }
     }
@@ -26,6 +26,8 @@ final class SettingsStore {
         didSet { defaults.set(stepsEnabled, forKey: Key.steps) }
     }
 
+    /// The haptics toggle, written through to `WKInterfaceDevice.hapticsEnabled`
+    /// on every change and applied once at init.
     var hapticsEnabled: Bool {
         didSet {
             defaults.set(hapticsEnabled, forKey: Key.haptics)

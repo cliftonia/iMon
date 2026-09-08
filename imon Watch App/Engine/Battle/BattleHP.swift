@@ -1,7 +1,9 @@
 import Foundation
 
-/// Battle stamina: species base HP, +1 while the wearer's step count clears
-/// the active threshold, plus any HP earned through training.
+/// Battle stamina: species base HP, +1 while the `ActivityModel` factor for
+/// today's steps clears the `TimeConstants` threshold, plus HP earned
+/// through training. A pure operation namespace — every input arrives as a
+/// parameter, so nothing can fall out of sync.
 nonisolated enum BattleHP {
 
     /// `steps` is today's running count; `nil` (steps disabled or unavailable)
@@ -12,6 +14,8 @@ nonisolated enum BattleHP {
         return base + activeBonus + state.trainedHP
     }
 
+    /// Renders `hp` filled hearts followed by empties up to `maxHP`; an `hp`
+    /// above `maxHP` is allowed and just lengthens the string.
     static func heartsString(hp: Int, maxHP: Int) -> String {
         String(repeating: "\u{2665}", count: hp)
             + String(

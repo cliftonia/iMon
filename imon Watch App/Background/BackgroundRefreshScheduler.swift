@@ -21,7 +21,8 @@ extension BackgroundRefreshScheduler {
     static func live() -> BackgroundRefreshScheduler {
         BackgroundRefreshScheduler(
             schedule: { date in
-                // Callers are main-actor; a deferred Task races setTaskCompleted, breaking the chain.
+                // Callers are main-actor; a deferred Task races setTaskCompleted,
+                // breaking the chain.
                 MainActor.assumeIsolated {
                     WKApplication.shared().scheduleBackgroundRefresh(
                         withPreferredDate: date, userInfo: nil

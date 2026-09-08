@@ -5,8 +5,7 @@ import SwiftUI
 private enum BezelPalette {
     /// The daylight ring: the signature LCD green, matching the lit screen.
     static let dayRing = Color("LCDBackground")
-    /// The night ring: a pale, faintly cool silver echoing the moon and stars
-    /// while staying legible against the dark screen.
+    /// The night ring: a pale cool silver, legible against the dark screen.
     static let nightRing = Color(red: 0.86, green: 0.89, blue: 0.95)
 
     /// The classic green frame: a faint panel fill and a soft grey edge.
@@ -14,7 +13,7 @@ private enum BezelPalette {
     static let classicStroke = Color.gray.opacity(0.6)
 
     /// Battery-saver is strictly red on black — no green panel, no grey edge, so
-    /// the whole bezel (frame, edge and ring) is drawn in the one signal red.
+    /// the whole bezel (frame, edge and ring) is drawn in one red.
     static let batterySaver = Color(red: 1, green: 0.12, blue: 0.08)
     static let batterySaverFill = batterySaver.opacity(0.18)
     static let batterySaverStroke = batterySaver.opacity(0.6)
@@ -23,11 +22,11 @@ private enum BezelPalette {
 struct LCDBezel<Content: View>: View {
 
     let content: Content
-    /// Evolution progress (0...1) drawn as a glow filling the bezel; `nil` hides it.
+    /// Evolution progress (0...1) drawn as a ring around the bezel; `nil` hides it.
     let evolutionProgress: Double?
     /// The real time of day (not the resolved scene's), so the progress ring
-    /// shifts to a moonlit colour at night and holds it through the action
-    /// ceremonies, whose clean scene always reports day.
+    /// turns to the night colour at night and holds it through the ceremonies,
+    /// whose clean scene always reports day.
     let dayPhase: DayPhase
     /// The active LCD palette, so the ring matches the red battery-saver screen.
     @Environment(\.lcdTheme) private var theme
@@ -42,9 +41,9 @@ struct LCDBezel<Content: View>: View {
         self.dayPhase = dayPhase
     }
 
-    /// Battery-saver recolours the whole screen red, so the ring follows suit.
-    /// Otherwise only the lights-off night screen is dark; day and the lit indoor
-    /// room both keep the green screen, so the ring stays green there.
+    /// Battery-saver recolours the whole screen red, so the ring uses the same
+    /// red. Otherwise only the lights-off night screen is dark; day and the lit
+    /// indoor room both keep the green screen, so the ring stays green there.
     private var ringColor: Color {
         switch theme {
         case .nightRed:
@@ -76,8 +75,8 @@ struct LCDBezel<Content: View>: View {
             .overlay(evolutionRing)
     }
 
-    /// The LCD-green progress arc, filling clockwise as the pet nears evolution.
-    /// Always present (so it animates smoothly); hidden via opacity when unset.
+    /// The progress arc, filling clockwise as the pet nears evolution. Always
+    /// present so changes animate smoothly; hidden via opacity when unset.
     private var evolutionRing: some View {
         RoundedRectangle(cornerRadius: 6)
             .trim(from: 0, to: max(0, min(1, evolutionProgress ?? 0)))

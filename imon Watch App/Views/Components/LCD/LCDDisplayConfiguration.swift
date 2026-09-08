@@ -17,7 +17,7 @@ nonisolated struct LCDDisplayConfiguration: Hashable, Sendable {
     let stormFlash: Bool
     /// The evolution strobe — a full-screen white-out flash with no VS text.
     let evolveFlash: Bool
-    /// Blinks a Call sign (the toy's attention alert) while the pet languishes.
+    /// Whether the Call sign blinks while the pet languishes — the toy's attention alert.
     let showCallSign: Bool
 
     init(

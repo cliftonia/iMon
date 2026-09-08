@@ -3,7 +3,7 @@ import SwiftUI
 /// The LCD screen: a SwiftUI `Canvas` painting a 32×20 grid of 1-bit cells.
 /// Every layer — sprites, weather, room, poop, call sign — is a list of lit
 /// cells filled per frame, and a `TimelineView` drives redraws only while
-/// something on screen actually animates.
+/// something on screen animates.
 struct LCDDisplay: View {
 
     let configuration: LCDDisplayConfiguration
@@ -28,8 +28,6 @@ struct LCDDisplay: View {
     var evolveFlash: Bool { configuration.evolveFlash }
     var showCallSign: Bool { configuration.showCallSign }
 
-    /// Whether the LCD has an animated overlay (weather, storm or evolution
-    /// flash, or the blinking Call sign) and so needs the periodic timeline.
     private var isAnimated: Bool {
         weatherCondition != nil || stormFlash || evolveFlash || showCallSign
     }
@@ -65,8 +63,8 @@ struct LCDDisplay: View {
     static let roomAmbientColor = Color(red: 84 / 255, green: 108 / 255, blue: 68 / 255)
 
     /// Interior-hole masks are pure functions of the sprite, so cache them —
-    /// the flood fill would otherwise rerun for every sprite on every canvas
-    /// tick (several per second whenever weather or the call sign animates).
+    /// the flood fill would otherwise rerun for every sprite on every redraw
+    /// (several per second whenever weather or the call sign animates).
     private static var holeCache: [SpriteFrame: SpriteFrame] = [:]
 
     private static func interiorHoles(of sprite: SpriteFrame) -> SpriteFrame {
@@ -153,7 +151,7 @@ struct LCDDisplay: View {
             }
         }
 
-        // Call sign last of all, so the attention alert reads over any scene.
+        // Call sign last of all, so the care call reads over any scene.
         drawCallSign(
             phase: weatherPhase, in: context,
             pixelWidth: pixelWidth, pixelHeight: pixelHeight
@@ -162,8 +160,8 @@ struct LCDDisplay: View {
 
     // MARK: - Call Sign
 
-    /// The toy's attention alert: a blinking "!" in the top-left while the pet
-    /// is languishing (hunger and strength both empty), summoning care.
+    /// The care call on screen: a blinking "!" in the top-left corner while the
+    /// pet is languishing.
     private func drawCallSign(
         phase: Int,
         in context: GraphicsContext,
@@ -172,7 +170,6 @@ struct LCDDisplay: View {
     ) {
         guard showCallSign, (phase / 3) % 2 == 0 else { return }
 
-        // A 2px-wide exclamation mark tucked into the top-left corner.
         context.fillLCDCells(
             [
                 (1, 0), (2, 0), (1, 1), (2, 1), (1, 2), (2, 2),
@@ -239,12 +236,10 @@ struct LCDDisplay: View {
         }
     }
 
-    /// Fills a sprite's enclosed holes (eyes, mouths) with opaque,
-    /// scene-matched shading so the gap keeps the bare-eye look while nothing
-    /// shows through it. Run under the body to block the backdrop behind, and
-    /// again on top of front-drawn weather so a walking pet's eyes never flicker.
-    /// Indoors the backing is the same radial lamp gradient as the room glow,
-    /// so eyes match the wall behind them wherever the pet stands.
+    /// Fills a sprite's enclosed holes (eyes, mouths) so the backdrop never
+    /// shows through the bare-eye gap. It runs under the body, and again over
+    /// the front-drawn weather, so a walking pet's eyes never flicker; indoors
+    /// the backing is the room glow's gradient, matching the wall behind them.
     func fillInteriorHoles(
         _ sprite: SpriteFrame,
         in context: GraphicsContext,
@@ -306,7 +301,6 @@ struct LCDDisplay: View {
             }
         }
 
-        // Stink wavy lines above poop area
         let stinkColor = basePixelColor.opacity(0.7)
         let stinkPixels: [(x: Int, y: Int)]
         if stinkPhase % 2 == 0 {

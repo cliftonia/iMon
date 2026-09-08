@@ -3,9 +3,9 @@ import Foundation
 nonisolated enum AttackHeight: CaseIterable, Sendable {
     case high, medium, low
 
-    /// RPS triangle: High > Medium > Low > High.
-    /// The one height this height beats — keeps `beats` exhaustive
-    /// without a banned `default:`.
+    /// The height this one beats — high over medium, medium over low, low
+    /// over high. The switch is exhaustive with no `default:` (banned), so
+    /// adding a case fails to compile here instead of falling through.
     var prey: AttackHeight {
         switch self {
         case .high: .medium

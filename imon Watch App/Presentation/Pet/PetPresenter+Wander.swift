@@ -1,5 +1,11 @@
 import Foundation
 
+/// Ambient wandering: the pet idles in place, then walks a few steps left or
+/// right. Each delay between walks is random, so every attempt is scheduled
+/// as its own one-shot timer, and every exit — a pause, a skipped attempt,
+/// a finished walk — schedules the next one; the loop stops only in
+/// `stopWandering`. It pauses while the view model is busy, the screen mode
+/// is not `.normal`, or the pet is sleeping, dead, or languishing.
 extension PetPresenter {
 
     // MARK: - Wandering
@@ -8,6 +14,7 @@ extension PetPresenter {
         scheduleNextWander()
     }
 
+    /// Stops the wander loop and resets `petOffsetX` to 8.
     func stopWandering() {
         wanderTimer?.invalidate()
         wanderTimer = nil
@@ -23,6 +30,8 @@ extension PetPresenter {
             || state.isLanguishing
     }
 
+    /// Schedules the next walk attempt after a random 3–8 second delay,
+    /// replacing any pending timer.
     private func scheduleNextWander() {
         wanderTimer?.invalidate()
         let delay = Double.random(in: 3...8)
@@ -36,6 +45,10 @@ extension PetPresenter {
         }
     }
 
+    /// Starts a walk with probability 0.6, otherwise skips to the next
+    /// attempt. Direction is forced inward at the edges — right from offset
+    /// 3 or lower, left from 8 or higher — and random in between; a walk is
+    /// 3–6 steps.
     private func tryStartWalking() {
         guard !shouldPauseWander else {
             scheduleNextWander()
@@ -80,6 +93,8 @@ extension PetPresenter {
         }
     }
 
+    /// Advances the walk one step; the pet must stay inside X offsets 2...9,
+    /// and leaving the band or running out of steps ends the walk.
     private func wanderStep() {
         guard case .walking(
             let direction,

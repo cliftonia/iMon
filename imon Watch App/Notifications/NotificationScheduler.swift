@@ -14,8 +14,9 @@ nonisolated struct NotificationScheduler: Sendable {
 
 nonisolated extension NotificationScheduler {
 
-    /// Builds a reminder's content, attaching the pet's home-scene sprite for the
-    /// sky at `fireDate` (the moment it shows). Shared by scheduled and one-off sends.
+    /// Builds a reminder's content, attaching the species sprite for the `night`
+    /// state at `fireDate` — the moment it appears, not when it is scheduled.
+    /// Resolved without a weather reading; shared by scheduled and one-off sends.
     private static func makeContent(
         title: String, body: String, species: PetSpecies, fireDate: Date
     ) -> UNMutableNotificationContent {
@@ -30,6 +31,8 @@ nonisolated extension NotificationScheduler {
         return content
     }
 
+    /// Creates the witness backed by `UNUserNotificationCenter`; `now` is the
+    /// clock the scheduled delays are measured from.
     static func live(now: @escaping @Sendable () -> Date = { Date() }) -> NotificationScheduler {
         NotificationScheduler(
             schedule: { notifications in
@@ -40,6 +43,8 @@ nonisolated extension NotificationScheduler {
                         title: notification.title, body: notification.body,
                         species: notification.species, fireDate: notification.fireDate
                     )
+                    // Floor of one second so a past fire date cannot yield a
+                    // non-positive interval.
                     let interval = max(1, notification.fireDate.timeIntervalSince(now()))
                     let trigger = UNTimeIntervalNotificationTrigger(
                         timeInterval: interval, repeats: false

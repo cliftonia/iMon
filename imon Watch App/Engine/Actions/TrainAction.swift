@@ -43,9 +43,10 @@ nonisolated enum TrainAction {
 
     // MARK: - Apply
 
-    /// Applies the training session result to state.
-    /// A winning session (>= 3/5 rounds won) grants +1 strength, -2G weight, and
-    /// +1 trained HP (except for Dotkin). Training count increments regardless.
+    /// Applies a training session's result, or nothing when `canTrain` fails.
+    /// A win increments strength (cap `species.maxStrength`), subtracts
+    /// `TimeConstants.trainWeightLoss`, and adds one trained HP when
+    /// `canCondition` holds; the poop-or-injury roll runs win or lose.
     static func applyResult(
         to state: PetState,
         won: Bool,

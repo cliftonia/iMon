@@ -9,7 +9,7 @@ final class StepActivityStore {
 
     /// Today's step reading, or nil if the last successful fetch belongs to an
     /// earlier calendar day. A count cached before midnight must never be served
-    /// as the new day's — the engine's day-rollover would credit yesterday's
+    /// as the new day's — the engine's rollover would credit yesterday's
     /// whole total again and poison the new day's baseline and lazy-day check.
     var todaySteps: Int? {
         guard let lastSuccess = throttle.lastSuccess,
@@ -26,7 +26,7 @@ final class StepActivityStore {
         self.provider = provider
     }
 
-    /// Kicks off a refresh unless one is in flight or still within the cache
+    /// Starts a refresh unless one is in flight or still within the cache
     /// window. Returns the spawned task (nil if skipped).
     @discardableResult
     func refreshIfStale(now: Date = .now) -> Task<Void, Never>? {
@@ -47,7 +47,7 @@ final class StepActivityStore {
     /// The settled total for a past day, used to credit a day that ended while
     /// the app was closed. Deliberately bypasses the cache — it asks about a
     /// named day, not "now" — and reports nil rather than throwing, since a
-    /// missing tail must not block the day rolling over.
+    /// missing tail must not block rollover.
     func finalSteps(for day: Date) async -> Int? {
         try? await provider.fetchStepsForDay(day)
     }

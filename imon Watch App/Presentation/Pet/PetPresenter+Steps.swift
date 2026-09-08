@@ -7,13 +7,10 @@ extension PetPresenter {
     /// How many missed days a single catch-up will settle with HealthKit.
     static let maxCatchUpDays = 7
 
-    /// Folds today's live step count into the lifetime evolution accumulator,
-    /// applying the lazy-day decay on a calendar rollover.
-    ///
-    /// A day that ends while the app is closed is settled asynchronously first:
-    /// HealthKit keeps counting when nothing is watching, so rolling over on
-    /// the last figure the app happened to see would both lose that evening's
-    /// steps and risk charging a lazy-day penalty to a day that was not lazy.
+    /// Folds today's live steps into the evolution accumulator, applying the
+    /// lazy-day penalty on rollover. A day that ends while the app is closed
+    /// settles asynchronously first: HealthKit keeps counting unwatched, so
+    /// the last figure seen would lose steps and misjudge the day's laziness.
     func creditSteps() {
         guard let steps = currentSteps() else { return }
         let progress = StepProgress.Progress(of: state)
@@ -32,11 +29,9 @@ extension PetPresenter {
     }
 
     /// Credits the closed day's true total, then rolls the accumulator over.
-    /// Runs even when the tail is unavailable, so a failed lookup delays the
-    /// rollover by one fetch rather than stalling it forever.
-    /// Every whole day missed is fetched before any state is touched, so the
-    /// accumulator is advanced in one synchronous stretch. Splitting it this
-    /// way keeps an evolution accepted mid-fetch from being overwritten.
+    /// Every missed day is fetched before any state is touched, so an
+    /// evolution accepted mid-fetch is not overwritten; the rollover proceeds
+    /// even when fetches fail, with `fallbackSteps` covering a lost live count.
     func settleAndRollOver(trackedDay: Date, fallbackSteps: Int) async {
         let totals = await missedDayTotals(from: trackedDay)
         defer { dayRecoveryTask = nil }
@@ -61,10 +56,9 @@ extension PetPresenter {
     }
 
     /// Settled totals for the tracked day and each whole day missed since,
-    /// oldest first. Bounded by days walked — not by fetches that succeeded —
-    /// so a long absence or a failing HealthKit cannot fan out into dozens of
-    /// queries; days beyond the bound go uncredited and unpenalised. A tracked
-    /// day in the future (a clock set back) walks nowhere and returns empty.
+    /// oldest first. Capped at `maxCatchUpDays` days walked, so a failing
+    /// HealthKit leaves gaps instead of fanning out queries; days beyond go
+    /// uncredited and unpenalised, and a future tracked day returns empty.
     func missedDayTotals(from trackedDay: Date) async -> [(day: Date, total: Int)] {
         let calendar = Calendar.current
         var totals: [(day: Date, total: Int)] = []

@@ -5,7 +5,6 @@ import Foundation
 /// training can push the value out of displayable range.
 nonisolated struct Weight: Codable, Sendable, Hashable {
 
-    /// The lightest and heaviest a pet can weigh (grams).
     static let minGrams = 5
     static let maxGrams = 99
 

@@ -4,7 +4,7 @@ struct ContentView: View {
     @State private var appPresenter = AppPresenter()
     @State private var powerSaver = PowerSaverStore.live()
 
-    /// The manual Settings switch or the system Low Power Mode - either turns on
+    /// The manual Settings switch or the system Low Power Mode — either turns on
     /// the red palette.
     private var batterySaverActive: Bool {
         appPresenter.settings.batterySaverEnabled || powerSaver.isActive

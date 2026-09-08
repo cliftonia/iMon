@@ -6,9 +6,10 @@ nonisolated enum RoundOutcome: Equatable, Sendable {
     case clash
 }
 
-/// The arena rules: each round is an attack-height duel resolved by the
-/// `AttackHeight` triangle, and the session outcome feeds the win/loss record
-/// and conditioning that the evolution gates read.
+/// The arena rules as pure, stateless functions: each round is an
+/// attack-height duel resolved by the `AttackHeight` triangle, and applying
+/// the result mutates a caller-owned `PetState` — the win/loss record and
+/// conditioning the evolution gates read.
 nonisolated enum BattleEngine {
 
     // MARK: - Query
@@ -33,10 +34,10 @@ nonisolated enum BattleEngine {
         return .clash
     }
 
-    /// Applies the battle result to state, incrementing win/loss counters. Losing
-    /// while already weak (low strength or hunger) leaves the pet injured —
-    /// a beaten, run-down creature needs medication. Every battle (win or lose)
-    /// counts as activity and a win grants +1 trained POW (except for Dotkin).
+    /// Applies the battle result: every result stamps `lastBattledAt`, even a
+    /// draw. A win adds +1 `trainedPower` while `canCondition` holds (never for
+    /// Dotkin), clamped to `TimeConstants.maxConditioning`; a loss with strength
+    /// or hunger at one heart or fewer also injures the pet.
     static func applyResult(
         _ result: BattleResult,
         to state: PetState,

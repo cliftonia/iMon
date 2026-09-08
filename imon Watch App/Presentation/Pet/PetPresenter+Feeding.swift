@@ -1,10 +1,17 @@
 import Foundation
 import WatchKit
 
+/// Feeding and cleaning ceremonies for `PetPresenter`.
+///
+/// A ceremony plays as the view model's single `activity`, blocking input
+/// while it runs; the multi-stage sequences are split into phase helpers so
+/// each stage's sprites, haptics and pause stay together.
 extension PetPresenter {
 
     // MARK: - Feeding (Inline LCD Ceremony)
 
+    /// Opens food selection for the feeding ceremony, or plays `refuse()`
+    /// when `FeedAction.canFeed` fails.
     func startFeeding() {
         guard FeedAction.canFeed(state) else {
             refuse()
@@ -13,6 +20,10 @@ extension PetPresenter {
         viewModel.activity = .feeding(.selecting)
     }
 
+    /// Feeds the selected food and starts the feeding sequence. Does nothing
+    /// unless the ceremony is `.selecting`, cancels the ceremony when
+    /// `FeedAction.canFeed` fails, and refuses a food the pet is already
+    /// sated on rather than overfeeding.
     func selectAndFeed(_ food: FeedAction.FoodKind) {
         guard viewModel.feedingPhase == .selecting else { return }
         guard FeedAction.canFeed(state) else {
@@ -21,7 +32,6 @@ extension PetPresenter {
             return
         }
         guard !FeedAction.isSated(state, food: food) else {
-            // Already full on this stat — shake it off rather than overfeed.
             refuse()
             return
         }
@@ -32,6 +42,9 @@ extension PetPresenter {
 
     // MARK: - Feeding Sequence
 
+    /// Runs the serving, bite and satisfaction stages in order, dropping the
+    /// remaining stages when the task is cancelled between them; only the
+    /// final stage applies the feed and saves.
     func runFeedingSequence() async {
         let food = viewModel.selectedFood
         await runServingPhase(food: food)
@@ -102,6 +115,8 @@ extension PetPresenter {
 
     // MARK: - Clean
 
+    /// Runs the cleaning ceremony, ignoring the call while another activity
+    /// is in flight and refusing when `CleanAction.canClean` fails.
     func cleanAction() {
         guard !viewModel.isBusy else { return }
         guard CleanAction.canClean(state) else {
@@ -111,6 +126,8 @@ extension PetPresenter {
         startActivity { await $0.runCleaningSequence() }
     }
 
+    /// Plays the water drops, applies the clean and saves, then ends on the
+    /// sparkle; a cancellation at either pause abandons the rest.
     func runCleaningSequence() async {
         viewModel.activity = .cleaning
 

@@ -1,25 +1,21 @@
 import Foundation
 
-/// The resolved look of the LCD for a given moment — the single source of truth
-/// for which scene shows, so the rules live in one testable place instead of
-/// scattered across the views.
+/// What the LCD draws behind the pet for a given moment — the scene's
+/// lights, day phase and weather, decided by `SceneResolver`.
 nonisolated struct LCDScene: Equatable, Sendable {
     let lightsOn: Bool
     let dayPhase: DayPhase
     let weather: WeatherIconCondition?
 }
 
+/// Resolves which scene shows, so the rules live in one testable place
+/// instead of scattered across the views.
 nonisolated enum SceneResolver {
 
-    /// The home (pet) screen.
-    ///
-    /// - An **action ceremony** (feeding, cleaning, healing) plays in its own
-    ///   clean scene — no room, no weather — but the **lighting matches where
-    ///   the pet is**: lit inside or by day, dark outside at night.
-    /// - A **care mess** (poop on the floor, or an injury needing medicine)
-    ///   hides the weather so the care cue reads clearly against the scene.
-    /// - Otherwise (idle, or a **refusal**) it's the full environment: real
-    ///   light, day phase and weather.
+    /// Resolves the home (pet) screen: the full environment with real light,
+    /// day phase and weather — except an action ceremony, which plays in its
+    /// own clean scene (no room, no weather) with the real lighting kept,
+    /// and a care mess, which hides the weather so the care cue reads clearly.
     static func home(
         dayPhase: DayPhase,
         lightsOn: Bool,
@@ -37,8 +33,8 @@ nonisolated enum SceneResolver {
         )
     }
 
-    /// The battle / training arena — always outdoors: lit by day, dark at night,
-    /// never the inside room, never weather.
+    /// Resolves the battle / training arena — always outdoors: lit by day,
+    /// dark at night, never the inside room, never weather.
     static func arena(dayPhase: DayPhase) -> LCDScene {
         LCDScene(lightsOn: dayPhase == .day, dayPhase: .day, weather: nil)
     }

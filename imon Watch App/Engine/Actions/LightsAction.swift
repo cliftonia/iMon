@@ -12,8 +12,8 @@ nonisolated enum LightsAction {
 
     // MARK: - Query
 
-    /// The light can only be toggled at night. By day it is forced on, so any
-    /// toggle (which could only turn it off) is refused.
+    /// Reports whether the light can be toggled: night only, and never while
+    /// the pet is dead or still an egg.
     static func canToggle(_ state: PetState, night: Bool) -> Bool {
         !state.isDead && !state.isEgg && night
     }
@@ -35,7 +35,8 @@ nonisolated enum LightsAction {
         if state.lightsOn {
             state.wake(at: now)
         } else {
-            // Turned off — start the settle countdown; stay awake for now.
+            // Settle countdown anchor; the pet stays awake until
+            // `SleepSchedule` turns it into sleep.
             state.timestamps.lightsOffAt = now
         }
         return (state, .toggled)

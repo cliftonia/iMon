@@ -1,6 +1,5 @@
 import Foundation
 
-/// A sequence of SpriteFrames played at a fixed interval, optionally looping.
 nonisolated struct SpriteAnimation: Sendable, Hashable {
 
     let frames: [SpriteFrame]
