@@ -43,8 +43,9 @@ the steps are counted and the wrist is raised.
 
 ## Decisions pending
 
-- **The pet hand-off.** A new bundle id strands the currently saved pet
-  unless a one-time App Group hand-off ships in the new app.
+- ~~**The pet hand-off.**~~ Decided 2026-09-09: no hand-off. The new
+  identifiers hatch a fresh egg, which is also the only way to test
+  hatching, onboarding and the first evolution before review.
 - **Sync transport** (Epic 6): `NSUbiquitousKeyValueStore` (the DTO is tiny
   JSON, well under the 1 MB cap) vs CloudKit (more machinery, more control).
   Decide when the epic opens; the founding only needs to keep the DTO the

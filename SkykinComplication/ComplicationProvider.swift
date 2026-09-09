@@ -49,7 +49,7 @@ extension WidgetEntry {
 struct ComplicationProvider: TimelineProvider {
 
     // Must match `AppGroup.identifier` and `ComplicationStore.key` in the app.
-    private static let appGroup = "group.cliftonia.skykin"
+    private static let appGroup = "group.cliftonia.stepkin"
     private static let timelineKey = "com.cliftonia.imon.complicationTimeline"
 
     /// Returns `WidgetEntry.placeholder`, the newborn pose shown before the app

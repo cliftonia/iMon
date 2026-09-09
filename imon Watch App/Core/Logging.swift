@@ -2,7 +2,7 @@ import os
 
 /// One `os.Logger` per layer so Console filtering follows the architecture.
 nonisolated enum Log {
-    private static let subsystem = "com.cliftonia.imon"
+    private static let subsystem = "com.cliftonia.stepkin"
 
     /// Logger for the engine layer.
     static let engine = Logger(subsystem: subsystem, category: "engine")

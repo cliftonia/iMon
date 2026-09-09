@@ -4,7 +4,7 @@ import Foundation
 /// both processes read and write the same saved pet.
 nonisolated enum AppGroup {
     /// Lookup key for the shared container. Renaming it strands the saved pet.
-    static let identifier = "group.cliftonia.skykin"
+    static let identifier = "group.cliftonia.stepkin"
 }
 
 nonisolated extension UserDefaults {

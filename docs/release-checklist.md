@@ -36,17 +36,14 @@ developer's.
 
 ## Decide before the upload (developer)
 
-1. **Bundle identifiers.** The App Store Connect record (created 2026-07-19)
-   is an iOS record against `cliftonia.stepkin`; the project still builds
-   `cliftonia.imon`, `cliftonia.imon.watchkitapp` and
-   `…watchkitapp.SkykinComplication`, and the App Group is
-   `group.cliftonia.skykin`. The upload will be refused until they match.
-   Changing them is a text edit in `project.pbxproj`, both entitlements files
-   and `AppGroup.swift` / `ComplicationProvider.swift` — but it also **strands
-   the pet on the wrist** (new container). Decide the hand-off first; see
-   `migration-plan.md` § 3. The UserDefaults keys
-   (`com.cliftonia.imon.petState`, `.backup`, `.complicationTimeline`) must
-   *not* change in either case.
+1. **Bundle identifiers — done 2026-09-09.** The project now builds
+   `cliftonia.stepkin`, `cliftonia.stepkin.watchkitapp` and
+   `…watchkitapp.SkykinComplication`, with App Group
+   `group.cliftonia.stepkin`, matching the App Store Connect record. The
+   decision was a fresh egg: no hand-off, and the pet under the old
+   identifiers stays on the wrist until the old app is deleted. The
+   UserDefaults keys (`com.cliftonia.imon.petState`, `.backup`,
+   `.complicationTimeline`) were deliberately kept.
 2. **Provisioning on the new App ID.** HealthKit, WeatherKit, App Groups and
    the notification capability must be ticked on `cliftonia.stepkin.watchkitapp`
    in the developer portal; WeatherKit takes time to propagate, so the first
