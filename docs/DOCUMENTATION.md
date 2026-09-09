@@ -20,8 +20,13 @@ checker in `Tools/doc_lint.py` enforces them and runs with the lint gate.
 - **Every non-private function and initializer** carries at least the one
   summary sentence. Add more only for a contract the signature cannot say:
   units, `nil` semantics, side effects, failure modes, ordering, isolation.
-- **Private helpers, properties and cases** are commented only when the
-  contract is not evident from the name.
+- **Every non-private stored property** carries one `///` line that says
+  what the value is for or where it comes from — the reader's side of it,
+  never the type restated. `/// The species name.` fails; `/// Shown as the
+  title row of the rectangular family.` passes. A property with a real
+  contract (units, bit order, `nil` meaning) states it in that line.
+- **Private helpers, private properties and cases** are commented only when
+  the contract is not evident from the name.
 - **Extensions** need no header of their own; a `// MARK:` names the group.
 
 ### Voice

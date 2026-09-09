@@ -8,7 +8,10 @@ import Observation
 @Observable
 final class SpriteAnimator {
 
+    /// The frame the view draws, taken from the playing animation; kept at
+    /// the final pose after `stop()` rather than reset to empty.
     private(set) var currentFrame: SpriteFrame = .empty
+    /// Index into the playing animation's frames; wraps to 0 when looping.
     private(set) var currentFrameIndex: Int = 0
 
     private var animation: SpriteAnimation?

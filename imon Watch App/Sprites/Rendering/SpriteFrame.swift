@@ -6,6 +6,7 @@ import Foundation
 /// past an edge, and shift amounts outside 1..<16 are a no-op.
 nonisolated struct SpriteFrame: Sendable, Hashable {
 
+    /// The bitmap's 16 rows, topmost first.
     let rows: [UInt16]
 
     /// Creates a frame; traps unless `rows` contains exactly 16 rows.
@@ -105,9 +106,11 @@ nonisolated struct SpriteFrame: Sendable, Hashable {
         return SpriteFrame(rows: holeRows)
     }
 
+    /// A frame with every pixel off.
     static let empty = SpriteFrame(
         rows: [UInt16](repeating: 0, count: 16)
     )
 
+    /// The frame's width and height in pixels.
     static let size = 16
 }

@@ -28,8 +28,11 @@ nonisolated enum WeatherIconCondition: Sendable, Equatable, CaseIterable, Identi
 /// Immutable current-weather reading. Temperature is kept raw so it can be
 /// formatted in the device's locale at display time.
 nonisolated struct WeatherSnapshot: Sendable, Equatable {
+    /// The current temperature as measured, before any display formatting.
     let temperature: Measurement<UnitTemperature>
+    /// The current condition, reduced to the set the LCD has icons for.
     let condition: WeatherIconCondition
+    /// Whether daylight holds for the reading.
     let isDaylight: Bool
     /// Relative humidity, 0...1.
     let humidity: Double
@@ -44,6 +47,7 @@ nonisolated enum WeatherError: Error, Sendable {
 
 #if DEBUG
 nonisolated extension WeatherSnapshot {
+    /// A fixed sample reading for debug builds.
     static let sample = WeatherSnapshot(
         temperature: Measurement(value: 18, unit: .celsius),
         condition: .clear,

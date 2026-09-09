@@ -4,6 +4,7 @@ import Foundation
 /// One-shot current-location lookup, a witness standing in for CoreLocation
 /// so it can be mocked.
 nonisolated struct LocationProvider: Sendable {
+    /// The one-shot lookup, throwing when no fix is available.
     let currentLocation: @Sendable () async throws -> CLLocation
 }
 
@@ -48,6 +49,7 @@ nonisolated extension LocationProvider {
 /// dismissed by the manager deallocating mid-request.
 @MainActor
 private final class LocationAuthorizer {
+    /// The single instance all requests share; its long life keeps the authorization prompt alive.
     static let shared = LocationAuthorizer()
     private let manager = CLLocationManager()
 

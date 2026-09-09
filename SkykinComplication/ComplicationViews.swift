@@ -4,6 +4,7 @@ import WidgetKit
 /// Renders a 16×16 sprite (one `UInt16` per row, MSB = leftmost) baked into the
 /// entry by the app, so the complication needs none of the app's sprite stack.
 struct SpriteCanvas: View {
+    /// The baked sprite rows; fewer than 16 leaves the remaining rows empty.
     let rows: [UInt16]
 
     var body: some View {
@@ -30,7 +31,9 @@ struct SpriteCanvas: View {
 /// Row of small heart icons, filled up to `value` out of `max`; always draws at
 /// least one slot even when `max` is zero.
 struct HeartsRow: View {
+    /// Filled heart count; slots at or above it draw empty hearts.
     let value: Int
+    /// Total heart slots; zero still draws one slot.
     let max: Int
 
     var body: some View {
@@ -47,6 +50,7 @@ struct HeartsRow: View {
 /// other than rectangular, inline and corner falling through to `CircularView`.
 struct ComplicationView: View {
     @Environment(\.widgetFamily) private var family
+    /// The timeline entry rendered by whichever family view is chosen.
     let entry: WidgetEntry
 
     var body: some View {
@@ -62,6 +66,7 @@ struct ComplicationView: View {
 /// Circular complication: the baked sprite centred on the system widget
 /// background.
 struct CircularView: View {
+    /// The timeline entry supplying the baked sprite rows and status text.
     let entry: WidgetEntry
 
     var body: some View {
@@ -77,6 +82,7 @@ struct CircularView: View {
 /// `HeartsRow`, and the status text, prefixed with "needs" when the pet needs
 /// attention.
 struct RectangularView: View {
+    /// The timeline entry supplying the species name, hunger hearts, and status text.
     let entry: WidgetEntry
 
     var body: some View {
@@ -100,6 +106,7 @@ struct RectangularView: View {
 /// Inline complication: a single-line label of the status text with a warning
 /// glyph when the pet needs attention, a pawprint otherwise.
 struct InlineView: View {
+    /// The timeline entry supplying the status text and needs-attention flag.
     let entry: WidgetEntry
 
     var body: some View {
@@ -113,6 +120,7 @@ struct InlineView: View {
 /// Corner complication: the baked sprite with a widget label gauge of hunger
 /// against the maximum heart count.
 struct CornerView: View {
+    /// The timeline entry supplying the baked sprite rows, hunger reading, and status text.
     let entry: WidgetEntry
 
     var body: some View {

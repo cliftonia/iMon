@@ -94,19 +94,21 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
+    /// Streaks whipping past for a battle miss; ends on `.empty` so nothing lingers.
     static let missStreaks = SpriteAnimation(
         frames: [missStreaks1, missStreaks2, .empty],
         frameDuration: 0.25,
         loops: false
     )
 
+    /// Three-frame battle burst; plays once at 0.15 s per frame.
     static let explosion = SpriteAnimation(
         frames: [explosion1, explosion2, explosion3],
         frameDuration: 0.15,
         loops: false
     )
 
-    // Frame 1: a small central burst.
+    /// Frame 1: a small central burst.
     static let explosion1 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -126,7 +128,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Frame 2: a medium starburst.
+    /// Frame 2: a medium starburst.
     static let explosion2 = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................
@@ -146,7 +148,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Frame 3: a large blast with debris.
+    /// Frame 3: a large blast with debris.
     static let explosion3 = SpriteFrame(rows: [
         0x2004, //  ..#..........#..  debris
         0x0810, //  ....#......#....

@@ -5,7 +5,10 @@ import Foundation
 /// are not identical.
 nonisolated struct BattleOpponent: Sendable {
 
+    /// The drawn species, chosen by `generate(matching:)` to differ from the player's when
+    /// possible.
     let species: PetSpecies
+    /// The species' `basePower` jittered by ±10, clamped to at least 1.
     let power: Double
 
     /// Generates an opponent matched to the player's current stage.

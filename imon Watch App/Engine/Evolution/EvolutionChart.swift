@@ -7,6 +7,7 @@ nonisolated enum EvolutionChart {
 
     // MARK: - Complete Evolution Tree
 
+    /// All chart rows in match order, assembled once by `buildRequirements()`.
     static let requirements: [EvolutionRequirement] = buildRequirements()
 
     /// Returns the rows leaving a species, preserving chart order so the

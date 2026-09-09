@@ -8,6 +8,7 @@ import Observation
 @Observable
 final class PowerSaverStore {
 
+    /// The sampled Low Power Mode reading; true puts the UI in the red battery-saver palette.
     private(set) var isActive: Bool
     private let isLowPowerEnabled: @Sendable () -> Bool
 

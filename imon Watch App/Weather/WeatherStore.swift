@@ -7,6 +7,7 @@ import os
 @Observable
 final class WeatherStore {
 
+    /// The latest fetched reading; nil until a fetch succeeds, unchanged when one fails.
     private(set) var snapshot: WeatherSnapshot?
 
     private let provider: WeatherProvider

@@ -8,8 +8,13 @@ import WatchKit
 /// torn-down presenter.
 final class TrainingPresenter {
 
+    /// The phase machine's state and round tally the view renders; replaced wholesale by
+    /// `startTraining`.
     private(set) var viewModel = TrainingViewModel()
+    /// Plays the pet's own sprite for each phase: idle stance, attack, projectile, reaction.
     let spriteAnimator = SpriteAnimator()
+    /// Plays the target-side effects — hit sequence, miss streaks, victory sparkle; stopped in
+    /// calmer phases.
     let targetAnimator = SpriteAnimator()
 
     private let species: PetSpecies

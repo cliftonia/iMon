@@ -4,6 +4,7 @@ import SwiftUI
 /// weather *icon* lives in the debug row by the pet's name.)
 struct WeatherOverlay: View {
 
+    /// The reading rendered in the row: temperature, humidity and condition.
     let snapshot: WeatherSnapshot
     @Environment(\.lcdTheme) private var theme
 

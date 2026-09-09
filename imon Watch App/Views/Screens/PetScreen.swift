@@ -7,6 +7,7 @@ import WatchKit
 /// battle layout when the presenter's screen mode leaves normal play.
 struct PetScreen: View {
 
+    /// The presenter the view delegates to; it drives menu selection and the game loop.
     let presenter: PetPresenter
     // Not private — the `+Actions` extension reads it for menu navigation.
     @Environment(AppPresenter.self) var appPresenter

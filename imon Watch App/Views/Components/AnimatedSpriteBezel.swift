@@ -4,7 +4,10 @@ import SwiftUI
 /// onboarding screens.
 struct AnimatedSpriteBezel: View {
 
+    /// The animator driving the embedded `SpriteView`.
     let animator: SpriteAnimator
+
+    /// The pixel size handed to the embedded `SpriteView`.
     let pixelSize: CGFloat
 
     var body: some View {

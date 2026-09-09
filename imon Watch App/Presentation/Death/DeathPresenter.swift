@@ -7,7 +7,9 @@ import WatchKit
 /// and begins a fresh egg.
 final class DeathPresenter {
 
+    /// The screen's state: the memorial's name and age, captured at init.
     private(set) var viewModel = DeathViewModel()
+    /// The grave sprite's animator, loaded with the still frame at init.
     let spriteAnimator = SpriteAnimator()
 
     private let onRestart: () -> Void

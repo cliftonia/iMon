@@ -14,14 +14,17 @@ final class SettingsStore {
         didSet { defaults.set(batterySaverEnabled, forKey: Key.batterySaver) }
     }
 
+    /// The notifications toggle, persisted on every change and enabled by default.
     var notificationsEnabled: Bool {
         didSet { defaults.set(notificationsEnabled, forKey: Key.notifications) }
     }
 
+    /// The weather toggle, persisted on every change and enabled by default.
     var weatherEnabled: Bool {
         didSet { defaults.set(weatherEnabled, forKey: Key.weather) }
     }
 
+    /// The steps toggle, persisted on every change and enabled by default.
     var stepsEnabled: Bool {
         didSet { defaults.set(stepsEnabled, forKey: Key.steps) }
     }

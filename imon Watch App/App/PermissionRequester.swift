@@ -7,6 +7,7 @@ import Foundation
 /// rather than on the first frame of a fresh install. Each framework only
 /// prompts once, so calling this on every alive start is harmless.
 nonisolated struct PermissionRequester: Sendable {
+    /// The prompt for both authorizations: HealthKit steps and care reminders.
     let requestAll: @Sendable () async -> Void
 }
 

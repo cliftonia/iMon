@@ -8,15 +8,23 @@ import WatchKit
 /// resumed rather than leaked.
 final class BattlePresenter {
 
+    /// Battle screen state — species, HP and phase — seeded in `startBattle`.
     private(set) var viewModel = BattleViewModel()
+    /// Plays our monster's sprite animations, starting on idle in `startBattle`.
     let petAnimator = SpriteAnimator()
+    /// Plays the opponent's sprite animations, starting on idle at the intro's reveal.
     let opponentAnimator = SpriteAnimator()
 
     // Read by the `+Frames` and `+Rounds` extensions.
+    /// What the battle is built from — opponent matching, shown species and starting HP.
     let petState: PetState
+    /// Forwarded to `BattleHP.calculate` when HP is seeded.
     let steps: Int?
+    /// Fired exactly once with the `BattleResult`.
     let onComplete: (BattleResult) -> Void
+    /// The generated rival; `nil` until `startBattle` creates it from `petState`.
     var opponent: BattleOpponent?
+    /// The suspended height pick, resumed by `pickAction` — or as `.medium` on teardown.
     var pickContinuation: CheckedContinuation<AttackHeight, Never>?
 
     private var battleTask: Task<Void, Never>?

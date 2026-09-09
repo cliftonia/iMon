@@ -18,7 +18,10 @@ nonisolated enum StepProgress {
 
     /// The lifetime steps accumulator, advanced as a unit.
     nonisolated struct Progress: Sendable, Equatable {
+        /// The lifetime steps total; credited only, never decremented.
         var lifetime: Int
+        /// Steps credited on `trackedDay`; compared with `lazyThreshold` when
+        /// the day rolls over.
         var creditedToday: Int
         /// The calendar day `creditedToday` belongs to; `nil` until first credit.
         var trackedDay: Date?

@@ -18,6 +18,7 @@ final class PetViewModel {
         case battle
     }
 
+    /// The flow the screen is in; anything but `.normal` blocks input via `isBusy`.
     var screenMode: ScreenMode = .normal
 
     /// Day / night / inside — drives the LCD scene (sun, night sky, or room).
@@ -25,7 +26,9 @@ final class PetViewModel {
 
     // MARK: - Pet Display
 
+    /// The pet's state, rendered by the view; `nil` when no state has been provided yet.
     var status: PetStatus?
+    /// The pet's horizontal offset on the LCD.
     var petOffsetX: Int = 8
 
     /// Progress toward the next evolution (0...1) — drives the bezel ring.
@@ -47,6 +50,7 @@ final class PetViewModel {
         case settings
     }
 
+    /// The menu entry currently selected, stepped by `MenuAction` position.
     var menuSelection: MenuAction = .stats
 
     // MARK: - Activity
@@ -73,7 +77,9 @@ final class PetViewModel {
         case evolving
     }
 
+    /// The ceremony currently in flight; `.idle` when none is playing.
     var activity: Activity = .idle
+    /// The food chosen while the feeding ceremony is in its `selecting` step.
     var selectedFood: FeedAction.FoodKind = .meat
 
     /// The feeding sub-phase, when feeding — for the buttons and animation.

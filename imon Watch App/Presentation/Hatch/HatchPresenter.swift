@@ -7,7 +7,10 @@ import WatchKit
 /// after the callback, so abandoning the ceremony loses nothing.
 final class HatchPresenter {
 
+    /// Carries the current hatch phase shown to the view; only `startHatching` writes it.
     private(set) var viewModel = HatchViewModel()
+
+    /// Plays the sprite loops for each phase; stopped when the ceremony ends.
     let spriteAnimator = SpriteAnimator()
 
     private let onHatched: () -> Void

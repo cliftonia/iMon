@@ -28,6 +28,7 @@ nonisolated enum TimeConstants {
 
     // MARK: - Game Loop
 
+    /// One game-loop tick per interval.
     static let gameTickInterval: TimeInterval = 30
 
     /// The settle — the gap between the light going out at bedtime and the pet falling asleep.
@@ -39,6 +40,7 @@ nonisolated enum TimeConstants {
 
     /// The fallback night window (24h clock), used only when weather is unavailable.
     static let nightStartHour: Int = 18
+    /// The morning wake hour: the end of the night window begun at `nightStartHour`.
     static let nightEndHour: Int = 6
 
     // MARK: - Limits
@@ -93,6 +95,7 @@ nonisolated enum TimeConstants {
     /// Weight lost per completed training session (grams).
     static let trainWeightLoss: Int = 2
 
+    /// Rounds in one training session.
     static let trainRounds: Int = 5
 
     /// Wins needed in training to count as a successful session.
@@ -120,7 +123,9 @@ nonisolated enum TimeConstants {
 
     // MARK: - Weather
 
+    /// How long a weather reading is cached before refetching.
     static let weatherCacheInterval: TimeInterval = 1_800
 
+    /// How long the step count is cached before refetching.
     static let stepCacheInterval: TimeInterval = 600
 }

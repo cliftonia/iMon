@@ -4,6 +4,7 @@ import Foundation
 
 nonisolated extension SharedSprites {
 
+    /// Clear-sky icon for day; `weatherMoon` is the night counterpart.
     static let weatherSun = SpriteFrame(rows: [
         0x0000,
         0x0100,
@@ -23,6 +24,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Clear-sky icon for night; `weatherSun` is the day counterpart.
     static let weatherMoon = SpriteFrame(rows: [
         0x0000,
         0x03C0,
@@ -42,6 +44,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Cloudy icon for day; `weatherCloudNight` is the night counterpart.
     static let weatherCloud = SpriteFrame(rows: [
         0x0000,
         0x0000,
@@ -61,6 +64,8 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Cloudy icon for night, with a small sky glyph above the cloud;
+    /// the day counterpart is `weatherCloud`.
     static let weatherCloudNight = SpriteFrame(rows: [
         0x0E00,
         0x1000,
@@ -80,6 +85,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Rain icon; no night variant exists, so it serves both day and night.
     static let weatherRain = SpriteFrame(rows: [
         0x0000,
         0x0380,
@@ -99,6 +105,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Snow icon; no night variant exists, so it serves both day and night.
     static let weatherSnow = SpriteFrame(rows: [
         0x0000,
         0x0380,
@@ -118,6 +125,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Storm icon; no night variant exists, so it serves both day and night.
     static let weatherStorm = SpriteFrame(rows: [
         0x0000,
         0x0380,
@@ -137,6 +145,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Wind icon; no night variant exists, so it serves both day and night.
     static let weatherWind = SpriteFrame(rows: [
         0x0000,
         0x0000,
@@ -156,6 +165,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Fog icon; no night variant exists, so it serves both day and night.
     static let weatherFog = SpriteFrame(rows: [
         0x0000,
         0x0000,

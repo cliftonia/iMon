@@ -6,7 +6,10 @@ import Foundation
 /// reading) so a failed fetch never refreshes a reading's age.
 final class ThrottledFetch {
 
+    /// The last attempt's time, consulted by `isFresh` to throttle retries; nil until the first
+    /// attempt.
     private(set) var lastFetch: Date?
+    /// The last success's time, dating the reading's age; nil until the first success.
     private(set) var lastSuccess: Date?
     private var task: Task<Void, Never>?
 

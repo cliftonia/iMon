@@ -7,6 +7,7 @@ import WatchKit
 /// reveal strobe, and applying the new stage.
 extension PetPresenter {
 
+    /// Duration of the reveal strobe before the evolved creature appears, in milliseconds.
     static let evolveFlashMilliseconds = 1_600
 
     /// Starts the evolution flash when the lifetime steps have crossed the

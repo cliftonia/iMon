@@ -8,6 +8,7 @@ import Observation
 /// is immutable or already observable.
 final class SettingsPresenter {
 
+    /// The shared store the Settings screen's toggles bind to directly.
     let settings: SettingsStore
 
     /// "1.0 (1)" from the bundle, "—" for missing values; shown on the About row.
@@ -19,6 +20,7 @@ final class SettingsPresenter {
     }
 
     #if DEBUG
+    /// The developer actions shown in the screen's Debug section.
     let debug: SettingsDebugActions
 
     /// Creates the presenter for the Settings screen, with the developer
@@ -40,10 +42,15 @@ final class SettingsPresenter {
 /// injected as a witness so `SettingsPresenter` holds no game knowledge.
 @MainActor
 struct SettingsDebugActions {
+    /// Debug action forcing a weather condition.
     let setWeather: (WeatherIconCondition?) -> Void
+    /// Debug action forcing an evolution.
     let forceEvolve: () -> Void
+    /// Debug action running the care test.
     let careTest: () -> Void
+    /// Debug action killing the pet.
     let killPet: () -> Void
+    /// Debug action morphing the pet into the given species.
     let morph: (PetSpecies) -> Void
 }
 #endif

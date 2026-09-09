@@ -6,6 +6,8 @@ import SwiftUI
 /// something on screen animates.
 struct LCDDisplay: View {
 
+    /// Everything a frame draws — sprites, poop, weather, and the call sign; the accessors
+    /// below read directly off it.
     let configuration: LCDDisplayConfiguration
 
     /// The active palette - `nightRed` in battery-saver mode, else `classic`.

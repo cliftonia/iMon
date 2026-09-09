@@ -6,8 +6,11 @@ import SwiftUI
 /// the row into one accessibility element reading the label and the count.
 struct HeartMeter: View {
 
+    /// Leading text of the row, also read in the accessibility label.
     let label: String
+    /// Number of leading hearts drawn filled; the rest draw hollow.
     let filledCount: Int
+    /// Total hearts drawn in the row.
     let maxCount: Int
 
     var body: some View {

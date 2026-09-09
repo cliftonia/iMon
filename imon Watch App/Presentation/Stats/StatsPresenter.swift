@@ -7,6 +7,7 @@ import Foundation
 /// evolution is step-fed and would otherwise look silently stuck.
 final class StatsPresenter {
 
+    /// The display snapshot the stats screen renders; rewritten in full on every update.
     private(set) var viewModel = StatsViewModel()
 
     // MARK: - Update

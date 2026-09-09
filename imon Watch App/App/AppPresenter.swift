@@ -23,19 +23,30 @@ final class AppPresenter {
         case dead
     }
 
+    /// The lifecycle phase on screen; `loading` until `onAppear` resolves the saved pet.
     private(set) var phase: LifecyclePhase = .loading
+    /// The pet screen's presenter; non-nil only while `phase` is `.alive`.
     private(set) var petPresenter: PetPresenter?
+    /// The pushed stats screen's presenter, created by `navigateToStats`.
     private(set) var statsPresenter: StatsPresenter?
+    /// The pushed settings screen's presenter, created by `navigateToSettings`.
     private(set) var settingsPresenter: SettingsPresenter?
+    /// The hatch screen's presenter; non-nil only while `phase` is `.hatching`.
     private(set) var hatchPresenter: HatchPresenter?
+    /// The onboarding screen's presenter; non-nil only while `phase` is `.onboarding`.
     private(set) var onboardingPresenter: OnboardingPresenter?
     /// The newborn saved at hatch, held until onboarding finishes.
     private var hatchedState: PetState?
+    /// The death screen's presenter, created by `startDeath` when the pet dies.
     private(set) var deathPresenter: DeathPresenter?
 
+    /// The `NavigationStack` path stats and settings push onto; phase transitions pop to root.
     let router = AppRouter()
+    /// The weather store; its night signal feeds the catch-up tick and `PetPresenter`.
     let weatherStore: WeatherStore
+    /// The step store; its readings feed the catch-up tick, activity scaling, and stats.
     let stepActivityStore: StepActivityStore
+    /// The shared settings store; its weather and steps flags switch those readings on and off.
     let settings: SettingsStore
 
     private let store: PetStateStore

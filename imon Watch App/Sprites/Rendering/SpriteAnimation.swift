@@ -6,8 +6,11 @@ import Foundation
 /// advances the frames on a timer.
 nonisolated struct SpriteAnimation: Sendable, Hashable {
 
+    /// The frames to play, in order.
     let frames: [SpriteFrame]
+    /// How long each frame is shown before advancing to the next.
     let frameDuration: TimeInterval
+    /// Whether playback restarts from the first frame after the last.
     let loops: Bool
 
     /// Creates an animation whose frames play in the given order.

@@ -6,6 +6,7 @@ import SwiftUI
 /// nothing.
 struct MenuIconRow: View {
 
+    /// The index of the icon shown as selected.
     let selectedIndex: Int
     @Environment(\.lcdTheme) private var theme
 

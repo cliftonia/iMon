@@ -9,18 +9,26 @@ import os
 /// care reminders and the complication timeline to the system.
 final class PetPresenter {
 
+    /// The screen state the view binds to; recomputed from `state` after every change.
     private(set) var viewModel = PetViewModel()
+    /// The base sprite animation player; `updateAnimation` picks weak, sleep or idle on it.
     let spriteAnimator = SpriteAnimator()
+    /// The feeding extension's animator; stopped whenever an activity ends or the loop stops.
     let feedingAnimator = SpriteAnimator()
 
+    /// The training mode's presenter, non-nil while training is running.
     var trainingPresenter: TrainingPresenter?
+    /// The battle mode's presenter, non-nil while a battle is running.
     var battlePresenter: BattlePresenter?
 
+    /// The live pet state, replaced by `GameEngine.advance` on every tick.
     var state: PetState
+    /// The witness `save` persists the state through.
     let store: PetStateStore
 
     /// Schedules care reminders while the app is backgrounded.
     let notificationScheduler: NotificationScheduler
+    /// The complication reload signal, sent after backgrounding bakes a fresh timeline.
     let complicationReloader: ComplicationReloader
 
     /// Weather-derived night (true/false), or nil when no reading is available.
@@ -39,9 +47,11 @@ final class PetPresenter {
     private let onDeath: () -> Void
 
     private var gameTimer: Timer?
+    /// The timer stepping the wander; the `+Wander` extension owns the movement.
     var wanderTimer: Timer?
     /// The single in-flight activity ceremony (feed / clean / heal / refuse).
     var activityTask: Task<Void, Never>?
+    /// The in-flight sleep toggle; cancelled and cleared when the game loop stops.
     var sleepToggleTask: Task<Void, Never>?
     /// The in-flight rollover of a day that ended while the app was closed.
     /// Not private: the tests await it, since the rollover is asynchronous but
@@ -62,6 +72,7 @@ final class PetPresenter {
         case walking(direction: Int, stepsRemaining: Int)
     }
 
+    /// The current wander leg, starting `.idle`; the movement lives in the `+Wander` extension.
     var wanderState: WanderState = .idle
 
     // MARK: - Init

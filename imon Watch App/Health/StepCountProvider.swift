@@ -5,6 +5,7 @@ import HealthKit
 /// steps can be tested without HealthKit. Days are anchored to local midnight —
 /// a count never carries across days.
 nonisolated struct StepCountProvider: Sendable {
+    /// Today's step total from local midnight to now, read as a running count.
     let fetchTodaySteps: @Sendable () async throws -> Int
 
     /// The total for the calendar day containing the given date. Lets a day

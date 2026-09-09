@@ -8,7 +8,9 @@ nonisolated struct NotificationScheduler: Sendable {
     let schedule: @Sendable ([CareNotification]) -> Void
     /// Fires a one-off notification immediately (e.g. an evolution announcement).
     let notify: @Sendable (_ title: String, _ body: String, _ species: PetSpecies) -> Void
+    /// Removes every pending care reminder.
     let cancelAll: @Sendable () -> Void
+    /// Requests permission for alerts and sounds; false on denial or failure.
     let requestAuthorization: @Sendable () async -> Bool
 }
 

@@ -5,14 +5,23 @@ import Foundation
 /// row taken only when no specific row matches.
 nonisolated struct EvolutionRequirement: Sendable {
 
+    /// The species at the start of the from→to edge.
     let from: PetSpecies
+    /// The species at the end of the from→to edge.
     let to: PetSpecies
+    /// The most care mistakes allowed; exceeding this rejects the row.
     let maxCareMistakes: Int?
+    /// The fewest care mistakes required; falling short rejects the row.
     let minCareMistakes: Int?
+    /// The fewest battle wins required; falling short rejects the row.
     let minBattleWins: Int?
+    /// The minimum win rate, a 0–1 fraction; zero battles fought rejects the row.
     let minWinRate: Double?
+    /// The fewest trainings required; falling short rejects the row.
     let minTrainingCount: Int?
+    /// The minimum weight, in grams; lighter rejects the row.
     let minWeight: Int?
+    /// Whether this is the fallback row, taken only when no specific row matches.
     let isDefault: Bool
 
     /// Creates a from→to edge with its care gates.

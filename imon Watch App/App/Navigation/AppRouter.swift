@@ -4,6 +4,7 @@ import SwiftUI
 /// push `AppRoute`s and pop back to the pet screen on phase changes.
 @Observable
 final class AppRouter {
+    /// The `NavigationStack` binding; `navigate(to:)` appends and `popToRoot()` clears it.
     var path = NavigationPath()
 
     /// Pushes `route`, presenting its screen.

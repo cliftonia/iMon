@@ -5,6 +5,8 @@ import SwiftUI
 /// debug menu.
 struct SettingsScreen: View {
 
+    /// Owns the settings the toggles bind to, the About version label, and
+    /// the debug actions.
     let presenter: SettingsPresenter
 
     var body: some View {

@@ -16,7 +16,9 @@ nonisolated struct CareNotification: Sendable, Equatable, Identifiable {
         case fading
     }
 
+    /// Which care need this reminder is for; chooses the message in `title` and `body`.
     let kind: Kind
+    /// When the reminder is due — the fire time of the pending request.
     let fireDate: Date
     /// The pet's species — supplies the personal name and the notification sprite.
     let species: PetSpecies

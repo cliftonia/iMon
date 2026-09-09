@@ -4,20 +4,35 @@ import Foundation
 /// display units and attention flags precomputed at construction, so views
 /// render from a frozen moment rather than reaching into live engine state.
 nonisolated struct PetStatus: Sendable {
+    /// The pet's species, stored on the source `PetState`.
     let species: PetSpecies
+    /// The evolution stage, read from `species` at snapshot time.
     let stage: EvolutionStage
+    /// Hunger in hearts; empty hearts raise `needsAttention`.
     let hungerHearts: StatHearts
+    /// Strength in hearts; empty hearts raise `needsAttention`.
     let strengthHearts: StatHearts
+    /// Weight flattened to whole grams for display.
     let weightGrams: Int
+    /// The age counter in whole days, stored on the source `PetState`.
     let ageDays: Int
+    /// Poops present; any poop raises `needsAttention`.
     let poopCount: Int
+    /// Whether the pet is asleep at snapshot time.
     let isSleeping: Bool
+    /// Whether the light is on at snapshot time.
     let lightsOn: Bool
+    /// Whether the pet is injured; injury raises `needsAttention`.
     let isInjured: Bool
+    /// Whether the pet is dead at snapshot time.
     let isDead: Bool
+    /// Whether the pet is still an egg at snapshot time.
     let isEgg: Bool
+    /// Whether the pet is languishing, as computed on the source `PetState`.
     let isLanguishing: Bool
+    /// The battle-win tally, stored on the source `PetState`.
     let battleWins: Int
+    /// The battle-loss tally, stored on the source `PetState`.
     let battleLosses: Int
 
     /// The care-call flag — true while hunger or strength hearts are

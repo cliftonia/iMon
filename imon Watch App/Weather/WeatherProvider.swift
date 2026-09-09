@@ -4,6 +4,7 @@ import WeatherKit
 /// Fetches the current weather for the device's location. A witness so the
 /// WeatherKit/CoreLocation dependency can be mocked in tests and previews.
 nonisolated struct WeatherProvider: Sendable {
+    /// The fetch closure, supplied by the factory (`.live`, `.mock`, `.mockFailing`).
     let fetchCurrent: @Sendable () async throws -> WeatherSnapshot
 }
 

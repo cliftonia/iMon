@@ -57,6 +57,7 @@ nonisolated enum LCDTheme: Sendable {
 
 /// The environment key carrying `LCDTheme`, defaulting to `classic`.
 private struct LCDThemeKey: EnvironmentKey {
+    /// The theme used when no ancestor injects one through the environment: `classic`.
     static let defaultValue: LCDTheme = .classic
 }
 

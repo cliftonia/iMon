@@ -5,6 +5,7 @@ import SwiftUI
 /// `DeathPresenter`.
 struct DeathScreen: View {
 
+    /// The source of the sprite, species name, and age shown and of the restart action.
     let presenter: DeathPresenter
 
     var body: some View {

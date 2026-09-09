@@ -5,6 +5,7 @@ import SwiftUI
 /// progress dots; tapping the content advances to the next tip.
 struct OnboardingScreen: View {
 
+    /// The presenter whose tutorial state the view renders and whose actions it delegates to.
     let presenter: OnboardingPresenter
 
     var body: some View {

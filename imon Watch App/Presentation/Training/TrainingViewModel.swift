@@ -8,11 +8,17 @@ import Observation
 @Observable
 final class TrainingViewModel {
 
+    /// The stage the run has reached; selects what the Training screen shows.
     var phase: TrainingPhase = .ready
+    /// The round of the run being played.
     var currentRound: Int = 0
+    /// The number shown in the current round.
     var currentNumber: Int = 5
+    /// The result of each round the run has played.
     var roundResults: [Bool] = []
+    /// Whether `currentNumber` is visible on screen.
     var showingNumber: Bool = false
+    /// Whether the last guess was high; meaningless before the first guess.
     var lastGuessHigh: Bool = true
 
     /// The stage of a training run, from `ready` through the attack

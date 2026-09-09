@@ -3,8 +3,11 @@ import Foundation
 /// What the LCD draws behind the pet for a given moment — the scene's
 /// lights, day phase and weather, decided by `SceneResolver`.
 nonisolated struct LCDScene: Equatable, Sendable {
+    /// Whether the scene draws lit or dark; the arena derives it from the day phase.
     let lightsOn: Bool
+    /// Day or night for the environment; the arena forces day, going dark through its lights.
     let dayPhase: DayPhase
+    /// The weather behind the pet; `nil` draws none — a ceremony, a care mess, or the arena.
     let weather: WeatherIconCondition?
 }
 

@@ -5,6 +5,7 @@ import Foundation
 /// `Codable` passes the bare raw value through, so the brand never appears
 /// in persisted JSON.
 nonisolated struct Tagged<Phantom, RawValue>: Sendable where RawValue: Sendable {
+    /// The wrapped value; `Codable` passes it through bare, without the brand.
     let rawValue: RawValue
 }
 

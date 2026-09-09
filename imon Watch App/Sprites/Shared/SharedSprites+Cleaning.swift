@@ -4,6 +4,7 @@ nonisolated extension SharedSprites {
 
     // MARK: - Cleaning
 
+    /// First frame of `waterDrops`: the shower head with the drops at their highest.
     static let waterDrops1 = SpriteFrame(rows: [
         0x0700, //  .....###........   (pipe stem)
         0x1FC0, //  ...#######......   (head plate)
@@ -23,7 +24,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
-    // Water drops falling — frame 2 (drops shifted down by 1)
+    /// Second frame of `waterDrops`, with the drops shifted down one row from `waterDrops1`.
     static let waterDrops2 = SpriteFrame(rows: [
         0x0700, //  .....###........   (pipe stem)
         0x1FC0, //  ...#######......   (head plate)
@@ -43,6 +44,7 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
+    /// First frame of `cleanSparkle`: two sparkles.
     static let cleanSparkle1 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000,
         0x0800, //  ....#...........
@@ -55,7 +57,7 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000, 0x0000
     ])
 
-    // Clean sparkle — frame 2 (top sparkle shifted left from edge)
+    /// Second frame of `cleanSparkle`, with the sparkles shifted from `cleanSparkle1`.
     static let cleanSparkle2 = SpriteFrame(rows: [
         0x0000, 0x0000, 0x0000, 0x0000,
         0x0080, //  ........#.......
@@ -68,6 +70,7 @@ nonisolated extension SharedSprites {
         0x0000, 0x0000, 0x0000, 0x0000
     ])
 
+    /// Falling water drops, played during the wash.
     static let waterDrops = SpriteAnimation(
         frames: [waterDrops1, waterDrops2],
         frameDuration: 0.2,

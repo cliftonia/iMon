@@ -21,8 +21,11 @@ nonisolated enum NotificationSpriteRenderer {
     /// A screen colour in device RGB — a named type so the palette constants and
     /// draw helpers stay readable (and clear of the tuple-size lint).
     private struct RGB {
+        /// The red channel, passed straight to `CGContext.setFillColor`.
         let r: CGFloat
+        /// The green channel, passed straight to `CGContext.setFillColor`.
         let g: CGFloat
+        /// The blue channel, passed straight to `CGContext.setFillColor`.
         let b: CGFloat
     }
 

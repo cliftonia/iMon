@@ -6,6 +6,8 @@ import SwiftUI
 /// the `HatchPresenter`'s phase, and starts the sequence from `.task`.
 struct HatchScreen: View {
 
+    /// The presenter driving the hatch: supplies the sprite animator and
+    /// phase, and starts the sequence from `.task`.
     let presenter: HatchPresenter
 
     var body: some View {

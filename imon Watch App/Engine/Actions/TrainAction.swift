@@ -17,6 +17,8 @@ nonisolated enum TrainAction {
     /// The outcome of one round, produced by `evaluateRound`: `won` records
     /// whether the guess matched the hidden number.
     nonisolated struct RoundResult: Sendable {
+        /// Whether the guess matched the hidden number; `applyResult` grants
+        /// its strength, weight and conditioning gains only when this is true.
         let won: Bool
     }
 

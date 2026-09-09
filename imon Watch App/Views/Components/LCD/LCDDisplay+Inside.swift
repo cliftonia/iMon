@@ -78,6 +78,7 @@ extension LCDDisplay {
 
     /// The window opening (inside the frame) where the sky/weather shows.
     static let windowCols = 21...28
+    /// Row span of the same opening; stays one cell inside the border from `windowFrameCells`.
     static let windowRows = 2...9
 
     /// The window frame on the back wall - a clean border, no mullion bars.

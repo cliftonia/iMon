@@ -46,6 +46,8 @@ nonisolated extension SharedSprites {
         0x0000  //  ................
     ])
 
+    /// The injection animation, looping the syringe between plunger up and
+    /// pressed at 0.3 s per frame.
     static let needleInjection = SpriteAnimation(
         frames: [needleUp, needleDown],
         frameDuration: 0.3,

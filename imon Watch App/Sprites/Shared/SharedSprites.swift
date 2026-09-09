@@ -7,12 +7,14 @@ nonisolated enum SharedSprites {
 
     // MARK: - Egg
 
+    /// The egg's idle animation, looping between the still and wobble frames.
     static let egg = SpriteAnimation(
         frames: [eggStill, eggWobble],
         frameDuration: 0.8,
         loops: true
     )
 
+    /// The hatching animation, played once as the egg cracks open.
     static let eggCrack = SpriteAnimation(
         frames: [eggCrack1, eggCrack2, eggCrack3],
         frameDuration: 0.6,
@@ -128,6 +130,7 @@ nonisolated enum SharedSprites {
         0x0000  //  ................
     ])
 
+    /// Tombstone shown as a status icon.
     static let grave = SpriteFrame(rows: [
         0x0000, //  ................
         0x0000, //  ................

@@ -7,6 +7,7 @@ import os
 /// modes.
 nonisolated enum JSONPetStateStore {
 
+    /// The `UserDefaults` key holding the current JSON save.
     static let key = "com.cliftonia.imon.petState"
     /// The previous good save, kept so one torn or undecodable write cannot
     /// cost a months-old pet. Do not rename either key: both are on wrists.

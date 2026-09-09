@@ -8,29 +8,52 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Identity
 
+    /// The pet's unique identity, tagged so it cannot be swapped with a bare
+    /// `UUID`.
     let id: Tagged<PetState, UUID>
+    /// The pet's species, setting max hearts, base weight and evolution goal.
     var species: PetSpecies
 
     // MARK: - Vital Stats
 
+    /// Hunger hearts, hatched full; both stats empty is languishing (see
+    /// `isLanguishing`).
     var hungerHearts: StatHearts = .empty
+    /// Strength hearts, hatched full; both stats empty is languishing (see
+    /// `isLanguishing`).
     var strengthHearts: StatHearts = .empty
+    /// The pet's weight; `hatched` starts it at the species' base weight.
     var weight: Weight = Weight(10)
+    /// The pet's age; a hatched pet starts at zero.
     var age: Int = 0
+    /// Messes the pet has left — the mess that can raise a care call.
     var poopCount: Int = 0
+    /// Whether the pet is asleep; sleep pauses the waking simulators (see
+    /// `isAwakeAndAlive`).
     var isSleeping: Bool = false
+    /// Whether the light is on; switching it off at night starts the settle
+    /// (see `lightsOffAt`).
     var lightsOn: Bool = true
 
     // MARK: - Health
 
+    /// Whether the pet is injured — an injury is a care call (see
+    /// `injuredAt`).
     var isInjured: Bool = false
+    /// Running total of injuries the pet has suffered.
     var injuryCount: Int = 0
+    /// Neglect count; steers evolution but never kills.
     var careMistakes: Int = 0
 
     // MARK: - Records
 
+    /// Battles won; winning earns the decaying bonus power tracked by
+    /// `trainedPower`.
     var battleWins: Int = 0
+    /// Battles lost; with `battleWins`, the pet's lifetime battle record.
     var battleLosses: Int = 0
+    /// Trainings completed; training earns the decaying bonus HP tracked by
+    /// `trainedHP`.
     var trainingCount: Int = 0
 
     // MARK: - Conditioning (trained combat bonuses, earned and lost through play)
@@ -54,7 +77,10 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Lifecycle
 
+    /// Whether the pet is dead — the end state of the collapse countdown.
     var isDead: Bool = false
+    /// Whether the pet is an egg; eggs fail the `isAwakeAndAlive` interaction
+    /// gate.
     var isEgg: Bool = false
 
     /// Last-known night state, for detecting dusk/dawn transitions.
@@ -62,6 +88,8 @@ nonisolated struct PetState: Sendable {
 
     // MARK: - Timestamps
 
+    /// Every event timestamp and simulator anchor for the pet; see
+    /// `Timestamps`.
     var timestamps: Timestamps
 }
 
@@ -72,17 +100,35 @@ extension PetState {
     /// Every event timestamp for the pet, grouped together. Anchors are
     /// non-optional; one-off / pending events are optional.
     nonisolated struct Timestamps: Sendable {
+        /// When the pet was born — fixed at creation.
         var bornAt: Date
+        /// When the pet was last fed.
         var lastFedAt: Date
+        /// When the pet last trained.
         var lastTrainedAt: Date
+        /// The poop anchor — when the pet last pooped.
         var lastPoopAt: Date
+        /// Hunger decay anchor — the hunger simulator counts whole intervals
+        /// from here.
         var lastHungerDecayAt: Date
+        /// Strength decay anchor — the strength simulator counts whole
+        /// intervals from here.
         var lastStrengthDecayAt: Date
+        /// When the pet last evolved; equals `bornAt` until the first
+        /// evolution.
         var evolvedAt: Date
+        /// When the state was last advanced — the previous tick's reference
+        /// date.
         var lastAdvancedAt: Date
+        /// When the pet last battled.
         var lastBattledAt: Date
+        /// When the current injury happened; nil while the pet is uninjured.
         var injuredAt: Date?
+        /// The start of an unanswered care call; nil while no call is pending.
+        /// A care call left unanswered converts into a care mistake.
         var pendingCareMistakeAt: Date?
+        /// The lights counterpart of `pendingCareMistakeAt`; nil while nothing
+        /// is pending.
         var pendingLightsMistakeAt: Date?
         /// When the light was switched off at night — starts the settle.
         var lightsOffAt: Date?
@@ -94,6 +140,8 @@ extension PetState {
         /// cannot be recovered later — it is recorded as it happens, and gives
         /// `collapsingAt` its true start.
         var hungerEmptiedAt: Date?
+        /// When strength ran out; non-nil only while strength is empty (see
+        /// `hungerEmptiedAt`).
         var strengthEmptiedAt: Date?
 
         /// A freshly created pet: every anchor starts at `date`, with no

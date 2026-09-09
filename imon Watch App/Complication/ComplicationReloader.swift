@@ -5,6 +5,7 @@ import WidgetKit
 /// callers can be tested with a capturing mock. Reloading is a no-op when no
 /// complication is installed.
 nonisolated struct ComplicationReloader: Sendable {
+    /// Asks WidgetKit to refresh the complication timeline.
     let reload: @Sendable () -> Void
 }
 

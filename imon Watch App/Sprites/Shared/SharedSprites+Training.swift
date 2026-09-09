@@ -7,6 +7,7 @@ nonisolated extension SharedSprites {
     // `trainingTargetHit` and `trainingTargetRecoil` keep the chain's top
     // two rows identical to this frame, so the bag swings without its
     // hanger moving.
+    /// The hanging bag at rest; `trainingHitSequence` finishes on this frame.
     static let trainingTarget = SpriteFrame(rows: [
         0x0C00,
         0x0C00,
@@ -26,6 +27,7 @@ nonisolated extension SharedSprites {
         0x1E00
     ])
 
+    /// The bag buckled at the moment of impact.
     static let trainingTargetHit = SpriteFrame(rows: [
         0x0C00,
         0x0C00,
@@ -45,6 +47,7 @@ nonisolated extension SharedSprites {
         0x0F00
     ])
 
+    /// The bag swung wide on the rebound, past its rest pose.
     static let trainingTargetRecoil = SpriteFrame(rows: [
         0x0C00,
         0x0C00,
@@ -64,6 +67,7 @@ nonisolated extension SharedSprites {
         0x3C00
     ])
 
+    /// First twinkle phase of the victory sparkle, a sparse scatter of pixels.
     static let trainingStar1 = SpriteFrame(rows: [
         0x0100,
         0x0280,
@@ -83,6 +87,7 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// Second twinkle phase of the victory sparkle, the same sparse scatter at new points.
     static let trainingStar2 = SpriteFrame(rows: [
         0x0000,
         0x0000,
@@ -102,12 +107,14 @@ nonisolated extension SharedSprites {
         0x0000
     ])
 
+    /// One complete hit swing: impact, recoil, rest, played through once.
     static let trainingHitSequence = SpriteAnimation(
         frames: [trainingTargetHit, trainingTargetRecoil, trainingTarget],
         frameDuration: 0.2,
         loops: false
     )
 
+    /// The victory twinkle, alternating the two star phases continuously.
     static let trainingVictorySparkle = SpriteAnimation(
         frames: [trainingStar1, trainingStar2],
         frameDuration: 0.3,

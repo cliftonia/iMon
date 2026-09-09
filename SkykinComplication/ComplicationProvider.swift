@@ -7,12 +7,20 @@ import Foundation
 /// only the subset of `ComplicationEntry`'s keys the views render; `JSONDecoder`
 /// ignores the extra keys the app writes.
 struct WidgetEntry: TimelineEntry, Codable {
+    /// When the snapshot becomes current on the watch face; the entry dates also drive the
+    /// timeline reload.
     let date: Date
+    /// The species the views name for this snapshot.
     let speciesName: String
+    /// The baked sprite, one 16-bit row per element, rendered by the views.
     let spriteRows: [UInt16]
+    /// Hunger hearts remaining, rendered against `hungerMax`.
     let hungerValue: Int
+    /// Hunger hearts at full; the denominator of `hungerValue`.
     let hungerMax: Int
+    /// Whether the pet is making a care call; the views flag the snapshot when true.
     let needsAttention: Bool
+    /// A short state word the views show as text, e.g. `"happy"`.
     let statusText: String
 }
 

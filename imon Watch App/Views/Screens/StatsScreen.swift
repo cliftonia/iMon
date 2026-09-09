@@ -4,6 +4,8 @@ import SwiftUI
 /// and strength meters, and battle record as read from `StatsPresenter`.
 struct StatsScreen: View {
 
+    /// The presenter owning this screen's state; every section reads its
+    /// view model.
     let presenter: StatsPresenter
 
     var body: some View {

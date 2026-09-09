@@ -4,6 +4,7 @@
 Rules, each reported as `path:line: rule: detail`:
   header     every struct/class/enum/actor/protocol has a `///` header
   member     every non-private func/init has a `///` summary
+  property   every non-private stored property of a type has a `///` line
   summary    a `///` block's first sentence ends with a period
   width      a comment line is at most 100 columns
   sentence   a `//` comment block ends with a period (or `)`, `?`, `!`)
@@ -26,7 +27,12 @@ FUNC = re.compile(
     r"^(\s+)(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:static|class|nonisolated|mutating|override|final|isolated|public|internal)\s+)*"
     r"(func\s+\w+|init[?(<])"
 )
-PRIVATE = re.compile(r"\b(private|fileprivate)\b")
+PRIVATE = re.compile(r"\b(private|fileprivate)\b(?!\(set\))")
+PROPERTY = re.compile(
+    r"^(\s+)(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:static|nonisolated|weak|lazy|private\(set\)|public|internal)\s+)*"
+    r"(let|var)\s+(\w+)\s*(?::|=)[^{]*$"
+)
+OPENER = re.compile(r"^\s{4}\S.*\{\s*$")
 HISTORY = re.compile(r"\b(no longer|previously|recently|used to be|as of 20\d\d|AUDIT \d|TODO|FIXME|HACK)\b", re.I)
 LINE_END = (".", ")", "?", "!", ":")
 
@@ -42,6 +48,7 @@ def check(path):
     lines = path.read_text().splitlines()
     rel = path.relative_to(ROOT)
     out = []
+    nested_type = False
     i = 0
     while i < len(lines):
         line = lines[i]
@@ -54,6 +61,15 @@ def check(path):
         m = FUNC.match(line)
         if m and not PRIVATE.search(line) and not has_doc(lines, i):
             out.append(f"{rel}:{i+1}: member: {m.group(2).strip()} has no /// summary")
+        if TYPE.match(line) and len(TYPE.match(line).group(1)) == 4:
+            nested_type = not PRIVATE.search(line)
+        elif OPENER.match(line) and not TYPE.match(line):
+            nested_type = False
+        m = PROPERTY.match(line)
+        if m and not PRIVATE.search(line) and not has_doc(lines, i):
+            indent = len(m.group(1))
+            if indent == 4 or (indent == 8 and nested_type):
+                out.append(f"{rel}:{i+1}: property: {m.group(3)} has no /// line")
         if s.startswith("///"):
             k = i
             while k + 1 < len(lines) and lines[k + 1].strip().startswith("///"):

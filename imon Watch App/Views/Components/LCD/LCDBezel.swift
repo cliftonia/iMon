@@ -10,12 +10,15 @@ private enum BezelPalette {
 
     /// The classic green frame: a faint panel fill and a soft grey edge.
     static let classicFill = Color("LCDBackground").opacity(0.3)
+    /// The soft grey edge of the classic frame.
     static let classicStroke = Color.gray.opacity(0.6)
 
     /// Battery-saver is strictly red on black — no green panel, no grey edge, so
     /// the whole bezel (frame, edge and ring) is drawn in one red.
     static let batterySaver = Color(red: 1, green: 0.12, blue: 0.08)
+    /// The battery-saver panel fill: a faint red wash behind the content.
     static let batterySaverFill = batterySaver.opacity(0.18)
+    /// The battery-saver frame edge: a red stroke around the panel.
     static let batterySaverStroke = batterySaver.opacity(0.6)
 }
 
@@ -23,6 +26,7 @@ private enum BezelPalette {
 /// edge in the active palette, plus a ring showing evolution progress.
 struct LCDBezel<Content: View>: View {
 
+    /// The screen content the bezel frames, captured from the `@ViewBuilder` closure.
     let content: Content
     /// Evolution progress (0...1) drawn as a ring around the bezel; `nil` hides it.
     let evolutionProgress: Double?

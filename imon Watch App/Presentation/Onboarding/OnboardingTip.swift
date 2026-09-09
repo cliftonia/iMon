@@ -4,8 +4,11 @@ import Foundation
 /// animation it plays while saying it. Kept as data so the flow is a simple
 /// list the presenter steps through.
 nonisolated struct OnboardingTip: Sendable, Identifiable {
+    /// The tip's index in `walkthrough`, doubling as its `Identifiable` identity.
     let id: Int
+    /// The animation Dotkin acts out while the message is shown.
     let animation: SpriteCatalog.AnimationKind
+    /// The line Dotkin speaks for this step.
     let message: String
 }
 

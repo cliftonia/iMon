@@ -10,8 +10,13 @@ struct GameModeLayout<
     Buttons: View
 >: View {
 
+    /// The view drawn inside the `LCDBezel` at the top.
     let lcd: LCD
+
+    /// The one-line strip shown between the LCD and the buttons.
     let info: Info
+
+    /// The controls pinned to the bottom of the screen.
     let buttons: Buttons
 
     /// Creates the layout, evaluating each view builder immediately and

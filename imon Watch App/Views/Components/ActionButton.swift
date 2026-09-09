@@ -7,12 +7,15 @@ import WatchKit
 /// debug action fired by a long press.
 struct ActionButton: View {
 
+    /// The letter printed on the face; it identifies the hardware position and cannot describe
+    /// the press.
     let label: String
     /// What the press does right now, for VoiceOver — the printed label is
     /// only "A", "B" or "C".
     var accessibilityLabel: String?
     /// Debug action fired on a long press (e.g. cycle weather / evolve).
     var longPressAction: (() -> Void)?
+    /// The press handler, fired after the button haptic.
     let action: () -> Void
     @Environment(\.lcdTheme) private var theme
 

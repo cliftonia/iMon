@@ -9,6 +9,7 @@ import Observation
 @Observable
 final class HatchViewModel {
 
+    /// What the view draws on the hatch screen; starts at `.egg`.
     var phase: HatchPhase = .egg
 
     /// The hatch's display states in the order they play out: `egg`,

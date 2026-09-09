@@ -7,7 +7,10 @@ import WatchKit
 /// persisted before this shows, so quitting mid-walkthrough cannot lose it.
 final class OnboardingPresenter {
 
+    /// The walkthrough's current-step state; read to know which tip to show and whether it is
+    /// the last.
     private(set) var viewModel = OnboardingViewModel()
+    /// Plays the current tip's animation; stopped before the hand-off to play.
     let spriteAnimator = SpriteAnimator()
 
     /// Called when the walkthrough is finished or skipped - hands off to play.
